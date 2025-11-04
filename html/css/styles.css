@@ -899,7 +899,7 @@ body {
 
     .orders-table th,
     .orders-table td {
-        padding: 12px 8px;
+        padding: 10px 8px;
         font-size: 0.85rem;
     }
 
@@ -1094,6 +1094,12 @@ body {
 
     .calendar-day {
         padding: 4px 2px;
+        border-radius: 0;
+    }
+    
+    .calendar-days .calendar-day:nth-child(7n),
+    .calendar-days .calendar-day:nth-child(7n+7) {
+        border-right: none;
     }
 }
 
@@ -1190,9 +1196,11 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    position: relative;
 }
 
-.calendar-day:nth-child(7n) {
+.calendar-days .calendar-day:nth-child(7n),
+.calendar-days .calendar-day:nth-child(7n+7) {
     border-right: none;
 }
 
@@ -1607,20 +1615,20 @@ body {
 
 .orders-table th {
     background: #F8FAFC;
-    padding: 12px 10px;
+    padding: 10px 8px;
     text-align: left;
     font-weight: 600;
     color: #2C3E50;
     border-bottom: 2px solid #E8EDF2;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     white-space: nowrap;
 }
 
 .orders-table td {
-    padding: 12px 10px;
+    padding: 10px 8px;
     border-bottom: 1px solid #E8EDF2;
     color: #34495E;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     vertical-align: middle;
 }
 

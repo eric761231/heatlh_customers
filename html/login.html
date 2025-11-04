@@ -97,18 +97,25 @@
                     throw new Error('缺少 email 資訊');
                 }
                 
-                // 清除舊的登入資訊和快取（確保可以切換帳號）
-                localStorage.removeItem('googleLogin');
+                // 清除所有舊的登入資訊和快取（確保可以切換帳號）
+                // 強制清除所有相關的 localStorage
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('googleLogin') || key.includes('cache'))) {
+                        keysToRemove.push(key);
+                    }
+                }
+                keysToRemove.forEach(key => localStorage.removeItem(key));
                 
                 // 清除客戶資料快取（如果存在）
-                if (typeof dataCache !== 'undefined' && dataCache) {
-                    dataCache.customers = null;
-                    dataCache.customersTimestamp = 0;
+                if (typeof window !== 'undefined' && typeof window.dataCache !== 'undefined') {
+                    window.dataCache = null;
                 }
                 
                 // 清除當前使用者快取
-                if (typeof currentUser !== 'undefined') {
-                    currentUser = null;
+                if (typeof window !== 'undefined' && typeof window.currentUser !== 'undefined') {
+                    window.currentUser = null;
                 }
                 
                 // 儲存新的登入資訊

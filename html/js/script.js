@@ -96,6 +96,11 @@ const dataCache = {
     }
 };
 
+// 暴露到 window 物件，以便在登入頁面清除
+if (typeof window !== 'undefined') {
+    window.dataCache = dataCache;
+}
+
 // API 呼叫函數（支援 Supabase 和 Google Sheets 切換）
 async function apiCall(action, data = null, customerId = null) {
     // 如果使用 Supabase，調用 Supabase API

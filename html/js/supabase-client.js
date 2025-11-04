@@ -7,6 +7,11 @@
 let supabaseClient = null;
 let currentUser = null; // 當前登入的使用者
 
+// 將變數暴露到 window 物件，以便在登入頁面清除
+if (typeof window !== 'undefined') {
+    window.currentUser = null;
+}
+
 /**
  * 初始化 Supabase 客戶端
  */
