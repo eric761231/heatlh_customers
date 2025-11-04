@@ -320,7 +320,23 @@
         // 頁面載入時檢查登入狀態並初始化
         window.addEventListener('DOMContentLoaded', function() {
             checkLoginStatus();
-            initializeGoogleSignIn();
+            // 延遲一點時間確保所有狀態已清除
+            setTimeout(() => {
+                initializeGoogleSignIn();
+            }, 100);
+        });
+        
+        // 在頁面可見時也重新初始化（處理瀏覽器返回的情況）
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                setTimeout(() => {
+                    clearGoogleSignInSession();
+                    const signinButton = document.getElementById('g_id_signin');
+                    if (signinButton && signinButton.innerHTML === '') {
+                        initializeGoogleSignIn();
+                    }
+                }, 100);
+            }
         });
     </script>
 </body>
