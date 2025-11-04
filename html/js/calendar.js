@@ -199,7 +199,11 @@ function showScheduleDetail(scheduleId) {
 // 顯示新增行程 Modal
 function showAddScheduleModal() {
     document.getElementById('scheduleModal').style.display = 'block';
-    setTodayDate();
+    // 只有在日期欄位為空時才設置為今天的日期
+    const dateInput = document.getElementById('scheduleDate');
+    if (!dateInput.value) {
+        setTodayDate();
+    }
 }
 
 // 關閉新增行程 Modal
