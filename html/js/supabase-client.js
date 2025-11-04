@@ -5,6 +5,7 @@
 
 // 初始化 Supabase 客戶端
 let supabaseClient = null;
+let currentUser = null; // 當前登入的使用者
 
 /**
  * 初始化 Supabase 客戶端
@@ -26,6 +27,70 @@ function initSupabase() {
         supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
     return supabaseClient;
+}
+
+/**
+ * 取得當前使用者（從 localStorage）
+ */
+function getCurrentUser() {
+    if (currentUser) {
+        return currentUser;
+    }
+    
+    try {
+        const loginInfo = localStorage.getItem('googleLogin');
+        if (loginInfo) {
+            const userInfo = JSON.parse(loginInfo);
+            currentUser = {
+                id: userInfo.email, // 使用 email 作為使用者 ID
+                email: userInfo.email,
+                name: userInfo.name || '使用者',
+                picture: userInfo.picture || ''
+            };
+            return currentUser;
+        }
+    } catch (e) {
+        console.error('取得使用者資訊失敗:', e);
+    }
+    
+    return null;
+}
+
+/**
+ * 建立或更新使用者（登入時呼叫）
+ */
+async function createOrUpdateUser(userData) {
+    const client = initSupabase();
+    if (!client) {
+        throw new Error('Supabase 客戶端未初始化');
+    }
+    
+    const userId = userData.email; // 使用 email 作為 ID
+    
+    const { data, error } = await client
+        .from('users')
+        .upsert({
+            id: userId,
+            email: userData.email,
+            name: userData.name || '',
+            picture: userData.picture || '',
+            google_id: userData.googleId || null,
+            last_login: new Date().toISOString()
+        }, { onConflict: 'id' })
+        .select()
+        .single();
+    
+    if (error) throw error;
+    
+    // 更新當前使用者資訊
+    currentUser = {
+        id: data.id,
+        email: data.email,
+        name: data.name,
+        picture: data.picture
+    };
+    
+    return data;
 }
 
 /**
@@ -140,6 +205,8 @@ async function getCustomerByIdFromSupabase(id) {
 
 async function addCustomerToSupabase(customerData) {
     const id = Date.now().toString();
+    const user = getCurrentUser();
+    
     const { data, error } = await supabaseClient
         .from('customers')
         .insert({
@@ -160,7 +227,8 @@ async function addCustomerToSupabase(customerData) {
             health_status: customerData.healthStatus || '',
             medications: customerData.medications || '',
             supplements: customerData.supplements || '',
-            avatar: customerData.avatar || ''
+            avatar: customerData.avatar || '',
+            created_by: user ? user.email : null
         })
         .select()
         .single();
@@ -174,6 +242,8 @@ async function addCustomerToSupabase(customerData) {
 }
 
 async function updateCustomerInSupabase(id, customerData) {
+    const user = getCurrentUser();
+    
     const { data, error } = await supabaseClient
         .from('customers')
         .update({
@@ -193,7 +263,8 @@ async function updateCustomerInSupabase(id, customerData) {
             health_status: customerData.healthStatus || '',
             medications: customerData.medications || '',
             supplements: customerData.supplements || '',
-            avatar: customerData.avatar || ''
+            avatar: customerData.avatar || '',
+            updated_by: user ? user.email : null
         })
         .eq('id', id)
         .select()
@@ -261,6 +332,8 @@ async function getAllSchedulesFromSupabase() {
 
 async function addScheduleToSupabase(scheduleData) {
     const id = Date.now().toString();
+    const user = getCurrentUser();
+    
     const { data, error } = await supabaseClient
         .from('schedules')
         .insert({
@@ -271,7 +344,8 @@ async function addScheduleToSupabase(scheduleData) {
             end_time: scheduleData.endTime || null,
             type: scheduleData.type || 'other',
             customer_id: scheduleData.customerId || null,
-            notes: scheduleData.notes || ''
+            notes: scheduleData.notes || '',
+            created_by: user ? user.email : null
         })
         .select()
         .single();
@@ -338,6 +412,8 @@ async function getAllOrdersFromSupabase() {
 
 async function addOrderToSupabase(orderData) {
     const id = Date.now().toString();
+    const user = getCurrentUser();
+    
     const { data, error } = await supabaseClient
         .from('orders')
         .insert({
@@ -348,7 +424,8 @@ async function addOrderToSupabase(orderData) {
             quantity: orderData.quantity || 1,
             amount: orderData.amount || 0,
             paid: orderData.paid === true || orderData.paid === 'true',
-            notes: orderData.notes || ''
+            notes: orderData.notes || '',
+            created_by: user ? user.email : null
         })
         .select()
         .single();
@@ -362,6 +439,8 @@ async function addOrderToSupabase(orderData) {
 }
 
 async function updateOrderInSupabase(id, orderData) {
+    const user = getCurrentUser();
+    
     const { data, error } = await supabaseClient
         .from('orders')
         .update({
@@ -371,7 +450,8 @@ async function updateOrderInSupabase(id, orderData) {
             quantity: orderData.quantity || 1,
             amount: orderData.amount || 0,
             paid: orderData.paid === true || orderData.paid === 'true',
-            notes: orderData.notes || ''
+            notes: orderData.notes || '',
+            updated_by: user ? user.email : null
         })
         .eq('id', id)
         .select()

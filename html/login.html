@@ -20,6 +20,8 @@
     </div>
 
     <script src="js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
     <script>
         // 檢查是否已登入
         function checkLoginStatus() {
@@ -100,10 +102,27 @@
                     email: payload.email,
                     name: payload.name || payload.given_name || '使用者',
                     picture: payload.picture || '',
+                    googleId: payload.sub || '', // Google 使用者 ID
                     exp: Date.now() + (24 * 60 * 60 * 1000) // 24小時後過期
                 };
                 
                 localStorage.setItem('googleLogin', JSON.stringify(loginInfo));
+                
+                // 如果使用 Supabase，儲存使用者到資料庫
+                if (typeof DATA_SOURCE !== 'undefined' && DATA_SOURCE === 'supabase' && typeof createOrUpdateUser !== 'undefined') {
+                    try {
+                        await createOrUpdateUser({
+                            email: payload.email,
+                            name: payload.name || payload.given_name || '使用者',
+                            picture: payload.picture || '',
+                            googleId: payload.sub || ''
+                        });
+                        console.log('使用者資料已儲存到 Supabase');
+                    } catch (error) {
+                        console.error('儲存使用者資料失敗:', error);
+                        // 即使儲存失敗也繼續登入流程
+                    }
+                }
                 
                 statusDiv.innerHTML = '<div class="success-message">登入成功！正在跳轉...</div>';
                 
