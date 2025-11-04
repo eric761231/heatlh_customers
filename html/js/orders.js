@@ -39,6 +39,8 @@ function displayOrders(ordersList) {
     }
     
     tbody.innerHTML = ordersList.map(order => {
+        // 確保 ID 是字符串
+        const orderId = String(order.id);
         const date = new Date(order.date).toLocaleDateString('zh-TW');
         const paidStatus = order.paid === true || order.paid === 'true' 
             ? '<span class="badge badge-success">已收款</span>' 
@@ -53,8 +55,8 @@ function displayOrders(ordersList) {
                 <td>$${order.amount || 0}</td>
                 <td>${paidStatus}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary" onclick="editOrder('${order.id}')">編輯</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteOrder('${order.id}')">刪除</button>
+                    <button class="btn btn-sm btn-primary" onclick="editOrder('${orderId}')">編輯</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteOrder('${orderId}')">刪除</button>
                 </td>
             </tr>
         `;
@@ -97,15 +99,41 @@ function closeOrderModal() {
 
 // 編輯訂單
 async function editOrder(orderId) {
-    const order = orders.find(o => o.id === orderId);
-    if (!order) return;
+    // 確保 ID 是字符串類型用於比較
+    const searchId = String(orderId);
+    const order = orders.find(o => String(o.id) === searchId);
     
-    editingOrderId = orderId;
+    if (!order) {
+        console.error('找不到訂單:', orderId);
+        alert('找不到指定的訂單');
+        return;
+    }
+    
+    editingOrderId = searchId;
     document.getElementById('orderModalTitle').textContent = '編輯訂單';
     
-    document.getElementById('orderDate').value = order.date;
-    document.getElementById('orderCustomer').value = order.customerId || '';
-    document.getElementById('orderProduct').value = order.product;
+    // 處理日期格式：將日期轉換為 YYYY-MM-DD 格式
+    let dateValue = order.date;
+    if (dateValue) {
+        // 如果是 Date 對象或日期字符串，轉換為 YYYY-MM-DD
+        const date = new Date(dateValue);
+        if (!isNaN(date.getTime())) {
+            dateValue = date.toISOString().split('T')[0];
+        } else if (typeof dateValue === 'string' && dateValue.includes('/')) {
+            // 處理類似 "2024/1/15" 的格式
+            const parts = dateValue.split('/');
+            if (parts.length === 3) {
+                const year = parts[0];
+                const month = parts[1].padStart(2, '0');
+                const day = parts[2].padStart(2, '0');
+                dateValue = `${year}-${month}-${day}`;
+            }
+        }
+    }
+    
+    document.getElementById('orderDate').value = dateValue || '';
+    document.getElementById('orderCustomer').value = String(order.customerId || '');
+    document.getElementById('orderProduct').value = order.product || '';
     document.getElementById('orderQuantity').value = order.quantity || 1;
     document.getElementById('orderAmount').value = order.amount || 0;
     document.getElementById('orderPaid').value = order.paid === true || order.paid === 'true' ? 'true' : 'false';
@@ -164,7 +192,8 @@ async function deleteOrder(orderId) {
     }
     
     try {
-        await deleteOrderById(orderId);
+        // 確保 ID 是字符串
+        await deleteOrderById(String(orderId));
         await loadOrders();
         alert('訂單已刪除');
     } catch (error) {
