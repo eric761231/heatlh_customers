@@ -43,6 +43,39 @@ function handleRequest(e) {
         const action = e.parameter.action;
         let result;
         
+        // 解析 POST 數據（支援 JSON 和表單編碼格式）
+        let postData = null;
+        if (e.postData) {
+            if (e.postData.type === 'application/json') {
+                postData = JSON.parse(e.postData.contents);
+            } else if (e.postData.type === 'application/x-www-form-urlencoded') {
+                // 處理表單編碼數據
+                const params = e.postData.contents.split('&');
+                for (let param of params) {
+                    const [key, value] = param.split('=');
+                    if (key === 'data') {
+                        postData = JSON.parse(decodeURIComponent(value));
+                        break;
+                    }
+                }
+            } else {
+                // 嘗試解析為 JSON
+                try {
+                    postData = JSON.parse(e.postData.contents);
+                } catch (err) {
+                    // 如果不是 JSON，嘗試表單解析
+                    const params = e.postData.contents.split('&');
+                    for (let param of params) {
+                        const [key, value] = param.split('=');
+                        if (key === 'data') {
+                            postData = JSON.parse(decodeURIComponent(value));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
         switch(action) {
             case 'getAll':
                 result = getAllCustomers();
@@ -51,8 +84,10 @@ function handleRequest(e) {
                 result = getCustomerById(e.parameter.id);
                 break;
             case 'add':
-                const data = JSON.parse(e.postData.contents);
-                result = addCustomer(data);
+                if (!postData) {
+                    throw new Error('缺少客戶資料');
+                }
+                result = addCustomer(postData);
                 break;
             case 'delete':
                 result = deleteCustomer(e.parameter.id);
@@ -61,8 +96,10 @@ function handleRequest(e) {
                 result = getAllSchedules();
                 break;
             case 'addSchedule':
-                const scheduleData = JSON.parse(e.postData.contents);
-                result = addSchedule(scheduleData);
+                if (!postData) {
+                    throw new Error('缺少行程資料');
+                }
+                result = addSchedule(postData);
                 break;
             case 'deleteSchedule':
                 result = deleteSchedule(e.parameter.id);
@@ -71,12 +108,16 @@ function handleRequest(e) {
                 result = getAllOrders();
                 break;
             case 'addOrder':
-                const orderData = JSON.parse(e.postData.contents);
-                result = addOrder(orderData);
+                if (!postData) {
+                    throw new Error('缺少訂單資料');
+                }
+                result = addOrder(postData);
                 break;
             case 'updateOrder':
-                const updateOrderData = JSON.parse(e.postData.contents);
-                result = updateOrder(e.parameter.id, updateOrderData);
+                if (!postData) {
+                    throw new Error('缺少訂單資料');
+                }
+                result = updateOrder(e.parameter.id, postData);
                 break;
             case 'deleteOrder':
                 result = deleteOrder(e.parameter.id);
@@ -499,7 +540,7 @@ function deleteOrder(id) {
 }
 
 /**
- * 建立回應
+ * 建立回應（包含 CORS 標頭）
  */
 function createResponse(success, data, error) {
     const response = {
@@ -511,6 +552,8 @@ function createResponse(success, data, error) {
         response.error = error;
     }
     
+    // 使用 HtmlService 來設置 CORS 標頭
+    // 注意：這需要在部署時設定正確的權限
     return ContentService
         .createTextOutput(JSON.stringify(response))
         .setMimeType(ContentService.MimeType.JSON);

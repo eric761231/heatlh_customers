@@ -71,13 +71,15 @@ async function apiCall(action, data = null, customerId = null) {
 
         const options = {
             method: data ? 'POST' : 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
+            headers: {}
         };
 
         if (data) {
-            options.body = JSON.stringify(data);
+            // 使用表單編碼方式發送數據，避免複雜的 CORS 預檢
+            const formData = new URLSearchParams();
+            formData.append('data', JSON.stringify(data));
+            options.body = formData;
+            options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
 
         const response = await fetch(url, options);
