@@ -261,6 +261,8 @@ function buildFullAddress() {
     
     const city = document.getElementById('city').value || '';
     const district = document.getElementById('district').value || '';
+    const village = document.getElementById('village').value.trim() || '';
+    const neighborhood = document.getElementById('neighborhood').value.trim() || '';
     const streetType = document.getElementById('streetType').value || '';
     const streetName = document.getElementById('streetName').value.trim() || '';
     const lane = document.getElementById('lane').value.trim() || '';
@@ -272,6 +274,11 @@ function buildFullAddress() {
     
     if (city) addressParts.push(city);
     if (district) addressParts.push(district);
+    if (village) addressParts.push(village);
+    if (neighborhood) {
+        // 如果鄰已經包含"鄰"字，直接使用；否則加上"鄰"
+        addressParts.push(neighborhood.includes('鄰') ? neighborhood : neighborhood + '鄰');
+    }
     
     if (streetName) {
         if (streetType) {
@@ -311,7 +318,7 @@ function updateAddressPreview() {
 
 // 監聽地址欄位變化
 function setupAddressListeners() {
-    const addressFields = ['city', 'district', 'streetType', 'streetName', 'lane', 'alley', 'number', 'floor'];
+    const addressFields = ['city', 'district', 'village', 'neighborhood', 'streetType', 'streetName', 'lane', 'alley', 'number', 'floor'];
     addressFields.forEach(fieldId => {
         const field = document.getElementById(fieldId);
         if (field) {
@@ -344,6 +351,8 @@ async function handleSubmit(event) {
     const phone = document.getElementById('phone').value.trim();
     const city = document.getElementById('city').value;
     const district = document.getElementById('district').value;
+    const village = document.getElementById('village').value.trim();
+    const neighborhood = document.getElementById('neighborhood').value.trim();
     const streetType = document.getElementById('streetType').value;
     const streetName = document.getElementById('streetName').value.trim();
     const lane = document.getElementById('lane').value.trim();
@@ -371,16 +380,16 @@ async function handleSubmit(event) {
         const reader = new FileReader();
         reader.onload = async function(e) {
             avatar = e.target.result;
-            await saveCustomer(name, phone, city, district, streetType, streetName, lane, alley, number, floor, fullAddress, healthStatus, medications, supplements, avatar);
+            await saveCustomer(name, phone, city, district, village, neighborhood, streetType, streetName, lane, alley, number, floor, fullAddress, healthStatus, medications, supplements, avatar);
         };
         reader.readAsDataURL(avatarFile);
     } else {
-        await saveCustomer(name, phone, city, district, streetType, streetName, lane, alley, number, floor, fullAddress, healthStatus, medications, supplements, avatar);
+        await saveCustomer(name, phone, city, district, village, neighborhood, streetType, streetName, lane, alley, number, floor, fullAddress, healthStatus, medications, supplements, avatar);
     }
 }
 
 // 儲存客戶
-async function saveCustomer(name, phone, city, district, streetType, streetName, lane, alley, number, floor, fullAddress, healthStatus, medications, supplements, avatar) {
+async function saveCustomer(name, phone, city, district, village, neighborhood, streetType, streetName, lane, alley, number, floor, fullAddress, healthStatus, medications, supplements, avatar) {
     try {
         // 建立新客戶物件
         const newCustomer = {
@@ -388,6 +397,8 @@ async function saveCustomer(name, phone, city, district, streetType, streetName,
             phone: phone,
             city: city,
             district: district,
+            village: village || '',
+            neighborhood: neighborhood || '',
             streetType: streetType || '',
             streetName: streetName || '',
             lane: lane || '',

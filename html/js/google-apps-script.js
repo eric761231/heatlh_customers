@@ -16,7 +16,7 @@
  * Google 試算表設定：
  * 1. 建立新的 Google 試算表
  * 2. 在第一行建立標題列（系統會自動建立）：
- *    ID | 姓名 | 電話 | 縣市 | 鄉鎮市區 | 路街類型 | 路街名稱 | 巷 | 弄 | 號 | 樓 | 完整地址 | 健康狀況 | 藥物 | 保健食品 | 頭像 | 建立時間
+ *    ID | 姓名 | 電話 | 縣市 | 鄉鎮市區 | 村/里 | 鄰 | 路街類型 | 路街名稱 | 巷 | 弄 | 號 | 樓 | 完整地址 | 健康狀況 | 藥物 | 保健食品 | 頭像 | 建立時間
  * 3. 將試算表的 ID（網址中的 /d/SPREADSHEET_ID/edit 部分）複製
  * 4. 將 SPREADSHEET_ID 替換到下方代碼中
  */
@@ -142,11 +142,11 @@ function getSheet() {
     // 如果工作表不存在，建立新的
     if (!sheet) {
         sheet = spreadsheet.insertSheet(SHEET_NAME);
-        // 建立標題列
-        sheet.getRange(1, 1, 1, 17).setValues([[
-            'ID', '姓名', '電話', '縣市', '鄉鎮市區', '路街類型', '路街名稱', '巷', '弄', '號', '樓', '完整地址', '健康狀況', '藥物', '保健食品', '頭像', '建立時間'
+        // 建立標題列（19欄：加入村/里和鄰）
+        sheet.getRange(1, 1, 1, 19).setValues([[
+            'ID', '姓名', '電話', '縣市', '鄉鎮市區', '村/里', '鄰', '路街類型', '路街名稱', '巷', '弄', '號', '樓', '完整地址', '健康狀況', '藥物', '保健食品', '頭像', '建立時間'
         ]]);
-        sheet.getRange(1, 1, 1, 17).setFontWeight('bold');
+        sheet.getRange(1, 1, 1, 19).setFontWeight('bold');
     }
     
     return sheet;
@@ -171,12 +171,35 @@ function getAllCustomers() {
                 createdAt: data[i][16] || data[i][8] || ''
             };
             
-            // 檢查是否為新格式（檢查欄位數量，新格式有17欄，舊格式有9欄）
-            // 或者檢查第4欄（鄉鎮市區）是否存在且不是舊格式的"居住地區"
-            if (data.length > 0 && data[i].length >= 12 && data[i][4] !== undefined) {
-                // 新格式
+            // 檢查是否為最新格式（19欄：有村/里和鄰）
+            // 或舊格式（17欄：沒有村/里和鄰）
+            // 或更舊格式（9欄：舊的格式）
+            if (data.length > 0 && data[i].length >= 19 && data[i][5] !== undefined) {
+                // 最新格式（19欄，包含村/里和鄰）
                 customer.city = data[i][3] || '';
                 customer.district = data[i][4] || '';
+                customer.village = data[i][5] || '';
+                customer.neighborhood = data[i][6] || '';
+                customer.streetType = data[i][7] || '';
+                customer.streetName = data[i][8] || '';
+                customer.lane = data[i][9] || '';
+                customer.alley = data[i][10] || '';
+                customer.number = data[i][11] || '';
+                customer.floor = data[i][12] || '';
+                customer.fullAddress = data[i][13] || '';
+                customer.healthStatus = data[i][14] || '';
+                customer.medications = data[i][15] || '';
+                customer.supplements = data[i][16] || '';
+                customer.avatar = data[i][17] || '';
+                customer.createdAt = data[i][18] || '';
+                // 為了向後兼容，保留 region 欄位
+                customer.region = customer.city + customer.district;
+            } else if (data.length > 0 && data[i].length >= 12 && data[i][4] !== undefined) {
+                // 舊格式（17欄，沒有村/里和鄰）
+                customer.city = data[i][3] || '';
+                customer.district = data[i][4] || '';
+                customer.village = '';
+                customer.neighborhood = '';
                 customer.streetType = data[i][5] || '';
                 customer.streetName = data[i][6] || '';
                 customer.lane = data[i][7] || '';
@@ -188,6 +211,7 @@ function getAllCustomers() {
                 customer.medications = data[i][13] || '';
                 customer.supplements = data[i][14] || '';
                 customer.avatar = data[i][15] || '';
+                customer.createdAt = data[i][16] || '';
                 // 為了向後兼容，保留 region 欄位
                 customer.region = customer.city + customer.district;
             } else {
@@ -229,14 +253,37 @@ function getCustomerById(id) {
                 id: data[i][0],
                 name: data[i][1] || '',
                 phone: data[i][2] || '',
-                createdAt: data[i][16] || data[i][8] || ''
+                createdAt: ''
             };
             
-            // 檢查是否為新格式（檢查欄位數量）
-            if (data.length > 0 && data[i].length >= 12 && data[i][4] !== undefined) {
-                // 新格式
+            // 檢查是否為最新格式（19欄：有村/里和鄰）
+            // 或舊格式（17欄：沒有村/里和鄰）
+            // 或更舊格式（9欄：舊的格式）
+            if (data.length > 0 && data[i].length >= 19 && data[i][5] !== undefined) {
+                // 最新格式（19欄，包含村/里和鄰）
                 customer.city = data[i][3] || '';
                 customer.district = data[i][4] || '';
+                customer.village = data[i][5] || '';
+                customer.neighborhood = data[i][6] || '';
+                customer.streetType = data[i][7] || '';
+                customer.streetName = data[i][8] || '';
+                customer.lane = data[i][9] || '';
+                customer.alley = data[i][10] || '';
+                customer.number = data[i][11] || '';
+                customer.floor = data[i][12] || '';
+                customer.fullAddress = data[i][13] || '';
+                customer.healthStatus = data[i][14] || '';
+                customer.medications = data[i][15] || '';
+                customer.supplements = data[i][16] || '';
+                customer.avatar = data[i][17] || '';
+                customer.createdAt = data[i][18] || '';
+                customer.region = customer.city + customer.district;
+            } else if (data.length > 0 && data[i].length >= 12 && data[i][4] !== undefined) {
+                // 舊格式（17欄，沒有村/里和鄰）
+                customer.city = data[i][3] || '';
+                customer.district = data[i][4] || '';
+                customer.village = '';
+                customer.neighborhood = '';
                 customer.streetType = data[i][5] || '';
                 customer.streetName = data[i][6] || '';
                 customer.lane = data[i][7] || '';
@@ -248,12 +295,15 @@ function getCustomerById(id) {
                 customer.medications = data[i][13] || '';
                 customer.supplements = data[i][14] || '';
                 customer.avatar = data[i][15] || '';
+                customer.createdAt = data[i][16] || '';
                 customer.region = customer.city + customer.district;
             } else {
-                // 舊格式（向後兼容）
+                // 更舊格式（向後兼容，9欄）
                 customer.region = data[i][3] || '';
                 customer.city = '';
                 customer.district = '';
+                customer.village = '';
+                customer.neighborhood = '';
                 customer.streetType = '';
                 customer.streetName = '';
                 customer.lane = '';
@@ -283,13 +333,15 @@ function addCustomer(customerData) {
     // 產生唯一 ID
     const id = Date.now().toString();
     
-    // 準備資料（新格式）
+    // 準備資料（最新格式，包含村/里和鄰）
     const row = [
         id,
         customerData.name || '',
         customerData.phone || '',
         customerData.city || '',
         customerData.district || '',
+        customerData.village || '',
+        customerData.neighborhood || '',
         customerData.streetType || '',
         customerData.streetName || '',
         customerData.lane || '',
