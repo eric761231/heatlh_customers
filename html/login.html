@@ -31,6 +31,8 @@
                     google.accounts.id.disableAutoSelect();
                     // 清除提示
                     google.accounts.id.cancel();
+                    // 清除記住的帳號
+                    google.accounts.id.storeCredential(null);
                 }
             } catch (e) {
                 console.log('清除 Google Sign-In 會話時出錯:', e);
@@ -237,10 +239,28 @@
                         window.google.accounts.id.initialize({
                             client_id: GOOGLE_CLIENT_ID,
                             callback: handleCredentialResponse,
-                            auto_select: false,
+                            auto_select: false, // 禁用自動選擇帳號
                             cancel_on_tap_outside: true,
-                            ux_mode: 'popup' // 使用彈出視窗模式，確保可以選擇帳號
+                            ux_mode: 'popup', // 使用彈出視窗模式，確保可以選擇帳號
+                            itp_support: false, // 禁用 Intelligent Tracking Prevention 支持
+                            use_fedcm_for_prompt: false // 禁用 FedCM 提示
                         });
+                        
+                        // 確保不會顯示 One Tap 提示
+                        try {
+                            window.google.accounts.id.prompt((notification) => {
+                                // 不顯示任何自動提示
+                            });
+                        } catch (e) {
+                            // 忽略錯誤
+                        }
+                        
+                        // 清除任何已儲存的憑證
+                        try {
+                            window.google.accounts.id.storeCredential(null);
+                        } catch (e) {
+                            // 忽略錯誤
+                        }
                         
                         // 渲染登入按鈕
                         const signinButton = document.getElementById('g_id_signin');
