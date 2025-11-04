@@ -252,8 +252,12 @@ function getCustomerById(id) {
     const sheet = getSheet();
     const data = sheet.getDataRange().getValues();
     
+    // 確保 ID 是字符串類型用於比較
+    const searchId = String(id);
+    
     for (let i = 1; i < data.length; i++) {
-        if (data[i][0] === id) {
+        // 將試算表中的 ID 也轉換為字符串進行比較
+        if (String(data[i][0]) === searchId) {
             // 支援新舊格式
             const customer = {
                 id: data[i][0],
@@ -378,8 +382,12 @@ function updateCustomer(id, customerData) {
     const sheet = getSheet();
     const data = sheet.getDataRange().getValues();
     
+    // 確保 ID 是字符串類型用於比較
+    const searchId = String(id);
+    
     for (let i = 1; i < data.length; i++) {
-        if (data[i][0] === id) {
+        // 將試算表中的 ID 也轉換為字符串進行比較
+        if (String(data[i][0]) === searchId) {
             // 準備更新資料（最新格式，包含村/里和鄰）
             const row = [
                 id, // 保持原 ID
@@ -423,8 +431,12 @@ function deleteCustomer(id) {
     const sheet = getSheet();
     const data = sheet.getDataRange().getValues();
     
+    // 確保 ID 是字符串類型用於比較
+    const searchId = String(id);
+    
     for (let i = 1; i < data.length; i++) {
-        if (data[i][0] === id) {
+        // 將試算表中的 ID 也轉換為字符串進行比較
+        if (String(data[i][0]) === searchId) {
             sheet.deleteRow(i + 1); // +1 因為陣列從 0 開始，但試算表從 1 開始
             return { success: true };
         }
@@ -515,8 +527,12 @@ function deleteSchedule(id) {
     const sheet = getScheduleSheet();
     const data = sheet.getDataRange().getValues();
     
+    // 確保 ID 是字符串類型用於比較
+    const searchId = String(id);
+    
     for (let i = 1; i < data.length; i++) {
-        if (data[i][0] === id) {
+        // 將試算表中的 ID 也轉換為字符串進行比較
+        if (String(data[i][0]) === searchId) {
             sheet.deleteRow(i + 1);
             return { success: true };
         }
@@ -607,8 +623,12 @@ function updateOrder(id, orderData) {
     const sheet = getOrderSheet();
     const data = sheet.getDataRange().getValues();
     
+    // 確保 ID 是字符串類型用於比較
+    const searchId = String(id);
+    
     for (let i = 1; i < data.length; i++) {
-        if (data[i][0] === id) {
+        // 將試算表中的 ID 也轉換為字符串進行比較
+        if (String(data[i][0]) === searchId) {
             sheet.getRange(i + 1, 2, 1, 7).setValues([[
                 orderData.date || '',
                 orderData.customerId || '',
@@ -632,8 +652,12 @@ function deleteOrder(id) {
     const sheet = getOrderSheet();
     const data = sheet.getDataRange().getValues();
     
+    // 確保 ID 是字符串類型用於比較
+    const searchId = String(id);
+    
     for (let i = 1; i < data.length; i++) {
-        if (data[i][0] === id) {
+        // 將試算表中的 ID 也轉換為字符串進行比較
+        if (String(data[i][0]) === searchId) {
             sheet.deleteRow(i + 1);
             return { success: true };
         }
