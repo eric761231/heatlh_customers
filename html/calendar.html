@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行事曆</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/config.js"></script>
+    <script src="../js/taiwan-address.js"></script>
+</head>
+<body>
+    <!-- 側邊導航欄 -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h2>選單</h2>
+            <button class="close-btn" onclick="toggleSidebar()">×</button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="add-customer.html" class="nav-item">
+                <span class="nav-icon">➕</span>
+                <span>新增客戶</span>
+            </a>
+            <a href="calendar.html" class="nav-item active">
+                <span class="nav-icon">📅</span>
+                <span>行程事項</span>
+            </a>
+            <a href="customers.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>客戶資料</span>
+            </a>
+            <a href="orders.html" class="nav-item">
+                <span class="nav-icon">📦</span>
+                <span>訂貨清單</span>
+            </a>
+            <div class="nav-divider"></div>
+            <a href="#" class="nav-item" onclick="logout()">
+                <span class="nav-icon">🚪</span>
+                <span>登出</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- 側邊欄遮罩 -->
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- 主內容區 -->
+    <div class="main-content">
+        <!-- 頂部導航 -->
+        <header class="header">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            <h1>行程事項</h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="showAddScheduleModal()">新增行程</button>
+            </div>
+        </header>
+
+        <!-- 行事曆容器 -->
+        <div class="container">
+            <div class="calendar-controls">
+                <button class="btn btn-secondary" onclick="changeMonth(-1)">◀ 上個月</button>
+                <h2 id="currentMonthYear"></h2>
+                <button class="btn btn-secondary" onclick="changeMonth(1)">下個月 ▶</button>
+                <button class="btn btn-secondary" onclick="goToToday()">今天</button>
+            </div>
+
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- 行事曆將由 JavaScript 動態生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增行程 Modal -->
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>新增行程</h2>
+                <button class="modal-close" onclick="closeScheduleModal()">×</button>
+            </div>
+            <form id="scheduleForm" onsubmit="handleScheduleSubmit(event)">
+                <div class="form-group">
+                    <label for="scheduleTitle">標題 <span class="required">*</span></label>
+                    <input type="text" id="scheduleTitle" name="scheduleTitle" required placeholder="例如：見客戶 - 張三">
+                </div>
+
+                <div class="form-group">
+                    <label for="scheduleDate">日期 <span class="required">*</span></label>
+                    <input type="date" id="scheduleDate" name="scheduleDate" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form-group-half">
+                        <label for="scheduleStartTime">開始時間</label>
+                        <input type="time" id="scheduleStartTime" name="scheduleStartTime">
+                    </div>
+                    <div class="form-group form-group-half">
+                        <label for="scheduleEndTime">結束時間</label>
+                        <input type="time" id="scheduleEndTime" name="scheduleEndTime">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="scheduleType">類型</label>
+                    <select id="scheduleType" name="scheduleType">
+                        <option value="customer">見客戶</option>
+                        <option value="partner">見夥伴</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="scheduleCustomer">相關客戶</label>
+                    <select id="scheduleCustomer" name="scheduleCustomer">
+                        <option value="">請選擇客戶（選填）</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="scheduleNotes">備註</label>
+                    <textarea id="scheduleNotes" name="scheduleNotes" rows="4" placeholder="行程備註..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">儲存</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeScheduleModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 行程詳情 Modal -->
+    <div id="scheduleDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>行程詳情</h2>
+                <button class="modal-close" onclick="closeScheduleDetailModal()">×</button>
+            </div>
+            <div id="scheduleDetailContent"></div>
+        </div>
+    </div>
+
+    <script src="../js/script.js"></script>
+    <script src="../js/calendar.js"></script>
+</body>
+</html>
+

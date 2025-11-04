@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新增客戶</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/config.js"></script>
+    <script src="../js/taiwan-address.js"></script>
+</head>
+<body>
+    <!-- 側邊導航欄 -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h2>選單</h2>
+            <button class="close-btn" onclick="toggleSidebar()">×</button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="add-customer.html" class="nav-item active">
+                <span class="nav-icon">➕</span>
+                <span>新增客戶</span>
+            </a>
+            <a href="calendar.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>行程事項</span>
+            </a>
+            <a href="customers.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>客戶資料</span>
+            </a>
+            <a href="orders.html" class="nav-item">
+                <span class="nav-icon">📦</span>
+                <span>訂貨清單</span>
+            </a>
+            <div class="nav-divider"></div>
+            <a href="#" class="nav-item" onclick="logout()">
+                <span class="nav-icon">🚪</span>
+                <span>登出</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- 側邊欄遮罩 -->
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- 主內容區 -->
+    <div class="main-content">
+        <!-- 頂部導航 -->
+        <header class="header">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            <h1>新增客戶</h1>
+            <a href="calendar.html" class="btn btn-secondary">返回首頁</a>
+        </header>
+
+        <!-- 新增客戶表單 -->
+        <div class="container">
+            <div class="form-card">
+                <h2>新增客戶資料</h2>
+                <form id="customerForm" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label for="name">姓名 <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">通訊電話 <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">縣市 <span class="required">*</span></label>
+                        <select id="city" name="city" required onchange="updateDistricts()">
+                            <option value="">請選擇縣市</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="district">鄉鎮市區 <span class="required">*</span></label>
+                        <select id="district" name="district" required>
+                            <option value="">請先選擇縣市</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="streetType">路街類型</label>
+                        <select id="streetType" name="streetType">
+                            <option value="">請選擇</option>
+                            <option value="路">路</option>
+                            <option value="街">街</option>
+                            <option value="大道">大道</option>
+                            <option value="道">道</option>
+                            <option value="段">段</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="streetName">路街名稱</label>
+                        <input type="text" id="streetName" name="streetName" placeholder="例如：中山路、中正街">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group form-group-half">
+                            <label for="lane">巷</label>
+                            <input type="text" id="lane" name="lane" placeholder="例如：1">
+                        </div>
+                        <div class="form-group form-group-half">
+                            <label for="alley">弄</label>
+                            <input type="text" id="alley" name="alley" placeholder="例如：2">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group form-group-half">
+                            <label for="number">號</label>
+                            <input type="text" id="number" name="number" placeholder="例如：100">
+                        </div>
+                        <div class="form-group form-group-half">
+                            <label for="floor">樓</label>
+                            <input type="text" id="floor" name="floor" placeholder="例如：5樓">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="addressDetail">詳細地址（完整地址）</label>
+                        <textarea id="addressDetail" name="addressDetail" rows="3" placeholder="系統會自動組合完整地址，或可手動輸入完整地址"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="avatar">頭像</label>
+                        <div class="avatar-upload">
+                            <input type="file" id="avatar" name="avatar" accept="image/*" onchange="handleAvatarUpload(event)">
+                            <div class="avatar-preview" id="avatarPreview">
+                                <span>點擊選擇圖片</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="healthStatus">健康狀況</label>
+                        <textarea id="healthStatus" name="healthStatus" rows="4" placeholder="請輸入客戶的健康狀況..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medications">服用藥物</label>
+                        <textarea id="medications" name="medications" rows="4" placeholder="請輸入服用的藥物..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="supplements">服用保健食品</label>
+                        <textarea id="supplements" name="supplements" rows="4" placeholder="請輸入服用的保健食品..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">新增客戶</button>
+                        <button type="reset" class="btn btn-secondary">重置表單</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>
+

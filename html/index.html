@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客戶健康狀況追蹤系統</title>
+    <script>
+        // 檢查登入狀態，如果未登入則跳轉到登入頁面
+        window.addEventListener('DOMContentLoaded', function() {
+            const loginInfo = localStorage.getItem('googleLogin');
+            if (!loginInfo) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                const userInfo = JSON.parse(loginInfo);
+                if (userInfo.email && userInfo.exp) {
+                    const now = Date.now();
+                    if (now >= userInfo.exp) {
+                        localStorage.removeItem('googleLogin');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    // 已登入且未過期，跳轉到行事曆主頁
+                    window.location.href = 'calendar.html';
+                    return;
+                }
+            } catch (e) {
+                localStorage.removeItem('googleLogin');
+            }
+            
+            window.location.href = 'login.html';
+        });
+    </script>
+</head>
+<body>
+    <div class="loading">載入中...</div>
+</body>
+</html>

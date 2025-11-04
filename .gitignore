@@ -1,0 +1,23 @@
+# 敏感設定檔（包含 API keys 和 credentials）
+js/config.js
+
+# 系統檔案
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 編輯器設定
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 暫存檔案
+*.tmp
+*.log
+
+# Node modules (如果未來有使用)
+node_modules/
+package-lock.json
+
