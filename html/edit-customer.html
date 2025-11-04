@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>編輯客戶</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/config.js"></script>
+    <script src="js/taiwan-address.js"></script>
+</head>
+<body>
+    <!-- 側邊導航欄 -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h2>選單</h2>
+            <button class="close-btn" onclick="toggleSidebar()">×</button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="add-customer.html" class="nav-item">
+                <span class="nav-icon">➕</span>
+                <span>新增客戶</span>
+            </a>
+            <a href="calendar.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>行程事項</span>
+            </a>
+            <a href="customers.html" class="nav-item active">
+                <span class="nav-icon">👥</span>
+                <span>客戶資料</span>
+            </a>
+            <a href="orders.html" class="nav-item">
+                <span class="nav-icon">📦</span>
+                <span>訂貨清單</span>
+            </a>
+            <div class="nav-divider"></div>
+            <a href="#" class="nav-item" onclick="logout()">
+                <span class="nav-icon">🚪</span>
+                <span>登出</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- 側邊欄遮罩 -->
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- 主內容區 -->
+    <div class="main-content">
+        <!-- 頂部導航 -->
+        <header class="header">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            <h1>編輯客戶</h1>
+            <a href="customers.html" class="btn btn-secondary">返回客戶列表</a>
+        </header>
+
+        <!-- 編輯客戶表單 -->
+        <div class="container">
+            <div class="form-card">
+                <h2>編輯客戶資料</h2>
+                <form id="customerForm" onsubmit="handleSubmit(event)">
+                    <input type="hidden" id="customerId" name="customerId">
+                    
+                    <div class="form-group">
+                        <label for="name">姓名 <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">通訊電話 <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">縣市 <span class="required">*</span></label>
+                        <select id="city" name="city" required onchange="updateDistricts()">
+                            <option value="">請選擇縣市</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="district">鄉鎮市區 <span class="required">*</span></label>
+                        <select id="district" name="district" required>
+                            <option value="">請先選擇縣市</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="village">村/里</label>
+                        <input type="text" id="village" name="village" placeholder="例如：高林村、中正里">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="neighborhood">鄰</label>
+                        <input type="text" id="neighborhood" name="neighborhood" placeholder="例如：8鄰">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="streetType">路街類型</label>
+                        <select id="streetType" name="streetType">
+                            <option value="">請選擇</option>
+                            <option value="路">路</option>
+                            <option value="街">街</option>
+                            <option value="大道">大道</option>
+                            <option value="道">道</option>
+                            <option value="段">段</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="streetName">路街名稱</label>
+                        <input type="text" id="streetName" name="streetName" placeholder="例如：中山路、中正街">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group form-group-half">
+                            <label for="lane">巷</label>
+                            <input type="text" id="lane" name="lane" placeholder="例如：1">
+                        </div>
+                        <div class="form-group form-group-half">
+                            <label for="alley">弄</label>
+                            <input type="text" id="alley" name="alley" placeholder="例如：2">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group form-group-half">
+                            <label for="number">號</label>
+                            <input type="text" id="number" name="number" placeholder="例如：100">
+                        </div>
+                        <div class="form-group form-group-half">
+                            <label for="floor">樓</label>
+                            <input type="text" id="floor" name="floor" placeholder="例如：5樓">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="addressDetail">詳細地址（完整地址）</label>
+                        <textarea id="addressDetail" name="addressDetail" rows="3" placeholder="系統會自動組合完整地址，或可手動輸入完整地址"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="avatar">頭像</label>
+                        <div class="avatar-upload">
+                            <input type="file" id="avatar" name="avatar" accept="image/*" onchange="handleAvatarUpload(event)">
+                            <div class="avatar-preview" id="avatarPreview">
+                                <span>點擊選擇圖片</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="healthStatus">健康狀況</label>
+                        <textarea id="healthStatus" name="healthStatus" rows="4" placeholder="請輸入客戶的健康狀況..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medications">服用藥物</label>
+                        <textarea id="medications" name="medications" rows="4" placeholder="請輸入服用的藥物..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="supplements">服用保健食品</label>
+                        <textarea id="supplements" name="supplements" rows="4" placeholder="請輸入服用的保健食品..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">更新客戶</button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='customers.html'">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        let currentCustomerId = null;
+
+        // 從 URL 參數獲取客戶 ID
+        function getCustomerIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // 載入客戶資料
+        async function loadCustomerData() {
+            const customerId = getCustomerIdFromUrl();
+            if (!customerId) {
+                alert('缺少客戶 ID，將返回客戶列表');
+                window.location.href = 'customers.html';
+                return;
+            }
+
+            currentCustomerId = customerId;
+            document.getElementById('customerId').value = customerId;
+
+            try {
+                const customer = await getCustomerById(customerId);
+                if (!customer) {
+                    alert('找不到客戶資料，將返回客戶列表');
+                    window.location.href = 'customers.html';
+                    return;
+                }
+
+                // 填入表單資料
+                document.getElementById('name').value = customer.name || '';
+                document.getElementById('phone').value = customer.phone || '';
+                document.getElementById('city').value = customer.city || '';
+                
+                // 更新鄉鎮市區選單
+                if (customer.city) {
+                    updateDistricts();
+                    // 等待選單更新後再設置值
+                    setTimeout(() => {
+                        document.getElementById('district').value = customer.district || '';
+                    }, 100);
+                }
+                
+                document.getElementById('village').value = customer.village || '';
+                document.getElementById('neighborhood').value = customer.neighborhood || '';
+                document.getElementById('streetType').value = customer.streetType || '';
+                document.getElementById('streetName').value = customer.streetName || '';
+                document.getElementById('lane').value = customer.lane || '';
+                document.getElementById('alley').value = customer.alley || '';
+                document.getElementById('number').value = customer.number || '';
+                document.getElementById('floor').value = customer.floor || '';
+                document.getElementById('addressDetail').value = customer.fullAddress || '';
+                document.getElementById('healthStatus').value = customer.healthStatus || '';
+                document.getElementById('medications').value = customer.medications || '';
+                document.getElementById('supplements').value = customer.supplements || '';
+                
+                // 顯示頭像
+                if (customer.avatar) {
+                    const avatarPreview = document.getElementById('avatarPreview');
+                    avatarPreview.innerHTML = `<img src="${customer.avatar}" alt="客戶頭像">`;
+                }
+
+                // 更新地址預覽
+                updateAddressPreview();
+            } catch (error) {
+                alert('載入客戶資料失敗：' + error.message);
+                console.error('Load customer error:', error);
+            }
+        }
+
+        // 處理表單提交
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            if (!currentCustomerId) {
+                alert('缺少客戶 ID');
+                return;
+            }
+            
+            // 取得表單資料
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const city = document.getElementById('city').value;
+            const district = document.getElementById('district').value;
+            const village = document.getElementById('village').value.trim();
+            const neighborhood = document.getElementById('neighborhood').value.trim();
+            const streetType = document.getElementById('streetType').value;
+            const streetName = document.getElementById('streetName').value.trim();
+            const lane = document.getElementById('lane').value.trim();
+            const alley = document.getElementById('alley').value.trim();
+            const number = document.getElementById('number').value.trim();
+            const floor = document.getElementById('floor').value.trim();
+            const addressDetail = document.getElementById('addressDetail').value.trim();
+            const healthStatus = document.getElementById('healthStatus').value.trim();
+            const medications = document.getElementById('medications').value.trim();
+            const supplements = document.getElementById('supplements').value.trim();
+            
+            if (!name || !phone || !city || !district) {
+                alert('請填寫必填欄位（姓名、電話、縣市、鄉鎮市區）');
+                return;
+            }
+            
+            // 組合完整地址
+            const fullAddress = addressDetail || buildFullAddress();
+            
+            // 取得頭像
+            const avatarFile = document.getElementById('avatar').files[0];
+            let avatar = '';
+            
+            // 如果有現有頭像且沒有選擇新頭像，保留現有頭像
+            const avatarPreview = document.getElementById('avatarPreview');
+            if (!avatarFile && avatarPreview.querySelector('img')) {
+                avatar = avatarPreview.querySelector('img').src;
+            }
+            
+            if (avatarFile) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    avatar = e.target.result;
+                    await updateCustomerData(currentCustomerId, name, phone, city, district, village, neighborhood, streetType, streetName, lane, alley, number, floor, fullAddress, healthStatus, medications, supplements, avatar);
+                };
+                reader.readAsDataURL(avatarFile);
+            } else {
+                await updateCustomerData(currentCustomerId, name, phone, city, district, village, neighborhood, streetType, streetName, lane, alley, number, floor, fullAddress, healthStatus, medications, supplements, avatar);
+            }
+        }
+
+        // 更新客戶資料
+        async function updateCustomerData(customerId, name, phone, city, district, village, neighborhood, streetType, streetName, lane, alley, number, floor, fullAddress, healthStatus, medications, supplements, avatar) {
+            try {
+                // 建立客戶物件
+                const customerData = {
+                    name: name,
+                    phone: phone,
+                    city: city,
+                    district: district,
+                    village: village || '',
+                    neighborhood: neighborhood || '',
+                    streetType: streetType || '',
+                    streetName: streetName || '',
+                    lane: lane || '',
+                    alley: alley || '',
+                    number: number || '',
+                    floor: floor || '',
+                    fullAddress: fullAddress || '',
+                    healthStatus: healthStatus || '',
+                    medications: medications || '',
+                    supplements: supplements || '',
+                    avatar: avatar || ''
+                };
+                
+                // 顯示載入中
+                const submitBtn = document.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.textContent = '更新中...';
+                
+                // 呼叫 API 更新客戶
+                await updateCustomer(customerId, customerData);
+                
+                // 顯示成功訊息並返回
+                alert('客戶資料已成功更新！');
+                window.location.href = 'customers.html';
+            } catch (error) {
+                alert('更新客戶失敗：' + error.message);
+                const submitBtn = document.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '更新客戶';
+                console.error('Update customer error:', error);
+            }
+        }
+
+        // 頁面載入時初始化
+        window.addEventListener('DOMContentLoaded', async function() {
+            checkAuth();
+            initCitySelect();
+            await loadCustomerData();
+            setupAddressListeners();
+        });
+    </script>
+</body>
+</html>
+

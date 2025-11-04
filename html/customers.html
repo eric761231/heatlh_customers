@@ -146,6 +146,7 @@
                                 </div>
                                 ` : ''}
                                 <div class="customer-detail-actions">
+                                    <button class="btn btn-primary btn-sm" onclick="editCustomer('${customerId}', event)">更新資料</button>
                                     <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${customerId}', event)">刪除客戶</button>
                                 </div>
                             </div>
@@ -168,6 +169,16 @@
             
             console.log('After toggle, expanded:', Array.from(expandedCustomers));
             displayCustomerList(currentDisplayCustomers);
+        }
+
+        function editCustomer(customerId, event) {
+            if (event) {
+                event.stopPropagation(); // 阻止觸發展開/收合
+            }
+            
+            const id = String(customerId);
+            // 跳轉到編輯頁面，並傳遞客戶 ID
+            window.location.href = `edit-customer.html?id=${encodeURIComponent(id)}`;
         }
 
         async function deleteCustomer(customerId, event) {
