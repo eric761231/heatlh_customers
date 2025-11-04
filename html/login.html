@@ -98,6 +98,10 @@
                     localStorage.removeItem('googleLogin');
                 }
             }
+            
+            // 即使沒有 logout 參數，也清除任何已儲存的 Google 會話
+            // 確保每次進入登入頁面都要求選擇帳號
+            clearGoogleSignInSession();
         }
 
         // Base64 URL-safe 解碼函數
@@ -247,13 +251,7 @@
                         });
                         
                         // 確保不會顯示 One Tap 提示
-                        try {
-                            window.google.accounts.id.prompt((notification) => {
-                                // 不顯示任何自動提示
-                            });
-                        } catch (e) {
-                            // 忽略錯誤
-                        }
+                        // 不調用 prompt()，這樣就不會顯示自動提示
                         
                         // 清除任何已儲存的憑證
                         try {
