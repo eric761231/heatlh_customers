@@ -873,7 +873,12 @@ body {
 
     .calendar-day {
         padding: 6px 4px;
-        border-radius: 8px;
+        border-radius: 0;
+    }
+    
+    .calendar-days .calendar-day:nth-child(7n),
+    .calendar-days .calendar-day:nth-child(7n+7) {
+        border-right: none;
     }
 
     .calendar-day-number {
