@@ -67,7 +67,7 @@
         }
 
         // 處理 Google 登入回應
-        function handleCredentialResponse(response) {
+        async function handleCredentialResponse(response) {
             const statusDiv = document.getElementById('loginStatus');
             
             console.log('Google 登入回應:', response);

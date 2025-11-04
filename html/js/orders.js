@@ -67,11 +67,13 @@ function displayOrders(ordersList) {
     }).join('');
 }
 
-// 載入客戶列表供訂單選擇
+// 載入客戶列表供訂單選擇（只載入當前使用者的客戶）
 async function loadCustomersForOrder() {
     try {
-        const customers = await getCustomers();
+        const customers = await getCustomers(); // 已經過濾為當前使用者的客戶
         const select = document.getElementById('orderCustomer');
+        
+        if (!select) return;
         
         select.innerHTML = '<option value="">請選擇客戶</option>';
         customers.forEach(customer => {

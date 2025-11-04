@@ -26,6 +26,15 @@ function initSupabase() {
     if (!supabaseClient) {
         supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
+    
+    // 設定當前使用者 Email 到 Supabase 請求標頭（用於 RLS）
+    const user = getCurrentUser();
+    if (user && user.email) {
+        // 使用 Supabase 的 setAuth 或自定義標頭
+        // 注意：Supabase 的 RLS 會自動使用 JWT token，但我們需要通過其他方式
+        // 這裡我們在查詢時直接過濾 created_by
+    }
+    
     return supabaseClient;
 }
 
@@ -140,9 +149,16 @@ async function supabaseCall(action, data = null, id = null) {
 // ==================== 客戶資料操作 ====================
 
 async function getAllCustomersFromSupabase() {
+    const user = getCurrentUser();
+    if (!user) {
+        throw new Error('未登入，無法取得客戶資料');
+    }
+    
+    // 只查詢當前使用者建立的客戶
     const { data, error } = await supabaseClient
         .from('customers')
         .select('*')
+        .eq('created_by', user.email) // 只取得當前使用者的資料
         .order('created_at', { ascending: false });
     
     if (error) throw error;
@@ -172,13 +188,25 @@ async function getAllCustomersFromSupabase() {
 }
 
 async function getCustomerByIdFromSupabase(id) {
+    const user = getCurrentUser();
+    if (!user) {
+        throw new Error('未登入，無法取得客戶資料');
+    }
+    
+    // 只查詢當前使用者建立的客戶
     const { data, error } = await supabaseClient
         .from('customers')
         .select('*')
         .eq('id', id)
+        .eq('created_by', user.email) // 確保只能取得自己的資料
         .single();
     
-    if (error) throw error;
+    if (error) {
+        if (error.code === 'PGRST116') {
+            throw new Error('找不到指定的客戶資料或您沒有權限存取');
+        }
+        throw error;
+    }
     
     return {
         id: data.id,
@@ -243,6 +271,21 @@ async function addCustomerToSupabase(customerData) {
 
 async function updateCustomerInSupabase(id, customerData) {
     const user = getCurrentUser();
+    if (!user) {
+        throw new Error('未登入，無法更新客戶資料');
+    }
+    
+    // 先檢查是否為自己的資料
+    const { data: existing, error: checkError } = await supabaseClient
+        .from('customers')
+        .select('created_by')
+        .eq('id', id)
+        .eq('created_by', user.email)
+        .single();
+    
+    if (checkError || !existing) {
+        throw new Error('找不到指定的客戶資料或您沒有權限修改');
+    }
     
     const { data, error } = await supabaseClient
         .from('customers')
@@ -264,9 +307,10 @@ async function updateCustomerInSupabase(id, customerData) {
             medications: customerData.medications || '',
             supplements: customerData.supplements || '',
             avatar: customerData.avatar || '',
-            updated_by: user ? user.email : null
+            updated_by: user.email
         })
         .eq('id', id)
+        .eq('created_by', user.email) // 確保只能更新自己的資料
         .select()
         .single();
     
@@ -279,12 +323,24 @@ async function updateCustomerInSupabase(id, customerData) {
 }
 
 async function deleteCustomerFromSupabase(id) {
+    const user = getCurrentUser();
+    if (!user) {
+        throw new Error('未登入，無法刪除客戶資料');
+    }
+    
+    // 確保只能刪除自己的資料
     const { error } = await supabaseClient
         .from('customers')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('created_by', user.email); // 只刪除自己建立的資料
     
-    if (error) throw error;
+    if (error) {
+        if (error.code === 'PGRST116') {
+            throw new Error('找不到指定的客戶資料或您沒有權限刪除');
+        }
+        throw error;
+    }
     
     return { success: true };
 }
@@ -292,15 +348,21 @@ async function deleteCustomerFromSupabase(id) {
 // ==================== 行程資料操作 ====================
 
 async function getAllSchedulesFromSupabase() {
-    // 先取得所有行程
+    const user = getCurrentUser();
+    if (!user) {
+        throw new Error('未登入，無法取得行程資料');
+    }
+    
+    // 只取得當前使用者建立的行程
     const { data: schedules, error: schedulesError } = await supabaseClient
         .from('schedules')
         .select('*')
+        .eq('created_by', user.email) // 只取得自己的行程
         .order('date', { ascending: true });
     
     if (schedulesError) throw schedulesError;
     
-    // 如果有客戶 ID，取得客戶名稱
+    // 如果有客戶 ID，取得客戶名稱（只取得自己的客戶）
     const customerIds = [...new Set(schedules.filter(s => s.customer_id).map(s => s.customer_id))];
     let customerMap = {};
     
@@ -308,7 +370,8 @@ async function getAllSchedulesFromSupabase() {
         const { data: customers, error: customersError } = await supabaseClient
             .from('customers')
             .select('id, name')
-            .in('id', customerIds);
+            .in('id', customerIds)
+            .eq('created_by', user.email); // 只取得自己的客戶
         
         if (customersError) throw customersError;
         
@@ -359,12 +422,24 @@ async function addScheduleToSupabase(scheduleData) {
 }
 
 async function deleteScheduleFromSupabase(id) {
+    const user = getCurrentUser();
+    if (!user) {
+        throw new Error('未登入，無法刪除行程');
+    }
+    
+    // 確保只能刪除自己的行程
     const { error } = await supabaseClient
         .from('schedules')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('created_by', user.email); // 只刪除自己建立的行程
     
-    if (error) throw error;
+    if (error) {
+        if (error.code === 'PGRST116') {
+            throw new Error('找不到指定的行程或您沒有權限刪除');
+        }
+        throw error;
+    }
     
     return { success: true };
 }
@@ -372,15 +447,21 @@ async function deleteScheduleFromSupabase(id) {
 // ==================== 訂單資料操作 ====================
 
 async function getAllOrdersFromSupabase() {
-    // 先取得所有訂單
+    const user = getCurrentUser();
+    if (!user) {
+        throw new Error('未登入，無法取得訂單資料');
+    }
+    
+    // 只取得當前使用者建立的訂單
     const { data: orders, error: ordersError } = await supabaseClient
         .from('orders')
         .select('*')
+        .eq('created_by', user.email) // 只取得自己的訂單
         .order('date', { ascending: false });
     
     if (ordersError) throw ordersError;
     
-    // 如果有客戶 ID，取得客戶名稱
+    // 如果有客戶 ID，取得客戶名稱（只取得自己的客戶）
     const customerIds = [...new Set(orders.filter(o => o.customer_id).map(o => o.customer_id))];
     let customerMap = {};
     
@@ -388,7 +469,8 @@ async function getAllOrdersFromSupabase() {
         const { data: customers, error: customersError } = await supabaseClient
             .from('customers')
             .select('id, name')
-            .in('id', customerIds);
+            .in('id', customerIds)
+            .eq('created_by', user.email); // 只取得自己的客戶
         
         if (customersError) throw customersError;
         
@@ -440,7 +522,11 @@ async function addOrderToSupabase(orderData) {
 
 async function updateOrderInSupabase(id, orderData) {
     const user = getCurrentUser();
+    if (!user) {
+        throw new Error('未登入，無法更新訂單');
+    }
     
+    // 確保只能更新自己的訂單
     const { data, error } = await supabaseClient
         .from('orders')
         .update({
@@ -451,13 +537,19 @@ async function updateOrderInSupabase(id, orderData) {
             amount: orderData.amount || 0,
             paid: orderData.paid === true || orderData.paid === 'true',
             notes: orderData.notes || '',
-            updated_by: user ? user.email : null
+            updated_by: user.email
         })
         .eq('id', id)
+        .eq('created_by', user.email) // 確保只能更新自己的訂單
         .select()
         .single();
     
-    if (error) throw error;
+    if (error) {
+        if (error.code === 'PGRST116') {
+            throw new Error('找不到指定的訂單或您沒有權限修改');
+        }
+        throw error;
+    }
     
     return {
         id: data.id,
@@ -466,12 +558,24 @@ async function updateOrderInSupabase(id, orderData) {
 }
 
 async function deleteOrderFromSupabase(id) {
+    const user = getCurrentUser();
+    if (!user) {
+        throw new Error('未登入，無法刪除訂單');
+    }
+    
+    // 確保只能刪除自己的訂單
     const { error } = await supabaseClient
         .from('orders')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('created_by', user.email); // 只刪除自己建立的訂單
     
-    if (error) throw error;
+    if (error) {
+        if (error.code === 'PGRST116') {
+            throw new Error('找不到指定的訂單或您沒有權限刪除');
+        }
+        throw error;
+    }
     
     return { success: true };
 }
