@@ -80,14 +80,23 @@
                 allCustomers = await getCustomers();
                 currentDisplayCustomers = allCustomers;
                 
+                // 確保所有客戶 ID 都是字符串，並初始化 expandedCustomers
+                allCustomers.forEach(customer => {
+                    if (customer.id) {
+                        customer.id = String(customer.id);
+                    }
+                });
+                
                 if (allCustomers.length === 0) {
                     listContainer.innerHTML = '<div class="empty-message">尚無客戶資料</div>';
                     return;
                 }
 
+                console.log('Loaded customers:', allCustomers.map(c => ({ id: c.id, name: c.name })));
                 displayCustomerList(currentDisplayCustomers);
             } catch (error) {
                 showError(listContainer, '載入客戶資料失敗：' + error.message);
+                console.error('Load customer list error:', error);
             }
         }
 
@@ -95,14 +104,16 @@
             const listContainer = document.getElementById('customerList');
             
             listContainer.innerHTML = customers.map(customer => {
-                const isExpanded = expandedCustomers.has(customer.id);
+                // 確保 customer.id 轉換為字符串
+                const customerId = String(customer.id || '');
+                const isExpanded = expandedCustomers.has(customerId);
                 const healthStatusPreview = customer.healthStatus 
                     ? (customer.healthStatus.length > 50 ? customer.healthStatus.substring(0, 50) + '...' : customer.healthStatus)
                     : '尚未填寫';
                 
                 return `
-                    <div class="customer-list-item ${isExpanded ? 'expanded' : ''}" data-customer-id="${customer.id}">
-                        <div class="customer-list-header" data-customer-id="${customer.id}">
+                    <div class="customer-list-item ${isExpanded ? 'expanded' : ''}" data-customer-id="${customerId}">
+                        <div class="customer-list-header" data-customer-id="${customerId}">
                             <div class="customer-list-avatar">
                                 ${customer.avatar ? `<img src="${customer.avatar}" alt="${customer.name}">` : '<div class="avatar-placeholder-list">' + (customer.name ? customer.name.charAt(0) : '?') + '</div>'}
                             </div>
@@ -135,7 +146,7 @@
                                 </div>
                                 ` : ''}
                                 <div class="customer-detail-actions">
-                                    <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${customer.id}', event)">刪除客戶</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${customerId}', event)">刪除客戶</button>
                                 </div>
                             </div>
                         </div>
@@ -145,28 +156,38 @@
         }
 
         function toggleCustomerDetail(customerId) {
-            if (expandedCustomers.has(customerId)) {
-                expandedCustomers.delete(customerId);
+            // 確保 customerId 是字符串類型
+            const id = String(customerId);
+            console.log('Toggle customer:', id, 'Current expanded:', Array.from(expandedCustomers));
+            
+            if (expandedCustomers.has(id)) {
+                expandedCustomers.delete(id);
             } else {
-                expandedCustomers.add(customerId);
+                expandedCustomers.add(id);
             }
+            
+            console.log('After toggle, expanded:', Array.from(expandedCustomers));
             displayCustomerList(currentDisplayCustomers);
         }
 
         async function deleteCustomer(customerId, event) {
-            event.stopPropagation(); // 阻止觸發展開/收合
+            if (event) {
+                event.stopPropagation(); // 阻止觸發展開/收合
+            }
             
             if (!confirm('確定要刪除這位客戶嗎？此操作無法復原。')) {
                 return;
             }
             
             try {
-                await deleteCustomerById(customerId);
-                expandedCustomers.delete(customerId);
+                const id = String(customerId);
+                await deleteCustomerById(id);
+                expandedCustomers.delete(id);
                 await loadCustomerList();
                 alert('客戶已刪除');
             } catch (error) {
                 alert('刪除客戶失敗：' + error.message);
+                console.error('Delete customer error:', error);
             }
         }
 
@@ -183,7 +204,12 @@
                 
                 // 保留已展開的客戶狀態（只保留在過濾結果中的）
                 const filteredExpanded = new Set(
-                    currentDisplayCustomers.filter(c => expandedCustomers.has(c.id)).map(c => c.id)
+                    currentDisplayCustomers
+                        .filter(c => {
+                            const id = String(c.id || '');
+                            return expandedCustomers.has(id);
+                        })
+                        .map(c => String(c.id || ''))
                 );
                 expandedCustomers = filteredExpanded;
             }
@@ -193,12 +219,18 @@
 
         // 使用事件委託處理點擊事件
         document.addEventListener('click', function(event) {
+            // 檢查是否點擊在刪除按鈕上，如果是則不觸發展開
+            if (event.target.closest('.customer-detail-actions')) {
+                return;
+            }
+            
             const header = event.target.closest('.customer-list-header');
             if (header) {
                 const customerId = header.getAttribute('data-customer-id');
                 if (customerId) {
                     event.preventDefault();
                     event.stopPropagation();
+                    console.log('Header clicked, customerId:', customerId);
                     toggleCustomerDetail(customerId);
                 }
             }
