@@ -24,8 +24,8 @@
 // 請替換為您的 Google 試算表 ID
 const SPREADSHEET_ID = '1RTZQgHZcVifOkYBvqwqNdligpdK3TTUgogv4HM5_CsY';
 
-// 試算表名稱（預設為第一個工作表）
-const SHEET_NAME = 'Sheet1';
+// 試算表名稱（客戶資料工作表）
+const SHEET_NAME = '客戶資料';
 
 /**
  * 處理 HTTP 請求
@@ -387,10 +387,10 @@ function deleteCustomer(id) {
  */
 function getScheduleSheet() {
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-    let sheet = spreadsheet.getSheetByName('Schedules');
+    let sheet = spreadsheet.getSheetByName('行事曆');
     
     if (!sheet) {
-        sheet = spreadsheet.insertSheet('Schedules');
+        sheet = spreadsheet.insertSheet('行事曆');
         sheet.getRange(1, 1, 1, 8).setValues([[
             'ID', '標題', '日期', '開始時間', '結束時間', '類型', '客戶ID', '備註'
         ]]);
@@ -479,10 +479,10 @@ function deleteSchedule(id) {
  */
 function getOrderSheet() {
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-    let sheet = spreadsheet.getSheetByName('Orders');
+    let sheet = spreadsheet.getSheetByName('訂貨清單');
     
     if (!sheet) {
-        sheet = spreadsheet.insertSheet('Orders');
+        sheet = spreadsheet.insertSheet('訂貨清單');
         sheet.getRange(1, 1, 1, 8).setValues([[
             'ID', '日期', '客戶ID', '保健食品', '數量', '金額', '已收款', '備註'
         ]]);
