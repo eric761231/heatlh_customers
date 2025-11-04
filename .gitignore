@@ -1,5 +1,6 @@
 # 敏感設定檔（包含 API keys 和 credentials）
 js/config.js
+html/js/config.js
 
 # 系統檔案
 .DS_Store
