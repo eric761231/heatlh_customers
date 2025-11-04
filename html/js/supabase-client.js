@@ -42,24 +42,32 @@ function initSupabase() {
  * 取得當前使用者（從 localStorage）
  */
 function getCurrentUser() {
-    if (currentUser) {
-        return currentUser;
-    }
-    
     try {
         const loginInfo = localStorage.getItem('googleLogin');
         if (loginInfo) {
             const userInfo = JSON.parse(loginInfo);
-            currentUser = {
-                id: userInfo.email, // 使用 email 作為使用者 ID
-                email: userInfo.email,
-                name: userInfo.name || '使用者',
-                picture: userInfo.picture || ''
-            };
+            const userEmail = userInfo.email;
+            
+            // 如果使用者已變更，清除舊的快取
+            if (currentUser && currentUser.email !== userEmail) {
+                currentUser = null;
+            }
+            
+            // 如果沒有快取或使用者已變更，建立新的使用者物件
+            if (!currentUser || currentUser.email !== userEmail) {
+                currentUser = {
+                    id: userEmail, // 使用 email 作為使用者 ID
+                    email: userEmail,
+                    name: userInfo.name || '使用者',
+                    picture: userInfo.picture || ''
+                };
+            }
+            
             return currentUser;
         }
     } catch (e) {
         console.error('取得使用者資訊失敗:', e);
+        currentUser = null;
     }
     
     return null;

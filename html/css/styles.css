@@ -843,15 +843,22 @@ body {
 
     /* 日曆 */
     .calendar-controls {
-        flex-direction: column;
-        align-items: flex-start;
+        justify-content: center;
         gap: 12px;
         margin-bottom: 20px;
     }
 
     .calendar-controls h2 {
         font-size: 1.3rem;
-        width: 100%;
+        flex: 1;
+        text-align: center;
+    }
+
+    .btn-calendar-nav {
+        padding: 6px 10px;
+        font-size: 1rem;
+        min-width: 40px;
+        height: 40px;
     }
 
     .calendar-grid {
@@ -1094,16 +1101,44 @@ body {
 .calendar-controls {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     margin-bottom: 30px;
-    flex-wrap: wrap;
-    gap: 15px;
+    gap: 20px;
+    position: relative;
 }
 
 .calendar-controls h2 {
-    color: #333;
+    color: #2C3E50;
     font-size: 1.5rem;
     margin: 0;
+    font-weight: 600;
+    flex: 1;
+    text-align: center;
+}
+
+/* 日曆導航按鈕 */
+.btn-calendar-nav {
+    background: white;
+    border: 1.5px solid #E8EDF2;
+    color: #4A90E2;
+    font-size: 1.2rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-calendar-nav:hover {
+    background: #F0F8FF;
+    border-color: #4A90E2;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.15);
 }
 
 .calendar-grid {
@@ -1117,51 +1152,68 @@ body {
 .calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-    margin-bottom: 10px;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 1.5px solid #E8EDF2;
 }
 
 .calendar-weekday {
     text-align: center;
     font-weight: 600;
     color: #4A90E2;
-    padding: 12px;
+    padding: 12px 8px;
     font-size: 0.95rem;
+    border-right: 1px solid #E8EDF2;
+}
+
+.calendar-weekday:last-child {
+    border-right: none;
 }
 
 .calendar-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    gap: 0;
+    border-top: 1.5px solid #E8EDF2;
 }
 
 .calendar-day {
     aspect-ratio: 1;
-    border: 1.5px solid #E8EDF2;
-    border-radius: 10px;
-    padding: 10px;
+    border-right: 1px solid #E8EDF2;
+    border-bottom: 1px solid #E8EDF2;
+    border-radius: 0;
+    padding: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
     background: white;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.calendar-day:nth-child(7n) {
+    border-right: none;
 }
 
 .calendar-day:hover {
     background: #F0F8FF;
-    border-color: #4A90E2;
-    transform: translateY(-1px);
+    z-index: 1;
+    position: relative;
 }
 
 .calendar-day.today {
     background: #E8F4FD;
-    border-color: #4A90E2;
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.15);
+}
+
+.calendar-day.today .calendar-day-number {
+    color: #4A90E2;
 }
 
 .calendar-day.empty {
     background: #F8FAFC;
     cursor: default;
-    border: none;
 }
 
 .calendar-day-number {
@@ -1555,18 +1607,21 @@ body {
 
 .orders-table th {
     background: #F8FAFC;
-    padding: 16px;
+    padding: 12px 10px;
     text-align: left;
     font-weight: 600;
     color: #2C3E50;
     border-bottom: 2px solid #E8EDF2;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
 }
 
 .orders-table td {
-    padding: 16px;
+    padding: 12px 10px;
     border-bottom: 1px solid #E8EDF2;
     color: #34495E;
+    font-size: 0.9rem;
+    vertical-align: middle;
 }
 
 .orders-table tr:hover {

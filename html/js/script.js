@@ -31,7 +31,20 @@ function checkAuth() {
 // 登出
 function logout() {
     if (confirm('確定要登出嗎？')) {
+        // 清除登入資訊
         localStorage.removeItem('googleLogin');
+        
+        // 清除客戶資料快取（如果存在）
+        if (typeof dataCache !== 'undefined' && dataCache) {
+            dataCache.customers = null;
+            dataCache.customersTimestamp = 0;
+        }
+        
+        // 清除當前使用者快取
+        if (typeof currentUser !== 'undefined') {
+            currentUser = null;
+        }
+        
         window.location.href = 'login.html';
     }
 }
