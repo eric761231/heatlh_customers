@@ -224,71 +224,97 @@
                 return;
             }
 
-            // 載入 Google Sign-In 腳本
-            const script = document.createElement('script');
-            script.src = 'https://accounts.google.com/gsi/client';
-            script.async = true;
-            script.defer = true;
-            script.onload = function() {
-                // 確保 Google Sign-In 已載入後再初始化
-                if (window.google && window.google.accounts && window.google.accounts.id) {
-                    try {
-                        // 先禁用自動選擇，確保可以選擇帳號
-                        try {
-                            window.google.accounts.id.disableAutoSelect();
-                        } catch (e) {
-                            console.log('無法禁用自動選擇:', e);
-                        }
-                        
-                        window.google.accounts.id.initialize({
-                            client_id: GOOGLE_CLIENT_ID,
-                            callback: handleCredentialResponse,
-                            auto_select: false, // 禁用自動選擇帳號
-                            cancel_on_tap_outside: true,
-                            ux_mode: 'popup', // 使用彈出視窗模式，確保可以選擇帳號
-                            itp_support: false, // 禁用 Intelligent Tracking Prevention 支持
-                            use_fedcm_for_prompt: false // 禁用 FedCM 提示
-                        });
-                        
-                        // 確保不會顯示 One Tap 提示
-                        // 不調用 prompt()，這樣就不會顯示自動提示
-                        
-                        // 清除任何已儲存的憑證
-                        try {
-                            window.google.accounts.id.storeCredential(null);
-                        } catch (e) {
-                            // 忽略錯誤
-                        }
-                        
-                        // 渲染登入按鈕
-                        const signinButton = document.getElementById('g_id_signin');
-                        if (signinButton) {
-                            window.google.accounts.id.renderButton(signinButton, {
-                                type: 'standard',
-                                size: 'large',
-                                theme: 'outline',
-                                text: 'sign_in_with',
-                                shape: 'rectangular',
-                                logo_alignment: 'left'
-                            });
-                        }
-                    } catch (error) {
-                        console.error('Google Sign-In 初始化錯誤:', error);
-                        document.getElementById('loginStatus').innerHTML = 
-                            '<div class="error-message">初始化登入功能失敗，請重新整理頁面</div>';
-                    }
-                } else {
-                    console.error('Google Sign-In 腳本未正確載入');
+            // 清除現有的按鈕內容
+            const signinButton = document.getElementById('g_id_signin');
+            if (signinButton) {
+                signinButton.innerHTML = '';
+            }
+
+            // 如果 Google API 已經載入，先清除所有狀態
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                try {
+                    google.accounts.id.disableAutoSelect();
+                    google.accounts.id.cancel();
+                    google.accounts.id.storeCredential(null);
+                } catch (e) {
+                    console.log('清除 Google 狀態:', e);
+                }
+            }
+
+            // 載入 Google Sign-In 腳本（如果尚未載入）
+            if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
+                const script = document.createElement('script');
+                script.src = 'https://accounts.google.com/gsi/client';
+                script.async = true;
+                script.defer = true;
+                script.onload = function() {
+                    initGoogleSignInButton();
+                };
+                script.onerror = function() {
+                    console.error('無法載入 Google Sign-In 腳本');
                     document.getElementById('loginStatus').innerHTML = 
                         '<div class="error-message">無法載入 Google 登入服務，請檢查網路連線</div>';
+                };
+                document.head.appendChild(script);
+            } else {
+                // 如果已經載入，直接初始化
+                initGoogleSignInButton();
+            }
+        }
+
+        // 初始化 Google Sign-In 按鈕
+        function initGoogleSignInButton() {
+            if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
+                console.error('Google Sign-In 腳本未正確載入');
+                return;
+            }
+
+            try {
+                // 強制清除所有狀態
+                try {
+                    google.accounts.id.disableAutoSelect();
+                    google.accounts.id.cancel();
+                    google.accounts.id.storeCredential(null);
+                } catch (e) {
+                    console.log('清除狀態時出錯:', e);
                 }
-            };
-            script.onerror = function() {
-                console.error('無法載入 Google Sign-In 腳本');
+
+                // 生成隨機 nonce 來強制新的會話
+                const nonce = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                
+                // 初始化 Google Sign-In
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleCredentialResponse,
+                    auto_select: false, // 禁用自動選擇帳號
+                    cancel_on_tap_outside: true,
+                    ux_mode: 'popup', // 使用彈出視窗模式
+                    itp_support: false,
+                    use_fedcm_for_prompt: false,
+                    nonce: nonce // 使用 nonce 強制新的會話
+                });
+                
+                // 渲染登入按鈕，使用 select_account 模式強制選擇帳號
+                const signinButton = document.getElementById('g_id_signin');
+                if (signinButton) {
+                    google.accounts.id.renderButton(signinButton, {
+                        type: 'standard',
+                        size: 'large',
+                        theme: 'outline',
+                        text: 'signin_with', // 使用 signin_with 而不是 sign_in_with
+                        shape: 'rectangular',
+                        logo_alignment: 'left',
+                        context: 'signin',
+                        ux_mode: 'popup',
+                        // 強制顯示帳號選擇
+                        login_uri: window.location.origin + '/login.html'
+                    });
+                }
+            } catch (error) {
+                console.error('Google Sign-In 初始化錯誤:', error);
                 document.getElementById('loginStatus').innerHTML = 
-                    '<div class="error-message">無法載入 Google 登入服務，請檢查網路連線</div>';
-            };
-            document.head.appendChild(script);
+                    '<div class="error-message">初始化登入功能失敗，請重新整理頁面</div>';
+            }
         }
 
         // 頁面載入時檢查登入狀態並初始化
