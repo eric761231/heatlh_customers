@@ -15,6 +15,11 @@
             
             <div id="g_id_signin" class="g_id_signin"></div>
             
+            <button id="logoutBtn" class="btn-logout" onclick="logoutAccount()" style="display: none;">
+                <span>🚪</span>
+                <span>登出帳號</span>
+            </button>
+            
             <div id="loginStatus" class="login-status"></div>
         </div>
     </div>
@@ -36,6 +41,103 @@
                 }
             } catch (e) {
                 console.log('清除 Google Sign-In 會話時出錯:', e);
+            }
+        }
+        
+        // 清除所有登入相關資料
+        function clearAllLoginData() {
+            console.log('開始清除所有登入資料...');
+            
+            // 1. 清除 localStorage 中的登入資訊
+            localStorage.removeItem('googleLogin');
+            console.log('✓ 已清除 localStorage.googleLogin');
+            
+            // 2. 清除所有相關的 localStorage（包含 cache）
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.includes('googleLogin') || key.includes('cache') || key.includes('google') || key.includes('login'))) {
+                    keysToRemove.push(key);
+                    console.log('找到相關鍵:', key);
+                }
+            }
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+                console.log('✓ 已清除 localStorage.' + key);
+            });
+            
+            // 3. 清除 sessionStorage（如果有的話）
+            try {
+                sessionStorage.clear();
+                console.log('✓ 已清除 sessionStorage');
+            } catch (e) {
+                console.log('清除 sessionStorage 時出錯:', e);
+            }
+            
+            // 4. 清除 Google Sign-In 會話
+            clearGoogleSignInSession();
+            console.log('✓ 已清除 Google Sign-In 會話');
+            
+            // 5. 清除快取變數
+            if (typeof window !== 'undefined') {
+                if (typeof window.dataCache !== 'undefined') {
+                    window.dataCache = null;
+                    console.log('✓ 已清除 window.dataCache');
+                }
+                if (typeof window.currentUser !== 'undefined') {
+                    window.currentUser = null;
+                    console.log('✓ 已清除 window.currentUser');
+                }
+            }
+            
+            // 6. 嘗試清除 Google 相關的 Cookie（受限於瀏覽器安全策略）
+            // 注意：由於同源政策，我們無法直接清除 Google 網域的 Cookie
+            // 但可以通過清除 Google Sign-In 狀態來達到效果
+            
+            console.log('所有登入資料已清除完成');
+        }
+        
+        // 登出帳號功能
+        function logoutAccount() {
+            if (confirm('確定要登出所有帳號嗎？這將清除所有已儲存的登入資訊。')) {
+                clearAllLoginData();
+                
+                // 顯示成功訊息
+                const statusDiv = document.getElementById('loginStatus');
+                statusDiv.innerHTML = '<div class="success-message">已清除所有登入資料，請重新登入</div>';
+                
+                // 隱藏登出按鈕
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.style.display = 'none';
+                }
+                
+                // 重新初始化 Google Sign-In
+                setTimeout(() => {
+                    initializeGoogleSignIn();
+                }, 500);
+            }
+        }
+        
+        // 檢查並顯示登出按鈕
+        function checkAndShowLogoutButton() {
+            const loginInfo = localStorage.getItem('googleLogin');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            if (loginInfo && logoutBtn) {
+                try {
+                    const userInfo = JSON.parse(loginInfo);
+                    if (userInfo.email) {
+                        // 有登入資訊，顯示登出按鈕
+                        logoutBtn.style.display = 'flex';
+                    } else {
+                        logoutBtn.style.display = 'none';
+                    }
+                } catch (e) {
+                    logoutBtn.style.display = 'none';
+                }
+            } else if (logoutBtn) {
+                logoutBtn.style.display = 'none';
             }
         }
         
@@ -204,6 +306,12 @@
                 
                 statusDiv.innerHTML = '<div class="success-message">登入成功！正在跳轉...</div>';
                 
+                // 隱藏登出按鈕（因為要跳轉了）
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.style.display = 'none';
+                }
+                
                 // 跳轉到主頁面
                 setTimeout(() => {
                     window.location.href = 'calendar.html';
@@ -320,6 +428,7 @@
         // 頁面載入時檢查登入狀態並初始化
         window.addEventListener('DOMContentLoaded', function() {
             checkLoginStatus();
+            checkAndShowLogoutButton();
             // 延遲一點時間確保所有狀態已清除
             setTimeout(() => {
                 initializeGoogleSignIn();
