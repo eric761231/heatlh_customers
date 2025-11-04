@@ -91,6 +91,26 @@ body::before {
     min-height: 32px;
 }
 
+/* Google Sign-In 按鈕置中 */
+.g_id_signin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 24px 0;
+    position: relative;
+    z-index: 1;
+}
+
+.g_id_signin > div {
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.g_id_signin iframe {
+    margin: 0 auto !important;
+}
+
 .success-message {
     color: #FFFFFF;
     padding: 12px 16px;

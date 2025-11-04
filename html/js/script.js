@@ -65,6 +65,16 @@ function logout() {
             }
         }
         
+        // 清除 Google Sign-In 會話（如果可用）
+        try {
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                google.accounts.id.disableAutoSelect();
+                google.accounts.id.cancel();
+            }
+        } catch (e) {
+            console.log('清除 Google Sign-In 會話時出錯:', e);
+        }
+        
         // 跳轉到登入頁面，並帶上 logout 參數以強制清除 Google Sign-In 會話
         window.location.href = 'login.html?logout=true';
     }

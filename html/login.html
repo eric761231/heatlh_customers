@@ -23,6 +23,20 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
     <script>
+        // 清除 Google Sign-In 會話
+        function clearGoogleSignInSession() {
+            try {
+                if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                    // 禁用自動選擇
+                    google.accounts.id.disableAutoSelect();
+                    // 清除提示
+                    google.accounts.id.cancel();
+                }
+            } catch (e) {
+                console.log('清除 Google Sign-In 會話時出錯:', e);
+            }
+        }
+        
         // 檢查是否已登入
         function checkLoginStatus() {
             // 如果 URL 中有 logout 參數，清除所有登入狀態
@@ -30,6 +44,16 @@
             if (urlParams.get('logout') === 'true') {
                 // 清除所有登入資訊
                 localStorage.removeItem('googleLogin');
+                
+                // 清除所有相關的 localStorage
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('googleLogin') || key.includes('cache'))) {
+                        keysToRemove.push(key);
+                    }
+                }
+                keysToRemove.forEach(key => localStorage.removeItem(key));
                 
                 // 清除快取
                 if (typeof window !== 'undefined' && typeof window.dataCache !== 'undefined') {
@@ -39,13 +63,16 @@
                     window.currentUser = null;
                 }
                 
+                // 清除 Google Sign-In 會話
+                clearGoogleSignInSession();
+                
                 // 清除 URL 參數
                 window.history.replaceState({}, document.title, window.location.pathname);
                 
                 // 強制重新初始化 Google Sign-In
                 setTimeout(() => {
                     initializeGoogleSignIn();
-                }, 100);
+                }, 500);
                 return;
             }
             
