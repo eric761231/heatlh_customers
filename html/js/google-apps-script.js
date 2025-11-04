@@ -168,7 +168,7 @@ function getAllCustomers() {
                 id: data[i][0],
                 name: data[i][1] || '',
                 phone: data[i][2] || '',
-                createdAt: data[i][16] || data[i][8] || ''
+                createdAt: ''
             };
             
             // 檢查是否為最新格式（19欄：有村/里和鄰）
