@@ -102,7 +102,7 @@
                 
                 return `
                     <div class="customer-list-item ${isExpanded ? 'expanded' : ''}" data-customer-id="${customer.id}">
-                        <div class="customer-list-header" onclick="toggleCustomerDetail('${customer.id}')">
+                        <div class="customer-list-header" data-customer-id="${customer.id}">
                             <div class="customer-list-avatar">
                                 ${customer.avatar ? `<img src="${customer.avatar}" alt="${customer.name}">` : '<div class="avatar-placeholder-list">' + (customer.name ? customer.name.charAt(0) : '?') + '</div>'}
                             </div>
@@ -190,6 +190,19 @@
             
             displayCustomerList(currentDisplayCustomers);
         }
+
+        // 使用事件委託處理點擊事件
+        document.addEventListener('click', function(event) {
+            const header = event.target.closest('.customer-list-header');
+            if (header) {
+                const customerId = header.getAttribute('data-customer-id');
+                if (customerId) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    toggleCustomerDetail(customerId);
+                }
+            }
+        });
 
         window.addEventListener('DOMContentLoaded', async function() {
             checkAuth();
