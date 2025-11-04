@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XLSX 轉 CSV 轉換工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            background: #f0f4ff;
+            border-color: #5568d3;
+        }
+        .upload-area.dragover {
+            background: #e8edff;
+            border-color: #4456c3;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            display: none;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .download-links {
+            margin-top: 20px;
+            display: none;
+        }
+        .download-link {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            background: #e8edff;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: bold;
+        }
+        .download-link:hover {
+            background: #d0d9ff;
+        }
+        .progress {
+            margin-top: 20px;
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #667eea;
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 XLSX 轉 CSV 轉換工具</h1>
+        <p class="subtitle">將 Excel 檔案轉換為 CSV 格式，支援多個工作表</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <p style="font-size: 18px; margin-bottom: 10px;">📁 點擊或拖放 XLSX 檔案到此處</p>
+            <p style="color: #666; font-size: 14px;">支援 .xlsx 格式</p>
+            <input type="file" id="fileInput" accept=".xlsx" />
+        </div>
+        
+        <div class="file-info" id="fileInfo"></div>
+        
+        <button id="convertBtn" onclick="convertFile()" disabled>轉換為 CSV</button>
+        
+        <div class="progress" id="progress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p id="progressText" style="text-align: center; margin-top: 10px;">處理中...</p>
+        </div>
+        
+        <div id="status" class="status"></div>
+        
+        <div class="download-links" id="downloadLinks"></div>
+    </div>
+
+    <!-- 載入 SheetJS 庫用於讀取 XLSX -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <script>
+        let selectedFile = null;
+        
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const convertBtn = document.getElementById('convertBtn');
+        const status = document.getElementById('status');
+        const downloadLinks = document.getElementById('downloadLinks');
+        const progress = document.getElementById('progress');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        
+        // 點擊上傳區域
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        // 拖放功能
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].name.endsWith('.xlsx')) {
+                handleFile(files[0]);
+            } else {
+                showStatus('請選擇 .xlsx 格式的檔案', 'error');
+            }
+        });
+        
+        // 檔案選擇
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        function handleFile(file) {
+            if (!file.name.endsWith('.xlsx')) {
+                showStatus('請選擇 .xlsx 格式的檔案', 'error');
+                return;
+            }
+            
+            selectedFile = file;
+            fileInfo.style.display = 'block';
+            fileInfo.innerHTML = `
+                <strong>已選擇檔案：</strong> ${file.name}<br>
+                <strong>檔案大小：</strong> ${(file.size / 1024).toFixed(2)} KB
+            `;
+            convertBtn.disabled = false;
+            hideStatus();
+            downloadLinks.style.display = 'none';
+        }
+        
+        function showStatus(message, type) {
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+        }
+        
+        function hideStatus() {
+            status.style.display = 'none';
+        }
+        
+        function updateProgress(percent, text) {
+            progress.style.display = 'block';
+            progressFill.style.width = percent + '%';
+            progressText.textContent = text;
+        }
+        
+        async function convertFile() {
+            if (!selectedFile) {
+                showStatus('請先選擇檔案', 'error');
+                return;
+            }
+            
+            convertBtn.disabled = true;
+            hideStatus();
+            downloadLinks.style.display = 'none';
+            updateProgress(0, '正在讀取檔案...');
+            
+            try {
+                const arrayBuffer = await selectedFile.arrayBuffer();
+                updateProgress(30, '正在解析 XLSX...');
+                
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                const sheetNames = workbook.SheetNames;
+                
+                updateProgress(50, `找到 ${sheetNames.length} 個工作表，正在轉換...`);
+                
+                const csvFiles = [];
+                sheetNames.forEach((sheetName, index) => {
+                    const worksheet = workbook.Sheets[sheetName];
+                    const csv = XLSX.utils.sheet_to_csv(worksheet);
+                    
+                    // 建立下載連結
+                    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }); // UTF-8 BOM 支援中文
+                    const url = URL.createObjectURL(blob);
+                    
+                    // 安全的工作表名稱
+                    const safeSheetName = sheetName.replace(/[\/\\:]/g, '_');
+                    const fileName = selectedFile.name.replace('.xlsx', '') + '_' + safeSheetName + '.csv';
+                    
+                    csvFiles.push({ name: fileName, url: url, sheetName: sheetName });
+                    
+                    updateProgress(50 + (index + 1) / sheetNames.length * 40, `已轉換 ${index + 1}/${sheetNames.length} 個工作表`);
+                });
+                
+                updateProgress(100, '轉換完成！');
+                
+                // 顯示下載連結
+                downloadLinks.innerHTML = '<h3>下載轉換後的 CSV 檔案：</h3>';
+                csvFiles.forEach(file => {
+                    const link = document.createElement('a');
+                    link.href = file.url;
+                    link.download = file.name;
+                    link.className = 'download-link';
+                    link.textContent = `📥 ${file.name} (工作表: ${file.sheetName})`;
+                    downloadLinks.appendChild(link);
+                });
+                
+                downloadLinks.style.display = 'block';
+                showStatus(`轉換完成！共轉換 ${sheetNames.length} 個工作表`, 'success');
+                
+            } catch (error) {
+                console.error('轉換錯誤:', error);
+                showStatus('轉換失敗：' + error.message, 'error');
+            } finally {
+                convertBtn.disabled = false;
+                setTimeout(() => {
+                    progress.style.display = 'none';
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>
+
