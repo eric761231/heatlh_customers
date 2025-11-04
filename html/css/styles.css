@@ -5,10 +5,11 @@
 }
 
 body {
-    font-family: 'Microsoft JhengHei', '微軟正黑體', Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', '微軟正黑體', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #EBF5F8;
     min-height: 100vh;
-    color: #333;
+    color: #2C3E50;
+    line-height: 1.6;
 }
 
 /* 登入頁面 */
@@ -27,34 +28,39 @@ body {
 
 .login-card {
     background: white;
-    border-radius: 15px;
-    padding: 40px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    padding: 48px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     text-align: center;
+    border: 1px solid rgba(74, 144, 226, 0.1);
 }
 
 .login-card h1 {
-    color: #333;
-    margin-bottom: 10px;
-    font-size: 1.8rem;
+    color: #2C3E50;
+    margin-bottom: 12px;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
 }
 
 .login-subtitle {
-    color: #666;
-    margin-bottom: 30px;
+    color: #6C757D;
+    margin-bottom: 32px;
     font-size: 1rem;
+    font-weight: 400;
 }
 
 .login-status {
-    margin-top: 20px;
-    min-height: 30px;
+    margin-top: 24px;
+    min-height: 32px;
 }
 
 .success-message {
-    color: #28a745;
-    padding: 10px;
-    background: #d4edda;
-    border-radius: 5px;
+    color: #155724;
+    padding: 12px 16px;
+    background: #D4EDDA;
+    border-radius: 8px;
+    font-size: 0.95rem;
 }
 
 /* 側邊導航欄 */
@@ -64,11 +70,12 @@ body {
     top: 0;
     width: 320px;
     height: 100vh;
-    background: #fff;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    background: white;
+    box-shadow: 2px 0 16px rgba(0, 0, 0, 0.06);
     transition: left 0.3s ease;
     z-index: 1000;
     overflow-y: auto;
+    border-right: 1px solid rgba(74, 144, 226, 0.1);
 }
 
 .sidebar.active {
@@ -79,8 +86,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 24px;
+    background: #4A90E2;
     color: white;
 }
 
@@ -135,22 +142,25 @@ body {
 .nav-item {
     display: flex;
     align-items: center;
-    padding: 15px 20px;
-    color: #333;
+    padding: 14px 24px;
+    color: #2C3E50;
     text-decoration: none;
-    transition: all 0.3s;
+    transition: all 0.2s ease;
     border-left: 3px solid transparent;
+    font-size: 0.95rem;
 }
 
 .nav-item:hover {
-    background: #f8f9fa;
-    border-left-color: #667eea;
+    background: #F0F8FF;
+    border-left-color: #4A90E2;
+    color: #4A90E2;
 }
 
 .nav-item.active {
-    background: #e9ecef;
-    border-left-color: #667eea;
+    background: #EBF5F8;
+    border-left-color: #4A90E2;
     font-weight: 600;
+    color: #4A90E2;
 }
 
 .nav-icon {
@@ -162,8 +172,8 @@ body {
 
 .nav-divider {
     height: 1px;
-    background: #e0e0e0;
-    margin: 10px 20px;
+    background: #E8EDF2;
+    margin: 12px 24px;
 }
 
 /* 客戶清單 */
@@ -174,34 +184,35 @@ body {
 .customer-item {
     display: flex;
     align-items: center;
-    padding: 15px;
+    padding: 14px;
     margin-bottom: 10px;
-    background: #f8f9fa;
-    border-radius: 10px;
+    background: white;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s;
-    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    border: 1px solid #E8EDF2;
 }
 
 .customer-item:hover {
-    background: #e9ecef;
-    transform: translateX(5px);
-    border-color: #667eea;
+    background: #F0F8FF;
+    transform: translateX(4px);
+    border-color: #4A90E2;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
 }
 
 .customer-item-avatar {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    margin-right: 15px;
+    margin-right: 14px;
     overflow: hidden;
     flex-shrink: 0;
-    background: #667eea;
+    background: #4A90E2;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-weight: bold;
+    font-weight: 600;
     font-size: 1.2rem;
 }
 
@@ -219,20 +230,21 @@ body {
 .customer-item-name {
     font-weight: 600;
     font-size: 1rem;
-    margin-bottom: 5px;
-    color: #333;
+    margin-bottom: 4px;
+    color: #2C3E50;
 }
 
 .customer-item-phone {
-    font-size: 0.85rem;
-    color: #666;
+    font-size: 0.875rem;
+    color: #6C757D;
 }
 
 .empty-message {
     text-align: center;
-    color: #999;
-    padding: 40px 20px;
+    color: #95A5A6;
+    padding: 48px 24px;
     font-style: italic;
+    font-size: 0.95rem;
 }
 
 /* 主內容區 */
@@ -241,37 +253,42 @@ body {
 }
 
 .header {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 20px 30px;
+    background: white;
+    padding: 20px 32px;
     display: flex;
     align-items: center;
     gap: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
     position: sticky;
     top: 0;
     z-index: 100;
+    border-bottom: 1px solid rgba(74, 144, 226, 0.1);
 }
 
 .menu-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #4A90E2;
     border: none;
     color: white;
     font-size: 1.5rem;
-    padding: 10px 15px;
-    border-radius: 8px;
+    padding: 10px 14px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
 }
 
 .menu-btn:hover {
-    transform: scale(1.1);
+    background: #3A7BC8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
 }
 
 .header h1 {
     flex: 1;
-    font-size: 1.8rem;
-    color: #333;
+    font-size: 1.75rem;
+    color: #2C3E50;
     font-weight: 600;
+    letter-spacing: -0.5px;
 }
 
 .header-actions {
@@ -289,17 +306,20 @@ body {
 /* 表單卡片 */
 .form-card, .detail-card {
     background: white;
-    border-radius: 15px;
+    border-radius: 16px;
     padding: 40px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(74, 144, 226, 0.1);
 }
 
 .form-card h2, .detail-card h2 {
-    margin-bottom: 30px;
-    color: #333;
-    font-size: 1.8rem;
-    border-bottom: 3px solid #667eea;
-    padding-bottom: 15px;
+    margin-bottom: 32px;
+    color: #2C3E50;
+    font-size: 1.75rem;
+    border-bottom: 2px solid #4A90E2;
+    padding-bottom: 16px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
 }
 
 /* 表單 */
@@ -322,12 +342,12 @@ body {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #555;
-    font-size: 1rem;
+    color: #34495E;
+    font-size: 0.95rem;
 }
 
 .required {
-    color: #e74c3c;
+    color: #E74C3C;
 }
 
 .form-group input[type="text"],
@@ -335,19 +355,22 @@ body {
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 1rem;
+    padding: 12px 16px;
+    border: 1.5px solid #E8EDF2;
+    border-radius: 10px;
+    font-size: 0.95rem;
     font-family: inherit;
-    transition: border-color 0.3s;
+    transition: all 0.2s ease;
+    background: white;
+    color: #2C3E50;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
 .form-group textarea {
@@ -367,23 +390,23 @@ body {
 .avatar-preview {
     width: 150px;
     height: 150px;
-    border: 3px dashed #ddd;
+    border: 2px dashed #D1D9E0;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s ease;
     overflow: hidden;
-    background: #f8f9fa;
-    color: #999;
+    background: #F8FAFC;
+    color: #95A5A6;
     font-size: 0.9rem;
     text-align: center;
 }
 
 .avatar-preview:hover {
-    border-color: #667eea;
-    background: #f0f0f0;
+    border-color: #4A90E2;
+    background: #F0F8FF;
 }
 
 .avatar-preview img {
@@ -406,33 +429,39 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #4A90E2;
     color: white;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    background: #3A7BC8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
 }
 
 .btn-secondary {
-    background: #6c757d;
+    background: #6C757D;
     color: white;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.15);
 }
 
 .btn-secondary:hover {
-    background: #5a6268;
-    transform: translateY(-2px);
+    background: #5A6268;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.25);
 }
 
 .btn-danger {
-    background: #e74c3c;
+    background: #E74C3C;
     color: white;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
 }
 
 .btn-danger:hover {
-    background: #c0392b;
-    transform: translateY(-2px);
+    background: #C0392B;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
 
 .form-actions {
@@ -457,7 +486,8 @@ body {
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    border: 4px solid #667eea;
+    border: 3px solid #4A90E2;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
 }
 
 .customer-avatar-large img {
@@ -469,25 +499,27 @@ body {
 .avatar-placeholder {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #4A90E2;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 3rem;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .customer-info-header h2 {
-    margin-bottom: 10px;
-    color: #333;
+    margin-bottom: 12px;
+    color: #2C3E50;
     font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
 }
 
 .customer-phone, .customer-region {
     margin: 8px 0;
-    color: #666;
-    font-size: 1.1rem;
+    color: #6C757D;
+    font-size: 1.05rem;
 }
 
 .detail-section {
@@ -495,19 +527,21 @@ body {
 }
 
 .detail-section h3 {
-    color: #667eea;
-    margin-bottom: 15px;
+    color: #4A90E2;
+    margin-bottom: 16px;
     font-size: 1.3rem;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #E8EDF2;
+    font-weight: 600;
 }
 
 .detail-content {
-    background: #f8f9fa;
+    background: #F8FAFC;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 12px;
     line-height: 1.8;
-    color: #555;
+    color: #34495E;
+    border: 1px solid #E8EDF2;
 }
 
 .detail-content p {
@@ -516,25 +550,26 @@ body {
 }
 
 .no-data {
-    color: #999;
+    color: #95A5A6;
     font-style: italic;
+    font-size: 0.95rem;
 }
 
 .detail-actions {
     margin-top: 40px;
     padding-top: 30px;
-    border-top: 2px solid #e0e0e0;
+    border-top: 2px solid #E8EDF2;
 }
 
 .loading, .error-message {
     text-align: center;
-    padding: 40px;
-    color: #666;
-    font-size: 1.1rem;
+    padding: 48px;
+    color: #6C757D;
+    font-size: 1.05rem;
 }
 
 .error-message {
-    color: #e74c3c;
+    color: #E74C3C;
 }
 
 /* 響應式設計 */
@@ -588,9 +623,10 @@ body {
 
 .calendar-grid {
     background: white;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(74, 144, 226, 0.1);
 }
 
 .calendar-weekdays {
@@ -603,8 +639,9 @@ body {
 .calendar-weekday {
     text-align: center;
     font-weight: 600;
-    color: #667eea;
-    padding: 10px;
+    color: #4A90E2;
+    padding: 12px;
+    font-size: 0.95rem;
 }
 
 .calendar-days {
@@ -615,27 +652,29 @@ body {
 
 .calendar-day {
     aspect-ratio: 1;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
+    border: 1.5px solid #E8EDF2;
+    border-radius: 10px;
     padding: 10px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s ease;
     background: white;
 }
 
 .calendar-day:hover {
-    background: #f8f9fa;
-    border-color: #667eea;
+    background: #F0F8FF;
+    border-color: #4A90E2;
+    transform: translateY(-1px);
 }
 
 .calendar-day.today {
-    background: #e3f2fd;
-    border-color: #667eea;
+    background: #E8F4FD;
+    border-color: #4A90E2;
     font-weight: 600;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.15);
 }
 
 .calendar-day.empty {
-    background: #f5f5f5;
+    background: #F8FAFC;
     cursor: default;
     border: none;
 }
@@ -647,7 +686,7 @@ body {
 
 .calendar-day-schedules {
     font-size: 0.75rem;
-    color: #667eea;
+    color: #4A90E2;
     font-weight: 600;
 }
 
@@ -660,7 +699,8 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(44, 62, 80, 0.5);
+    backdrop-filter: blur(4px);
     overflow: auto;
 }
 
@@ -668,44 +708,50 @@ body {
     background: white;
     margin: 5% auto;
     padding: 0;
-    border-radius: 15px;
+    border-radius: 16px;
     width: 90%;
     max-width: 600px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     max-height: 90vh;
     overflow-y: auto;
+    border: 1px solid rgba(74, 144, 226, 0.1);
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 30px;
-    border-bottom: 2px solid #e0e0e0;
+    padding: 24px 32px;
+    border-bottom: 1.5px solid #E8EDF2;
 }
 
 .modal-header h2 {
     margin: 0;
-    color: #333;
+    color: #2C3E50;
+    font-weight: 600;
+    font-size: 1.5rem;
+    letter-spacing: -0.3px;
 }
 
 .modal-close {
     background: none;
     border: none;
-    font-size: 2rem;
-    color: #999;
+    font-size: 1.75rem;
+    color: #95A5A6;
     cursor: pointer;
     padding: 0;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.3s;
+    transition: all 0.2s ease;
+    border-radius: 8px;
 }
 
 .modal-close:hover {
-    color: #333;
+    color: #2C3E50;
+    background: #F8FAFC;
 }
 
 .modal-content form {
@@ -720,19 +766,22 @@ body {
 /* 客戶列表項目（手風琴式） */
 .customer-list-item {
     background: white;
-    border-radius: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     overflow: hidden;
-    transition: all 0.3s;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(74, 144, 226, 0.1);
 }
 
 .customer-list-item:hover {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
 }
 
 .customer-list-item.expanded {
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 6px 24px rgba(74, 144, 226, 0.15);
+    border-color: #4A90E2;
 }
 
 .customer-list-header {
@@ -745,7 +794,7 @@ body {
 }
 
 .customer-list-header:hover {
-    background: #f8f9fa;
+    background: #F8FAFC;
 }
 
 .customer-list-avatar {
@@ -754,7 +803,8 @@ body {
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    border: 3px solid #667eea;
+    border: 2.5px solid #4A90E2;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.15);
 }
 
 .customer-list-avatar img {
@@ -766,13 +816,13 @@ body {
 .avatar-placeholder-list {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #4A90E2;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .customer-list-summary {
@@ -782,13 +832,14 @@ body {
 
 .customer-list-summary h3 {
     margin: 0 0 8px 0;
-    color: #333;
+    color: #2C3E50;
     font-size: 1.2rem;
+    font-weight: 600;
 }
 
 .customer-list-health {
     margin: 0;
-    color: #666;
+    color: #6C757D;
     font-size: 0.95rem;
     line-height: 1.5;
 }
@@ -801,8 +852,8 @@ body {
 
 .expand-icon {
     font-size: 1.2rem;
-    color: #667eea;
-    transition: transform 0.3s;
+    color: #4A90E2;
+    transition: transform 0.2s ease;
 }
 
 .customer-list-item.expanded .expand-icon {
@@ -810,8 +861,8 @@ body {
 }
 
 .customer-list-detail {
-    border-top: 2px solid #e0e0e0;
-    background: #f8f9fa;
+    border-top: 1.5px solid #E8EDF2;
+    background: #F8FAFC;
     animation: slideDown 0.3s ease-out;
 }
 
@@ -833,8 +884,8 @@ body {
 .customer-detail-content .detail-row {
     margin: 15px 0;
     padding: 12px 0;
-    border-bottom: 1px solid #e0e0e0;
-    line-height: 1.6;
+    border-bottom: 1px solid #E8EDF2;
+    line-height: 1.7;
 }
 
 .customer-detail-content .detail-row:last-of-type {
@@ -842,15 +893,17 @@ body {
 }
 
 .customer-detail-content .detail-row strong {
-    color: #667eea;
-    margin-right: 10px;
+    color: #4A90E2;
+    margin-right: 12px;
     display: inline-block;
     min-width: 120px;
+    font-weight: 600;
 }
 
 /* 編輯模式樣式 */
 .customer-list-item.editable {
-    border: 2px solid #667eea;
+    border: 2px solid #4A90E2;
+    box-shadow: 0 4px 16px rgba(74, 144, 226, 0.2);
 }
 
 .editable-text {
@@ -860,13 +913,14 @@ body {
 .editable-input,
 .editable-textarea {
     width: 100%;
-    padding: 6px 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 8px 12px;
+    border: 1.5px solid #E8EDF2;
+    border-radius: 8px;
     font-size: 0.95rem;
     font-family: inherit;
     background: white;
     margin-top: 5px;
+    transition: all 0.2s ease;
 }
 
 .editable-input {
@@ -884,8 +938,8 @@ body {
 .editable-input:focus,
 .editable-textarea:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
 .detail-row .editable-input,
@@ -895,17 +949,18 @@ body {
 
 .health-status-full {
     margin-top: 8px;
-    padding: 10px;
+    padding: 12px;
     background: white;
-    border-radius: 8px;
+    border-radius: 10px;
     white-space: pre-wrap;
     word-wrap: break-word;
+    border: 1px solid #E8EDF2;
 }
 
 .customer-detail-actions {
     margin-top: 20px;
-    padding-top: 15px;
-    border-top: 2px solid #e0e0e0;
+    padding-top: 16px;
+    border-top: 1.5px solid #E8EDF2;
 }
 
 /* 客戶卡片網格（保留以防需要） */
@@ -918,16 +973,18 @@ body {
 
 .customer-card {
     background: white;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(74, 144, 226, 0.1);
 }
 
 .customer-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    border-color: #4A90E2;
 }
 
 .customer-card-avatar {
@@ -935,8 +992,9 @@ body {
     height: 80px;
     border-radius: 50%;
     overflow: hidden;
-    margin: 0 auto 15px;
-    border: 3px solid #667eea;
+    margin: 0 auto 16px;
+    border: 2.5px solid #4A90E2;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.15);
 }
 
 .customer-card-avatar img {
@@ -948,13 +1006,13 @@ body {
 .avatar-placeholder-small {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #4A90E2;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 2rem;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .customer-card-info {
@@ -963,12 +1021,13 @@ body {
 
 .customer-card-info h3 {
     margin: 10px 0;
-    color: #333;
+    color: #2C3E50;
+    font-weight: 600;
 }
 
 .customer-card-phone, .customer-card-address {
     font-size: 0.9rem;
-    color: #666;
+    color: #6C757D;
     margin: 5px 0;
 }
 
@@ -979,25 +1038,29 @@ body {
 
 .search-bar input {
     width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 1rem;
+    padding: 12px 16px;
+    border: 1.5px solid #E8EDF2;
+    border-radius: 10px;
+    font-size: 0.95rem;
     font-family: inherit;
+    background: white;
+    transition: all 0.2s ease;
 }
 
 .search-bar input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
 /* 訂單表格 */
 .orders-table-container {
     background: white;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
     overflow-x: auto;
+    border: 1px solid rgba(74, 144, 226, 0.1);
 }
 
 .orders-table {
@@ -1006,21 +1069,23 @@ body {
 }
 
 .orders-table th {
-    background: #f8f9fa;
-    padding: 15px;
+    background: #F8FAFC;
+    padding: 16px;
     text-align: left;
     font-weight: 600;
-    color: #333;
-    border-bottom: 2px solid #e0e0e0;
+    color: #2C3E50;
+    border-bottom: 2px solid #E8EDF2;
+    font-size: 0.95rem;
 }
 
 .orders-table td {
-    padding: 15px;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 16px;
+    border-bottom: 1px solid #E8EDF2;
+    color: #34495E;
 }
 
 .orders-table tr:hover {
-    background: #f8f9fa;
+    background: #F8FAFC;
 }
 
 .btn-sm {
@@ -1053,18 +1118,21 @@ body {
 }
 
 .schedule-item {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 10px;
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
     cursor: pointer;
-    transition: all 0.3s;
-    border-left: 4px solid #667eea;
+    transition: all 0.2s ease;
+    border-left: 3px solid #4A90E2;
+    border: 1px solid rgba(74, 144, 226, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .schedule-item:hover {
-    background: #e9ecef;
-    transform: translateX(5px);
+    background: #F0F8FF;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.1);
 }
 
 .schedule-item-header {
@@ -1076,15 +1144,17 @@ body {
 
 .schedule-item-header h4 {
     margin: 0;
-    color: #333;
+    color: #2C3E50;
+    font-weight: 600;
 }
 
 .schedule-type-badge {
-    background: #667eea;
+    background: #4A90E2;
     color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
     font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .schedule-detail {
@@ -1093,12 +1163,13 @@ body {
 
 .detail-row {
     margin: 15px 0;
-    padding: 10px 0;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 12px 0;
+    border-bottom: 1px solid #E8EDF2;
 }
 
 .detail-row strong {
-    color: #667eea;
-    margin-right: 10px;
+    color: #4A90E2;
+    margin-right: 12px;
+    font-weight: 600;
 }
 
