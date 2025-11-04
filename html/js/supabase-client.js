@@ -221,17 +221,32 @@ async function deleteCustomerFromSupabase(id) {
 // ==================== 行程資料操作 ====================
 
 async function getAllSchedulesFromSupabase() {
-    const { data, error } = await supabaseClient
+    // 先取得所有行程
+    const { data: schedules, error: schedulesError } = await supabaseClient
         .from('schedules')
-        .select(`
-            *,
-            customers!schedules_customer_id_fkey(name)
-        `)
+        .select('*')
         .order('date', { ascending: true });
     
-    if (error) throw error;
+    if (schedulesError) throw schedulesError;
     
-    return data.map(s => ({
+    // 如果有客戶 ID，取得客戶名稱
+    const customerIds = [...new Set(schedules.filter(s => s.customer_id).map(s => s.customer_id))];
+    let customerMap = {};
+    
+    if (customerIds.length > 0) {
+        const { data: customers, error: customersError } = await supabaseClient
+            .from('customers')
+            .select('id, name')
+            .in('id', customerIds);
+        
+        if (customersError) throw customersError;
+        
+        customers.forEach(c => {
+            customerMap[c.id] = c.name;
+        });
+    }
+    
+    return schedules.map(s => ({
         id: s.id,
         title: s.title,
         date: s.date,
@@ -239,7 +254,7 @@ async function getAllSchedulesFromSupabase() {
         endTime: s.end_time,
         type: s.type,
         customerId: s.customer_id,
-        customerName: s.customers?.name || '',
+        customerName: customerMap[s.customer_id] || '',
         notes: s.notes
     }));
 }
@@ -283,21 +298,36 @@ async function deleteScheduleFromSupabase(id) {
 // ==================== 訂單資料操作 ====================
 
 async function getAllOrdersFromSupabase() {
-    const { data, error } = await supabaseClient
+    // 先取得所有訂單
+    const { data: orders, error: ordersError } = await supabaseClient
         .from('orders')
-        .select(`
-            *,
-            customers!orders_customer_id_fkey(name)
-        `)
+        .select('*')
         .order('date', { ascending: false });
     
-    if (error) throw error;
+    if (ordersError) throw ordersError;
     
-    return data.map(o => ({
+    // 如果有客戶 ID，取得客戶名稱
+    const customerIds = [...new Set(orders.filter(o => o.customer_id).map(o => o.customer_id))];
+    let customerMap = {};
+    
+    if (customerIds.length > 0) {
+        const { data: customers, error: customersError } = await supabaseClient
+            .from('customers')
+            .select('id, name')
+            .in('id', customerIds);
+        
+        if (customersError) throw customersError;
+        
+        customers.forEach(c => {
+            customerMap[c.id] = c.name;
+        });
+    }
+    
+    return orders.map(o => ({
         id: o.id,
         date: o.date,
         customerId: o.customer_id,
-        customerName: o.customers?.name || '',
+        customerName: customerMap[o.customer_id] || '',
         product: o.product,
         quantity: o.quantity,
         amount: o.amount,

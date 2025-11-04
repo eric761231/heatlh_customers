@@ -12,5 +12,5 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 // 資料來源選擇：'supabase' 或 'google-sheets'
 // 遷移期間可以切換以測試兩個系統
-const DATA_SOURCE = 'google-sheets'; // 改為 'supabase' 以使用 Supabase
+const DATA_SOURCE = 'supabase'; // 使用 Supabase 資料庫
 
