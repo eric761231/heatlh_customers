@@ -25,6 +25,30 @@
     <script>
         // 檢查是否已登入
         function checkLoginStatus() {
+            // 如果 URL 中有 logout 參數，清除所有登入狀態
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('logout') === 'true') {
+                // 清除所有登入資訊
+                localStorage.removeItem('googleLogin');
+                
+                // 清除快取
+                if (typeof window !== 'undefined' && typeof window.dataCache !== 'undefined') {
+                    window.dataCache = null;
+                }
+                if (typeof window !== 'undefined' && typeof window.currentUser !== 'undefined') {
+                    window.currentUser = null;
+                }
+                
+                // 清除 URL 參數
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
+                // 強制重新初始化 Google Sign-In
+                setTimeout(() => {
+                    initializeGoogleSignIn();
+                }, 100);
+                return;
+            }
+            
             const loginInfo = localStorage.getItem('googleLogin');
             if (loginInfo) {
                 try {

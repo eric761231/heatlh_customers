@@ -31,8 +31,18 @@ function checkAuth() {
 // 登出
 function logout() {
     if (confirm('確定要登出嗎？')) {
-        // 清除登入資訊
+        // 清除所有登入資訊
         localStorage.removeItem('googleLogin');
+        
+        // 清除所有相關的 localStorage
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (key.includes('googleLogin') || key.includes('cache'))) {
+                keysToRemove.push(key);
+            }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
         
         // 清除客戶資料快取（如果存在）
         if (typeof dataCache !== 'undefined' && dataCache) {
@@ -45,7 +55,18 @@ function logout() {
             currentUser = null;
         }
         
-        window.location.href = 'login.html';
+        // 清除 window 物件上的快取
+        if (typeof window !== 'undefined') {
+            if (typeof window.dataCache !== 'undefined') {
+                window.dataCache = null;
+            }
+            if (typeof window.currentUser !== 'undefined') {
+                window.currentUser = null;
+            }
+        }
+        
+        // 跳轉到登入頁面，並帶上 logout 參數以強制清除 Google Sign-In 會話
+        window.location.href = 'login.html?logout=true';
     }
 }
 

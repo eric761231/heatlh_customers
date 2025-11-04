@@ -762,6 +762,80 @@ body::before {
     .container {
         padding: 0 12px;
         margin: 16px auto;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* 行事曆在手機上的樣式 */
+    .calendar-controls {
+        gap: 12px;
+        padding: 0 4px;
+    }
+    
+    .calendar-controls h2 {
+        font-size: 1.2rem;
+    }
+    
+    .btn-calendar-nav {
+        min-width: 40px;
+        height: 40px;
+        padding: 6px 10px;
+        font-size: 1rem;
+    }
+    
+    .calendar-grid {
+        padding: 12px 8px;
+        border-radius: 16px;
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+    
+    .calendar-weekdays,
+    .calendar-days {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0;
+        box-sizing: border-box;
+    }
+    
+    .calendar-weekday {
+        padding: 8px 4px;
+        font-size: 0.75rem;
+        text-align: center;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        word-break: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .calendar-day {
+        padding: 6px 4px;
+        min-height: 50px;
+        aspect-ratio: 1;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        box-sizing: border-box;
+    }
+    
+    .calendar-day-number {
+        font-size: 0.85rem;
+        margin-bottom: 2px;
+    }
+    
+    .calendar-day-schedules {
+        font-size: 0.65rem;
+    }
+    
+    .calendar-days .calendar-day:nth-child(7n),
+    .calendar-days .calendar-day:nth-child(7n+7) {
+        border-right: none;
+    }
+    
+    .calendar-weekday:last-child {
+        border-right: none;
     }
 
     /* 表單卡片 */
