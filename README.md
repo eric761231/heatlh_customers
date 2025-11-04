@@ -1,8 +1,8 @@
-# 客戶健康狀況追蹤系統 - Google 試算表版本
+# 葡眾愛客戶 - 客戶管理系統
 
 ## 功能說明
 
-這是一個使用 HTML、CSS、JavaScript 建立的客戶健康狀況追蹤系統，資料儲存在 Google 試算表中。
+這是一個使用 HTML、CSS、JavaScript 建立的客戶管理系統，資料儲存在 Supabase 資料庫中。
 
 ## 設定步驟
 
