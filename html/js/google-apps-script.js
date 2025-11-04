@@ -89,6 +89,12 @@ function handleRequest(e) {
                 }
                 result = addCustomer(postData);
                 break;
+            case 'update':
+                if (!postData || !e.parameter.id) {
+                    throw new Error('缺少客戶資料或 ID');
+                }
+                result = updateCustomer(e.parameter.id, postData);
+                break;
             case 'delete':
                 result = deleteCustomer(e.parameter.id);
                 break;
@@ -363,6 +369,51 @@ function addCustomer(customerData) {
         id: id,
         ...customerData
     };
+}
+
+/**
+ * 更新客戶
+ */
+function updateCustomer(id, customerData) {
+    const sheet = getSheet();
+    const data = sheet.getDataRange().getValues();
+    
+    for (let i = 1; i < data.length; i++) {
+        if (data[i][0] === id) {
+            // 準備更新資料（最新格式，包含村/里和鄰）
+            const row = [
+                id, // 保持原 ID
+                customerData.name || '',
+                customerData.phone || '',
+                customerData.city || '',
+                customerData.district || '',
+                customerData.village || '',
+                customerData.neighborhood || '',
+                customerData.streetType || '',
+                customerData.streetName || '',
+                customerData.lane || '',
+                customerData.alley || '',
+                customerData.number || '',
+                customerData.floor || '',
+                customerData.fullAddress || '',
+                customerData.healthStatus || '',
+                customerData.medications || '',
+                customerData.supplements || '',
+                customerData.avatar || '',
+                data[i][18] || new Date().toISOString() // 保持原建立時間
+            ];
+            
+            // 更新該行資料
+            sheet.getRange(i + 1, 1, 1, 19).setValues([row]);
+            
+            return {
+                id: id,
+                ...customerData
+            };
+        }
+    }
+    
+    throw new Error('找不到指定的客戶');
 }
 
 /**

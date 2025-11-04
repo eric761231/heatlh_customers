@@ -134,6 +134,17 @@ async function addCustomer(customerData) {
     }
 }
 
+// 更新客戶
+async function updateCustomer(customerId, customerData) {
+    try {
+        const result = await apiCall('update', customerData, customerId);
+        return result;
+    } catch (error) {
+        console.error('更新客戶失敗:', error);
+        throw error;
+    }
+}
+
 // 刪除客戶
 async function deleteCustomerById(customerId) {
     try {
