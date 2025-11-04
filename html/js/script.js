@@ -71,7 +71,8 @@ async function apiCall(action, data = null, customerId = null) {
 
         const options = {
             method: data ? 'POST' : 'GET',
-            headers: {}
+            headers: {},
+            // 添加超時設定（雖然 fetch 不直接支持，但可以通過 AbortController 實現）
         };
 
         if (data) {
@@ -82,31 +83,47 @@ async function apiCall(action, data = null, customerId = null) {
             options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
 
-        const response = await fetch(url, options);
+        // 添加超時控制（30秒）
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
         
-        if (!response.ok) {
-            // 處理特定的 HTTP 狀態碼
-            if (response.status === 429) {
-                throw new Error('請求過於頻繁，請稍後再試 (429 Too Many Requests)');
-            } else if (response.status === 0) {
-                throw new Error('網路連線失敗，請檢查網路連線');
-            } else {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        try {
+            const response = await fetch(url, { ...options, signal: controller.signal });
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                // 處理特定的 HTTP 狀態碼
+                if (response.status === 429) {
+                    throw new Error('請求過於頻繁，請稍後再試 (429 Too Many Requests)');
+                } else if (response.status === 0) {
+                    throw new Error('網路連線失敗，請檢查網路連線');
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
             }
-        }
 
-        const result = await response.json();
-        
-        if (result.success) {
-            return result.data;
-        } else {
-            throw new Error(result.error || '操作失敗');
+            const result = await response.json();
+            
+            if (result.success) {
+                return result.data;
+            } else {
+                throw new Error(result.error || '操作失敗');
+            }
+        } catch (error) {
+            clearTimeout(timeoutId);
+            if (error.name === 'AbortError') {
+                throw new Error('請求超時，請稍後再試');
+            }
+            throw error;
         }
     } catch (error) {
         console.error('API 錯誤:', error);
         // 如果是網路錯誤，提供更友好的錯誤訊息
         if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
             throw new Error('網路連線失敗，請檢查網路連線或稍後再試');
+        }
+        if (error.message.includes('AbortError') || error.message.includes('超時')) {
+            throw new Error('請求超時，請稍後再試');
         }
         throw error;
     }

@@ -1,6 +1,7 @@
 // 行事曆相關功能
 let currentDate = new Date();
 let schedules = [];
+let savingSchedule = false; // 防止重複提交
 
 // 初始化行事曆
 function initCalendar() {
@@ -58,9 +59,13 @@ function generateCalendarGrid(year, month) {
     // 填充日期
     for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(year, month, day);
-        const dateStr = date.toISOString().split('T')[0];
+        // 使用本地日期格式，避免時區問題
+        const dateStr = formatDateForDisplay(year, month, day);
         const isToday = date.toDateString() === today.toDateString();
-        const daySchedules = schedules.filter(s => s.date === dateStr);
+        const daySchedules = schedules.filter(s => {
+            // 比較日期字符串（格式：YYYY-MM-DD）
+            return normalizeDate(s.date) === dateStr;
+        });
         
         html += `<div class="calendar-day ${isToday ? 'today' : ''}" onclick="showDaySchedules('${dateStr}')">`;
         html += `<div class="calendar-day-number">${day}</div>`;
@@ -92,16 +97,51 @@ function goToToday() {
 async function loadSchedules() {
     try {
         schedules = await getSchedules();
+        // 標準化所有行程的日期格式
+        schedules = schedules.map(s => ({
+            ...s,
+            date: normalizeDate(s.date)
+        }));
         updateCalendar();
     } catch (error) {
         console.error('載入行程失敗:', error);
     }
 }
 
+// 格式化日期為 YYYY-MM-DD（本地時區）
+function formatDateForDisplay(year, month, day) {
+    const y = year;
+    const m = String(month + 1).padStart(2, '0');
+    const d = String(day).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+}
+
+// 標準化日期格式（處理各種日期格式）
+function normalizeDate(dateStr) {
+    if (!dateStr) return '';
+    // 如果已經是 YYYY-MM-DD 格式，直接返回
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        return dateStr;
+    }
+    // 嘗試解析其他格式
+    const date = new Date(dateStr);
+    if (!isNaN(date.getTime())) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    return dateStr;
+}
+
 // 顯示某天的行程
 function showDaySchedules(dateStr) {
-    const daySchedules = schedules.filter(s => s.date === dateStr);
-    const date = new Date(dateStr);
+    const normalizedDate = normalizeDate(dateStr);
+    const daySchedules = schedules.filter(s => normalizeDate(s.date) === normalizedDate);
+    
+    // 解析日期用於顯示
+    const dateParts = normalizedDate.split('-');
+    const date = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
     const dateFormatted = date.toLocaleDateString('zh-TW', { 
         year: 'numeric', 
         month: 'long', 
@@ -239,6 +279,12 @@ async function loadCustomersForSchedule() {
 async function handleScheduleSubmit(event) {
     event.preventDefault();
     
+    // 防止重複提交
+    if (savingSchedule) {
+        console.log('正在儲存中，請勿重複點擊');
+        return;
+    }
+    
     const title = document.getElementById('scheduleTitle').value.trim();
     const date = document.getElementById('scheduleDate').value;
     const startTime = document.getElementById('scheduleStartTime').value;
@@ -252,10 +298,19 @@ async function handleScheduleSubmit(event) {
         return;
     }
     
+    savingSchedule = true;
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn ? submitBtn.textContent : '';
+    
     try {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = '儲存中...';
+        }
+        
         const scheduleData = {
             title: title,
-            date: date,
+            date: date, // 使用 YYYY-MM-DD 格式
             startTime: startTime || '',
             endTime: endTime || '',
             type: type,
@@ -265,10 +320,20 @@ async function handleScheduleSubmit(event) {
         
         await addSchedule(scheduleData);
         closeScheduleModal();
+        
+        // 重新載入行程並更新行事曆
         await loadSchedules();
+        
         alert('行程已新增！');
     } catch (error) {
         alert('新增行程失敗：' + error.message);
+        console.error('Add schedule error:', error);
+    } finally {
+        savingSchedule = false;
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
     }
 }
 

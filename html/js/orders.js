@@ -1,6 +1,7 @@
 // 訂貨清單相關功能
 let orders = [];
 let editingOrderId = null;
+let savingOrder = false; // 防止重複提交
 
 // 初始化訂貨清單
 async function initOrders() {
@@ -146,6 +147,12 @@ async function editOrder(orderId) {
 async function handleOrderSubmit(event) {
     event.preventDefault();
     
+    // 防止重複提交
+    if (savingOrder) {
+        console.log('正在儲存中，請勿重複點擊');
+        return;
+    }
+    
     const date = document.getElementById('orderDate').value;
     const customerId = document.getElementById('orderCustomer').value;
     const product = document.getElementById('orderProduct').value.trim();
@@ -159,7 +166,16 @@ async function handleOrderSubmit(event) {
         return;
     }
     
+    savingOrder = true;
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn ? submitBtn.textContent : '';
+    
     try {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = '儲存中...';
+        }
+        
         const orderData = {
             date: date,
             customerId: customerId,
@@ -182,6 +198,13 @@ async function handleOrderSubmit(event) {
         await loadOrders();
     } catch (error) {
         alert('操作失敗：' + error.message);
+        console.error('Order submit error:', error);
+    } finally {
+        savingOrder = false;
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
     }
 }
 
