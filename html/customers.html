@@ -72,6 +72,7 @@
         let currentDisplayCustomers = []; // 當前顯示的客戶列表
         let expandedCustomers = new Set(); // 追蹤已展開的客戶
         let editingCustomers = new Set(); // 追蹤正在編輯的客戶
+        let savingCustomers = new Set(); // 追蹤正在儲存中的客戶，防止重複提交
 
         async function loadCustomerList() {
             const listContainer = document.getElementById('customerList');
@@ -230,6 +231,13 @@
             }
             
             const id = String(customerId);
+            
+            // 防止重複提交
+            if (savingCustomers.has(id)) {
+                console.log('正在儲存中，請勿重複點擊');
+                return;
+            }
+            
             const customerItem = document.querySelector(`[data-customer-id="${id}"]`);
             if (!customerItem) {
                 alert('找不到客戶資料');
@@ -277,6 +285,9 @@
             customerData.floor = originalCustomer.floor || '';
             customerData.avatar = originalCustomer.avatar || '';
             
+            // 標記為正在儲存
+            savingCustomers.add(id);
+            
             try {
                 const saveBtn = customerItem.querySelector('.btn-primary');
                 const originalText = saveBtn.textContent;
@@ -294,11 +305,24 @@
                 
                 alert('客戶資料已成功更新！');
             } catch (error) {
-                alert('更新客戶失敗：' + error.message);
+                let errorMessage = '更新客戶失敗';
+                if (error.message.includes('429') || error.message.includes('Too Many Requests')) {
+                    errorMessage = '請求過於頻繁，請稍後再試';
+                } else if (error.message.includes('CORS') || error.message.includes('Failed to fetch')) {
+                    errorMessage = '網路連線問題，請檢查網路或稍後再試';
+                } else {
+                    errorMessage = '更新客戶失敗：' + error.message;
+                }
+                
+                alert(errorMessage);
                 console.error('Update customer error:', error);
+                
                 const saveBtn = customerItem.querySelector('.btn-primary');
                 saveBtn.disabled = false;
                 saveBtn.textContent = '儲存資料';
+            } finally {
+                // 移除儲存標記
+                savingCustomers.delete(id);
             }
         }
 
