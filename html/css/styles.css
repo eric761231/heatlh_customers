@@ -849,47 +849,48 @@ body {
 }
 
 /* 編輯模式樣式 */
-.customer-list-item.editing {
+.customer-list-item.editable {
     border: 2px solid #667eea;
 }
 
-.customer-edit-form {
-    padding: 0;
+.editable-text {
+    display: inline-block;
 }
 
-.customer-edit-form .form-group {
-    margin-bottom: 15px;
-}
-
-.customer-edit-form .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-    color: #555;
-    font-size: 0.9rem;
-}
-
-.customer-edit-form .form-group input[type="text"],
-.customer-edit-form .form-group input[type="tel"],
-.customer-edit-form .form-group textarea {
+.editable-input,
+.editable-textarea {
     width: 100%;
-    padding: 8px 12px;
+    padding: 6px 10px;
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 4px;
     font-size: 0.95rem;
     font-family: inherit;
+    background: white;
+    margin-top: 5px;
 }
 
-.customer-edit-form .form-group input:focus,
-.customer-edit-form .form-group textarea:focus {
+.editable-input {
+    display: inline-block;
+    min-width: 200px;
+}
+
+.editable-textarea {
+    display: block;
+    resize: vertical;
+    min-height: 60px;
+    margin-top: 5px;
+}
+
+.editable-input:focus,
+.editable-textarea:focus {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
 }
 
-.customer-edit-form .form-group textarea {
-    resize: vertical;
-    min-height: 60px;
+.detail-row .editable-input,
+.detail-row .editable-textarea {
+    margin-top: 5px;
 }
 
 .health-status-full {

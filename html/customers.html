@@ -114,104 +114,73 @@
                     ? (customer.healthStatus.length > 50 ? customer.healthStatus.substring(0, 50) + '...' : customer.healthStatus)
                     : '尚未填寫';
                 
-                if (isEditing) {
-                    // 編輯模式：顯示表單
-                    return `
-                        <div class="customer-list-item ${isExpanded ? 'expanded' : ''} editing" data-customer-id="${customerId}">
-                            <div class="customer-list-header" data-customer-id="${customerId}">
-                                <div class="customer-list-avatar">
-                                    ${customer.avatar ? `<img src="${customer.avatar}" alt="${customer.name}">` : '<div class="avatar-placeholder-list">' + (customer.name ? customer.name.charAt(0) : '?') + '</div>'}
-                                </div>
-                                <div class="customer-list-summary">
-                                    <h3>${customer.name || '未命名'}</h3>
-                                    <p class="customer-list-health">編輯模式</p>
-                                </div>
-                                <div class="customer-list-expand-icon">
-                                    <span class="expand-icon">▼</span>
-                                </div>
+                // 統一顯示模式，但根據 isEditing 決定是否可編輯
+                const editableClass = isEditing ? 'editable' : '';
+                const editButtonText = isEditing ? '儲存資料' : '更新資料';
+                const editButtonAction = isEditing ? `saveCustomerEdit('${customerId}', event)` : `startEdit('${customerId}', event)`;
+                
+                return `
+                    <div class="customer-list-item ${isExpanded ? 'expanded' : ''} ${editableClass}" data-customer-id="${customerId}">
+                        <div class="customer-list-header" data-customer-id="${customerId}">
+                            <div class="customer-list-avatar">
+                                ${customer.avatar ? `<img src="${customer.avatar}" alt="${customer.name}">` : '<div class="avatar-placeholder-list">' + (customer.name ? customer.name.charAt(0) : '?') + '</div>'}
                             </div>
-                            <div class="customer-list-detail" style="display: block;">
-                                <div class="customer-detail-content">
-                                    <form class="customer-edit-form" data-customer-id="${customerId}" onsubmit="saveCustomerEdit(event, '${customerId}')">
-                                        <div class="form-group">
-                                            <label>姓名 <span class="required">*</span></label>
-                                            <input type="text" name="name" value="${(customer.name || '').replace(/"/g, '&quot;')}" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>電話 <span class="required">*</span></label>
-                                            <input type="tel" name="phone" value="${(customer.phone || '').replace(/"/g, '&quot;')}" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>📍 地址</label>
-                                            <textarea name="fullAddress" rows="2">${(customer.fullAddress || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>💊 服用藥物</label>
-                                            <textarea name="medications" rows="3">${(customer.medications || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>🍎 服用保健食品</label>
-                                            <textarea name="supplements" rows="3">${(customer.supplements || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>🏥 健康狀況</label>
-                                            <textarea name="healthStatus" rows="4">${(customer.healthStatus || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
-                                        </div>
-                                        <div class="customer-detail-actions">
-                                            <button type="submit" class="btn btn-primary btn-sm">儲存</button>
-                                            <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEdit('${customerId}', event)">取消</button>
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteCustomer('${customerId}', event)">刪除客戶</button>
-                                        </div>
-                                    </form>
+                            <div class="customer-list-summary">
+                                <h3>${customer.name || '未命名'}</h3>
+                                <p class="customer-list-health">${healthStatusPreview}</p>
+                            </div>
+                            <div class="customer-list-expand-icon">
+                                <span class="expand-icon">${isExpanded ? '▼' : '▶'}</span>
+                            </div>
+                        </div>
+                        <div class="customer-list-detail" style="display: ${isExpanded ? 'block' : 'none'};">
+                            <div class="customer-detail-content">
+                                <div class="detail-row">
+                                    <strong>📞 電話：</strong>
+                                    ${isEditing ? 
+                                        `<input type="tel" class="editable-input" data-field="phone" value="${(customer.phone || '').replace(/"/g, '&quot;')}" required>` :
+                                        `<span class="editable-text">${customer.phone || '未提供'}</span>`
+                                    }
+                                </div>
+                                <div class="detail-row">
+                                    <strong>📍 地址：</strong>
+                                    ${isEditing ? 
+                                        `<textarea class="editable-textarea" data-field="fullAddress" rows="2">${(customer.fullAddress || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>` :
+                                        `<span class="editable-text">${customer.fullAddress || (customer.city ? (customer.city + (customer.district || '') + (customer.streetName || '') + (customer.streetType || '') + (customer.lane ? customer.lane + '巷' : '') + (customer.alley ? customer.alley + '弄' : '') + (customer.number ? customer.number + '號' : '') + (customer.floor || '')) : (customer.region || '尚未填寫'))}</span>`
+                                    }
+                                </div>
+                                <div class="detail-row">
+                                    <strong>💊 服用藥物：</strong>
+                                    ${isEditing ? 
+                                        `<textarea class="editable-textarea" data-field="medications" rows="3">${(customer.medications || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>` :
+                                        `<span class="editable-text">${customer.medications || '尚未填寫'}</span>`
+                                    }
+                                </div>
+                                <div class="detail-row">
+                                    <strong>🍎 服用保健食品：</strong>
+                                    ${isEditing ? 
+                                        `<textarea class="editable-textarea" data-field="supplements" rows="3">${(customer.supplements || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>` :
+                                        `<span class="editable-text">${customer.supplements || '尚未填寫'}</span>`
+                                    }
+                                </div>
+                                ${customer.healthStatus || isEditing ? `
+                                <div class="detail-row">
+                                    <strong>🏥 健康狀況：</strong>
+                                    ${isEditing ? 
+                                        `<textarea class="editable-textarea" data-field="healthStatus" rows="4">${(customer.healthStatus || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>` :
+                                        `<div class="health-status-full">${customer.healthStatus || ''}</div>`
+                                    }
+                                </div>
+                                ` : ''}
+                                <div class="customer-detail-actions">
+                                    <button class="btn btn-primary btn-sm" onclick="${editButtonAction}">${editButtonText}</button>
+                                    ${isEditing ? `<button class="btn btn-secondary btn-sm" onclick="cancelEdit('${customerId}', event)">取消</button>` : ''}
+                                    <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${customerId}', event)">刪除客戶</button>
                                 </div>
                             </div>
                         </div>
-                    `;
-                } else {
-                    // 顯示模式：只讀顯示
-                    return `
-                        <div class="customer-list-item ${isExpanded ? 'expanded' : ''}" data-customer-id="${customerId}">
-                            <div class="customer-list-header" data-customer-id="${customerId}">
-                                <div class="customer-list-avatar">
-                                    ${customer.avatar ? `<img src="${customer.avatar}" alt="${customer.name}">` : '<div class="avatar-placeholder-list">' + (customer.name ? customer.name.charAt(0) : '?') + '</div>'}
-                                </div>
-                                <div class="customer-list-summary">
-                                    <h3>${customer.name || '未命名'}</h3>
-                                    <p class="customer-list-health">${healthStatusPreview}</p>
-                                </div>
-                                <div class="customer-list-expand-icon">
-                                    <span class="expand-icon">${isExpanded ? '▼' : '▶'}</span>
-                                </div>
-                            </div>
-                            <div class="customer-list-detail" style="display: ${isExpanded ? 'block' : 'none'};">
-                                <div class="customer-detail-content">
-                                    <div class="detail-row">
-                                        <strong>📞 電話：</strong>${customer.phone || '未提供'}
-                                    </div>
-                                    <div class="detail-row">
-                                        <strong>📍 地址：</strong>${customer.fullAddress || (customer.city ? (customer.city + (customer.district || '') + (customer.streetName || '') + (customer.streetType || '') + (customer.lane ? customer.lane + '巷' : '') + (customer.alley ? customer.alley + '弄' : '') + (customer.number ? customer.number + '號' : '') + (customer.floor || '')) : (customer.region || '尚未填寫'))}
-                                    </div>
-                                    <div class="detail-row">
-                                        <strong>💊 服用藥物：</strong>${customer.medications || '尚未填寫'}
-                                    </div>
-                                    <div class="detail-row">
-                                        <strong>🍎 服用保健食品：</strong>${customer.supplements || '尚未填寫'}
-                                    </div>
-                                    ${customer.healthStatus ? `
-                                    <div class="detail-row">
-                                        <strong>🏥 健康狀況：</strong>
-                                        <div class="health-status-full">${customer.healthStatus}</div>
-                                    </div>
-                                    ` : ''}
-                                    <div class="customer-detail-actions">
-                                        <button class="btn btn-primary btn-sm" onclick="startEdit('${customerId}', event)">更新資料</button>
-                                        <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${customerId}', event)">刪除客戶</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
+                    </div>
+                `;
             }).join('');
         }
 
@@ -255,51 +224,65 @@
             displayCustomerList(currentDisplayCustomers);
         }
 
-        async function saveCustomerEdit(event, customerId) {
-            event.preventDefault();
-            event.stopPropagation();
+        async function saveCustomerEdit(customerId, event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
             
             const id = String(customerId);
-            const form = event.target;
-            const formData = new FormData(form);
-            
-            // 取得表單資料
-            const customerData = {
-                name: formData.get('name').trim(),
-                phone: formData.get('phone').trim(),
-                fullAddress: formData.get('fullAddress').trim(),
-                medications: formData.get('medications').trim(),
-                supplements: formData.get('supplements').trim(),
-                healthStatus: formData.get('healthStatus').trim()
-            };
-            
-            // 驗證必填欄位
-            if (!customerData.name || !customerData.phone) {
-                alert('請填寫姓名和電話');
+            const customerItem = document.querySelector(`[data-customer-id="${id}"]`);
+            if (!customerItem) {
+                alert('找不到客戶資料');
                 return;
             }
             
-            // 從原始客戶資料中取得其他欄位（地址相關欄位）
-            const originalCustomer = allCustomers.find(c => String(c.id) === id);
-            if (originalCustomer) {
-                customerData.city = originalCustomer.city || '';
-                customerData.district = originalCustomer.district || '';
-                customerData.village = originalCustomer.village || '';
-                customerData.neighborhood = originalCustomer.neighborhood || '';
-                customerData.streetType = originalCustomer.streetType || '';
-                customerData.streetName = originalCustomer.streetName || '';
-                customerData.lane = originalCustomer.lane || '';
-                customerData.alley = originalCustomer.alley || '';
-                customerData.number = originalCustomer.number || '';
-                customerData.floor = originalCustomer.floor || '';
-                customerData.avatar = originalCustomer.avatar || '';
+            // 取得表單資料
+            const phoneInput = customerItem.querySelector('[data-field="phone"]');
+            const fullAddressInput = customerItem.querySelector('[data-field="fullAddress"]');
+            const medicationsInput = customerItem.querySelector('[data-field="medications"]');
+            const supplementsInput = customerItem.querySelector('[data-field="supplements"]');
+            const healthStatusInput = customerItem.querySelector('[data-field="healthStatus"]');
+            
+            const customerData = {
+                phone: phoneInput ? phoneInput.value.trim() : '',
+                fullAddress: fullAddressInput ? fullAddressInput.value.trim() : '',
+                medications: medicationsInput ? medicationsInput.value.trim() : '',
+                supplements: supplementsInput ? supplementsInput.value.trim() : '',
+                healthStatus: healthStatusInput ? healthStatusInput.value.trim() : ''
+            };
+            
+            // 驗證必填欄位
+            if (!customerData.phone) {
+                alert('請填寫電話');
+                return;
             }
             
+            // 從原始客戶資料中取得其他欄位（姓名和地址相關欄位）
+            const originalCustomer = allCustomers.find(c => String(c.id) === id);
+            if (!originalCustomer) {
+                alert('找不到客戶資料');
+                return;
+            }
+            
+            customerData.name = originalCustomer.name || '';
+            customerData.city = originalCustomer.city || '';
+            customerData.district = originalCustomer.district || '';
+            customerData.village = originalCustomer.village || '';
+            customerData.neighborhood = originalCustomer.neighborhood || '';
+            customerData.streetType = originalCustomer.streetType || '';
+            customerData.streetName = originalCustomer.streetName || '';
+            customerData.lane = originalCustomer.lane || '';
+            customerData.alley = originalCustomer.alley || '';
+            customerData.number = originalCustomer.number || '';
+            customerData.floor = originalCustomer.floor || '';
+            customerData.avatar = originalCustomer.avatar || '';
+            
             try {
-                const submitBtn = form.querySelector('button[type="submit"]');
-                const originalText = submitBtn.textContent;
-                submitBtn.disabled = true;
-                submitBtn.textContent = '儲存中...';
+                const saveBtn = customerItem.querySelector('.btn-primary');
+                const originalText = saveBtn.textContent;
+                saveBtn.disabled = true;
+                saveBtn.textContent = '儲存中...';
                 
                 // 更新客戶資料
                 await updateCustomer(id, customerData);
@@ -314,9 +297,9 @@
             } catch (error) {
                 alert('更新客戶失敗：' + error.message);
                 console.error('Update customer error:', error);
-                const submitBtn = form.querySelector('button[type="submit"]');
-                submitBtn.disabled = false;
-                submitBtn.textContent = '儲存';
+                const saveBtn = customerItem.querySelector('.btn-primary');
+                saveBtn.disabled = false;
+                saveBtn.textContent = '儲存資料';
             }
         }
 
