@@ -59,6 +59,28 @@ function showError(element, message) {
     }
 }
 
+// 資料快取（減少重複 API 調用）
+const dataCache = {
+    customers: null,
+    customersTimestamp: 0,
+    cacheDuration: 60000, // 快取 60 秒
+    
+    getCustomers: async function() {
+        const now = Date.now();
+        if (this.customers && (now - this.customersTimestamp) < this.cacheDuration) {
+            return this.customers;
+        }
+        this.customers = await getCustomers();
+        this.customersTimestamp = now;
+        return this.customers;
+    },
+    
+    clearCache: function() {
+        this.customers = null;
+        this.customersTimestamp = 0;
+    }
+};
+
 // API 呼叫函數
 async function apiCall(action, data = null, customerId = null) {
     try {
@@ -155,6 +177,7 @@ async function getCustomerById(customerId) {
 async function addCustomer(customerData) {
     try {
         const result = await apiCall('add', customerData);
+        dataCache.clearCache(); // 清除快取
         return result;
     } catch (error) {
         console.error('新增客戶失敗:', error);
@@ -166,6 +189,7 @@ async function addCustomer(customerData) {
 async function updateCustomer(customerId, customerData) {
     try {
         const result = await apiCall('update', customerData, customerId);
+        dataCache.clearCache(); // 清除快取
         return result;
     } catch (error) {
         console.error('更新客戶失敗:', error);
@@ -177,6 +201,7 @@ async function updateCustomer(customerId, customerData) {
 async function deleteCustomerById(customerId) {
     try {
         const result = await apiCall('delete', null, customerId);
+        dataCache.clearCache(); // 清除快取
         return result;
     } catch (error) {
         console.error('刪除客戶失敗:', error);

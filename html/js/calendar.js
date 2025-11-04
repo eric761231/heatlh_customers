@@ -4,12 +4,15 @@ let schedules = [];
 let savingSchedule = false; // 防止重複提交
 
 // 初始化行事曆
-function initCalendar() {
+async function initCalendar() {
     checkAuth();
     updateCalendar();
-    loadSchedules();
-    loadCustomersForSchedule();
     setTodayDate();
+    // 並行載入資料，提升速度
+    await Promise.all([
+        loadSchedules(),
+        loadCustomersForSchedule()
+    ]);
 }
 
 // 設定今天日期

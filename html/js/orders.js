@@ -6,9 +6,12 @@ let savingOrder = false; // 防止重複提交
 // 初始化訂貨清單
 async function initOrders() {
     checkAuth();
-    await loadOrders();
-    await loadCustomersForOrder();
     setTodayDateForOrder();
+    // 並行載入資料，提升速度
+    await Promise.all([
+        loadOrders(),
+        loadCustomersForOrder()
+    ]);
 }
 
 // 設定今天日期

@@ -83,51 +83,54 @@ function handleRequest(e) {
             case 'getById':
                 result = getCustomerById(e.parameter.id);
                 break;
-            case 'add':
-                if (!postData) {
-                    throw new Error('缺少客戶資料');
-                }
-                result = addCustomer(postData);
-                break;
-            case 'update':
-                if (!postData || !e.parameter.id) {
-                    throw new Error('缺少客戶資料或 ID');
-                }
-                result = updateCustomer(e.parameter.id, postData);
-                break;
-            case 'delete':
-                result = deleteCustomer(e.parameter.id);
-                break;
-            case 'getSchedules':
-                result = getAllSchedules();
-                break;
-            case 'addSchedule':
-                if (!postData) {
-                    throw new Error('缺少行程資料');
-                }
-                result = addSchedule(postData);
-                break;
-            case 'deleteSchedule':
-                result = deleteSchedule(e.parameter.id);
-                break;
-            case 'getOrders':
-                result = getAllOrders();
-                break;
-            case 'addOrder':
-                if (!postData) {
-                    throw new Error('缺少訂單資料');
-                }
-                result = addOrder(postData);
-                break;
-            case 'updateOrder':
-                if (!postData) {
-                    throw new Error('缺少訂單資料');
-                }
-                result = updateOrder(e.parameter.id, postData);
-                break;
-            case 'deleteOrder':
-                result = deleteOrder(e.parameter.id);
-                break;
+        case 'add':
+            if (!postData) {
+                throw new Error('缺少客戶資料');
+            }
+            result = addCustomer(postData);
+            customerCache = null; // 清除快取
+            break;
+        case 'update':
+            if (!postData || !e.parameter.id) {
+                throw new Error('缺少客戶資料或 ID');
+            }
+            result = updateCustomer(e.parameter.id, postData);
+            customerCache = null; // 清除快取
+            break;
+        case 'delete':
+            result = deleteCustomer(e.parameter.id);
+            customerCache = null; // 清除快取
+            break;
+        case 'getSchedules':
+            result = getAllSchedules();
+            break;
+        case 'addSchedule':
+            if (!postData) {
+                throw new Error('缺少行程資料');
+            }
+            result = addSchedule(postData);
+            break;
+        case 'deleteSchedule':
+            result = deleteSchedule(e.parameter.id);
+            break;
+        case 'getOrders':
+            result = getAllOrders();
+            break;
+        case 'addOrder':
+            if (!postData) {
+                throw new Error('缺少訂單資料');
+            }
+            result = addOrder(postData);
+            break;
+        case 'updateOrder':
+            if (!postData) {
+                throw new Error('缺少訂單資料');
+            }
+            result = updateOrder(e.parameter.id, postData);
+            break;
+        case 'deleteOrder':
+            result = deleteOrder(e.parameter.id);
+            break;
             default:
                 return createResponse(false, null, '未知的操作');
         }
@@ -565,9 +568,31 @@ function getOrderSheet() {
 function getAllOrders() {
     const sheet = getOrderSheet();
     const data = sheet.getDataRange().getValues();
-    const customers = getAllCustomers();
-    const customerMap = {};
-    customers.forEach(c => { customerMap[c.id] = c.name; });
+    
+    // 只在需要時載入客戶資料（用於建立映射）
+    let customerMap = {};
+    if (data.length > 1) {
+        // 收集所有客戶 ID
+        const customerIds = new Set();
+        for (let i = 1; i < data.length; i++) {
+            if (data[i][0] && data[i][2]) {
+                customerIds.add(String(data[i][2]));
+            }
+        }
+        
+        // 只在有客戶 ID 時載入客戶資料
+        if (customerIds.size > 0) {
+            // 使用快取或載入客戶資料
+            if (!customerCache) {
+                customerCache = getAllCustomers();
+            }
+            customerCache.forEach(c => { 
+                if (customerIds.has(String(c.id))) {
+                    customerMap[String(c.id)] = c.name; 
+                }
+            });
+        }
+    }
     
     const orders = [];
     for (let i = 1; i < data.length; i++) {
@@ -577,7 +602,7 @@ function getAllOrders() {
                 id: data[i][0],
                 date: data[i][1] || '',
                 customerId: customerId,
-                customerName: customerMap[customerId] || '',
+                customerName: customerMap[String(customerId)] || '',
                 product: data[i][3] || '',
                 quantity: data[i][4] || 1,
                 amount: data[i][5] || 0,
