@@ -70,7 +70,9 @@ const dataCache = {
         if (this.customers && (now - this.customersTimestamp) < this.cacheDuration) {
             return this.customers;
         }
-        this.customers = await getCustomers();
+        // 直接調用 API，不使用快取避免循環調用
+        const customers = await apiCall('getAll');
+        this.customers = customers;
         this.customersTimestamp = now;
         return this.customers;
     },
@@ -151,10 +153,17 @@ async function apiCall(action, data = null, customerId = null) {
     }
 }
 
-// 取得所有客戶
-async function getCustomers() {
+// 取得所有客戶（使用快取）
+async function getCustomers(useCache = true) {
     try {
+        if (useCache) {
+            return await dataCache.getCustomers();
+        }
+        // 不使用快取時直接調用 API
         const customers = await apiCall('getAll');
+        // 更新快取
+        dataCache.customers = customers;
+        dataCache.customersTimestamp = Date.now();
         return customers || [];
     } catch (error) {
         console.error('獲取客戶資料失敗:', error);
