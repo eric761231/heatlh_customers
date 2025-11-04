@@ -83,8 +83,17 @@ const dataCache = {
     }
 };
 
-// API 呼叫函數
+// API 呼叫函數（支援 Supabase 和 Google Sheets 切換）
 async function apiCall(action, data = null, customerId = null) {
+    // 如果使用 Supabase，調用 Supabase API
+    if (typeof DATA_SOURCE !== 'undefined' && DATA_SOURCE === 'supabase') {
+        if (typeof supabaseCall === 'undefined') {
+            throw new Error('Supabase 客戶端未載入，請確認已載入 supabase-client.js');
+        }
+        return await supabaseCall(action, data, customerId);
+    }
+    
+    // 否則使用 Google Apps Script
     try {
         const url = new URL(GOOGLE_SCRIPT_URL);
         url.searchParams.append('action', action);

@@ -6,3 +6,11 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzeAZjeeu-i_z
 // 請前往 https://console.cloud.google.com/apis/credentials 建立 OAuth 2.0 客戶端 ID
 const GOOGLE_CLIENT_ID = '487197553483-ob3hv43l2kkvunkc0nqc9bd3kj6f8v8g.apps.googleusercontent.com';
 
+// Supabase 配置
+const SUPABASE_URL = 'https://lvrcnmvnqbueghjyvxji.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // 請在 Supabase Dashboard > Settings > API 取得
+
+// 資料來源選擇：'supabase' 或 'google-sheets'
+// 遷移期間可以切換以測試兩個系統
+const DATA_SOURCE = 'google-sheets'; // 改為 'supabase' 以使用 Supabase
+
