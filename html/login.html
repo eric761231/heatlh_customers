@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
     <title>登入系統</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -12,27 +13,13 @@
             <h1>客戶健康狀況追蹤系統</h1>
             <p class="login-subtitle">請使用 Google 帳號登入</p>
             
-            <div id="g_id_onload"
-                 data-client_id=""
-                 data-callback="handleCredentialResponse"
-                 data-auto_prompt="false">
-            </div>
-            
-            <div class="g_id_signin" 
-                 data-type="standard"
-                 data-size="large"
-                 data-theme="outline"
-                 data-text="sign_in_with"
-                 data-shape="rectangular"
-                 data-logo_alignment="left">
-            </div>
+            <div id="g_id_signin" class="g_id_signin"></div>
             
             <div id="loginStatus" class="login-status"></div>
         </div>
     </div>
 
     <script src="js/config.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
         // 檢查是否已登入
         function checkLoginStatus() {
@@ -58,56 +45,139 @@
             }
         }
 
+        // Base64 URL-safe 解碼函數
+        function base64UrlDecode(str) {
+            // 將 base64url 轉換為標準 base64
+            str = str.replace(/-/g, '+').replace(/_/g, '/');
+            
+            // 添加填充
+            while (str.length % 4) {
+                str += '=';
+            }
+            
+            try {
+                // 解碼 base64
+                return atob(str);
+            } catch (e) {
+                console.error('Base64 解碼錯誤:', e);
+                throw e;
+            }
+        }
+
         // 處理 Google 登入回應
         function handleCredentialResponse(response) {
             const statusDiv = document.getElementById('loginStatus');
             
-            // 驗證 token（這裡簡化處理，實際應在後端驗證）
-            if (response.credential) {
-                // 解碼 JWT token（簡化版，實際應使用後端驗證）
-                try {
-                    const payload = JSON.parse(atob(response.credential.split('.')[1]));
-                    
-                    // 儲存登入資訊
-                    const loginInfo = {
-                        email: payload.email,
-                        name: payload.name,
-                        picture: payload.picture,
-                        exp: Date.now() + (24 * 60 * 60 * 1000) // 24小時後過期
-                    };
-                    
-                    localStorage.setItem('googleLogin', JSON.stringify(loginInfo));
-                    
-                    statusDiv.innerHTML = '<div class="success-message">登入成功！正在跳轉...</div>';
-                    
-                    // 跳轉到主頁面
-                    setTimeout(() => {
-                        window.location.href = 'calendar.html';
-                    }, 1000);
-                } catch (error) {
-                    statusDiv.innerHTML = '<div class="error-message">登入失敗，請重試</div>';
-                    console.error('登入錯誤:', error);
+            console.log('Google 登入回應:', response);
+            
+            // 檢查回應格式
+            if (!response || !response.credential) {
+                statusDiv.innerHTML = '<div class="error-message">登入回應格式錯誤，請重試</div>';
+                console.error('無效的登入回應:', response);
+                return;
+            }
+            
+            try {
+                // 分割 JWT token（格式：header.payload.signature）
+                const parts = response.credential.split('.');
+                if (parts.length !== 3) {
+                    throw new Error('JWT token 格式錯誤');
                 }
+                
+                // 解碼 payload（第二部分）
+                const decodedPayload = base64UrlDecode(parts[1]);
+                const payload = JSON.parse(decodedPayload);
+                
+                console.log('解碼後的 payload:', payload);
+                
+                // 驗證必要的欄位
+                if (!payload.email) {
+                    throw new Error('缺少 email 資訊');
+                }
+                
+                // 儲存登入資訊
+                const loginInfo = {
+                    email: payload.email,
+                    name: payload.name || payload.given_name || '使用者',
+                    picture: payload.picture || '',
+                    exp: Date.now() + (24 * 60 * 60 * 1000) // 24小時後過期
+                };
+                
+                localStorage.setItem('googleLogin', JSON.stringify(loginInfo));
+                
+                statusDiv.innerHTML = '<div class="success-message">登入成功！正在跳轉...</div>';
+                
+                // 跳轉到主頁面
+                setTimeout(() => {
+                    window.location.href = 'calendar.html';
+                }, 1000);
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="error-message">登入失敗：' + error.message + '</div>';
+                console.error('登入錯誤:', error);
+                console.error('回應內容:', response);
             }
         }
 
-        // 設定 Google Client ID
-        function setupGoogleSignIn() {
-            if (typeof GOOGLE_CLIENT_ID !== 'undefined' && GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID_HERE') {
-                const g_id_onload = document.getElementById('g_id_onload');
-                if (g_id_onload) {
-                    g_id_onload.setAttribute('data-client_id', GOOGLE_CLIENT_ID);
-                }
-            } else {
+        // 初始化 Google Sign-In
+        function initializeGoogleSignIn() {
+            // 檢查 Client ID 是否已設定
+            if (typeof GOOGLE_CLIENT_ID === 'undefined' || !GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
                 document.getElementById('loginStatus').innerHTML = 
                     '<div class="error-message">請在 config.js 中設定 GOOGLE_CLIENT_ID</div>';
+                return;
             }
+
+            // 載入 Google Sign-In 腳本
+            const script = document.createElement('script');
+            script.src = 'https://accounts.google.com/gsi/client';
+            script.async = true;
+            script.defer = true;
+            script.onload = function() {
+                // 確保 Google Sign-In 已載入後再初始化
+                if (window.google && window.google.accounts && window.google.accounts.id) {
+                    try {
+                        window.google.accounts.id.initialize({
+                            client_id: GOOGLE_CLIENT_ID,
+                            callback: handleCredentialResponse,
+                            auto_select: false,
+                            cancel_on_tap_outside: true
+                        });
+                        
+                        // 渲染登入按鈕
+                        const signinButton = document.getElementById('g_id_signin');
+                        if (signinButton) {
+                            window.google.accounts.id.renderButton(signinButton, {
+                                type: 'standard',
+                                size: 'large',
+                                theme: 'outline',
+                                text: 'sign_in_with',
+                                shape: 'rectangular',
+                                logo_alignment: 'left'
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Google Sign-In 初始化錯誤:', error);
+                        document.getElementById('loginStatus').innerHTML = 
+                            '<div class="error-message">初始化登入功能失敗，請重新整理頁面</div>';
+                    }
+                } else {
+                    console.error('Google Sign-In 腳本未正確載入');
+                    document.getElementById('loginStatus').innerHTML = 
+                        '<div class="error-message">無法載入 Google 登入服務，請檢查網路連線</div>';
+                }
+            };
+            script.onerror = function() {
+                console.error('無法載入 Google Sign-In 腳本');
+                document.getElementById('loginStatus').innerHTML = 
+                    '<div class="error-message">無法載入 Google 登入服務，請檢查網路連線</div>';
+            };
+            document.head.appendChild(script);
         }
 
-        // 頁面載入時檢查登入狀態
+        // 頁面載入時檢查登入狀態並初始化
         window.addEventListener('DOMContentLoaded', function() {
             checkLoginStatus();
-            setupGoogleSignIn();
+            initializeGoogleSignIn();
         });
     </script>
 </body>
