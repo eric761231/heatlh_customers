@@ -573,6 +573,8 @@ body {
 }
 
 /* 響應式設計 */
+
+/* 平板設備 (768px 以下) */
 @media (max-width: 768px) {
     .sidebar {
         width: 280px;
@@ -581,6 +583,7 @@ body {
 
     .container {
         padding: 0 15px;
+        max-width: 100%;
     }
 
     .form-card, .detail-card {
@@ -602,6 +605,488 @@ body {
 
     .header h1 {
         font-size: 1.3rem;
+    }
+
+    .calendar-grid {
+        padding: 16px;
+    }
+
+    .orders-table-container {
+        padding: 16px;
+        overflow-x: auto;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+}
+
+/* 手機設備 (480px 以下) */
+@media (max-width: 480px) {
+    /* 側邊欄 */
+    .sidebar {
+        width: 100%;
+        left: -100%;
+    }
+
+    .sidebar-header {
+        padding: 16px 20px;
+    }
+
+    .sidebar-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .nav-item {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+    }
+
+    .nav-icon {
+        font-size: 1.1rem;
+        margin-right: 10px;
+    }
+
+    /* 主內容區 */
+    .header {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .header h1 {
+        font-size: 1.2rem;
+        flex: 1 1 100%;
+        order: 2;
+        margin-top: 8px;
+    }
+
+    .menu-btn {
+        font-size: 1.3rem;
+        padding: 8px 12px;
+        order: 1;
+    }
+
+    .header-actions {
+        order: 3;
+        flex: 1 1 100%;
+        margin-top: 8px;
+    }
+
+    /* 容器 */
+    .container {
+        padding: 0 12px;
+        margin: 16px auto;
+    }
+
+    /* 表單卡片 */
+    .form-card, .detail-card {
+        padding: 20px 16px;
+        border-radius: 12px;
+    }
+
+    .form-card h2, .detail-card h2 {
+        font-size: 1.4rem;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+    }
+
+    /* 表單元素 */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="tel"],
+    .form-group select,
+    .form-group textarea {
+        padding: 10px 14px;
+        font-size: 16px; /* 防止 iOS 自動縮放 */
+        border-radius: 8px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .form-group-half {
+        margin-bottom: 20px;
+    }
+
+    /* 按鈕 */
+    .btn {
+        padding: 12px 24px;
+        font-size: 0.95rem;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .btn:last-child {
+        margin-bottom: 0;
+    }
+
+    .btn-sm {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+        margin-right: 4px;
+        margin-bottom: 4px;
+        width: auto;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 24px;
+    }
+
+    /* 客戶詳細資料 */
+    .customer-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+    }
+
+    .customer-avatar-large {
+        width: 100px;
+        height: 100px;
+    }
+
+    .customer-info-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .customer-phone, .customer-region {
+        font-size: 1rem;
+    }
+
+    .detail-section h3 {
+        font-size: 1.15rem;
+    }
+
+    .detail-content {
+        padding: 16px;
+        font-size: 0.95rem;
+    }
+
+    /* 客戶列表 */
+    .customer-list-container {
+        margin-top: 16px;
+    }
+
+    .customer-list-item {
+        margin-bottom: 12px;
+        border-radius: 12px;
+    }
+
+    .customer-list-header {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .customer-list-avatar {
+        width: 50px;
+        height: 50px;
+    }
+
+    .customer-list-summary h3 {
+        font-size: 1.1rem;
+    }
+
+    .customer-list-health {
+        font-size: 0.9rem;
+    }
+
+    .customer-detail-content {
+        padding: 16px;
+    }
+
+    .customer-detail-content .detail-row {
+        margin: 12px 0;
+        padding: 10px 0;
+        font-size: 0.9rem;
+    }
+
+    .customer-detail-content .detail-row strong {
+        min-width: 100px;
+        font-size: 0.9rem;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .customer-detail-actions {
+        margin-top: 16px;
+        padding-top: 16px;
+    }
+
+    .customer-detail-actions .btn {
+        margin-bottom: 8px;
+    }
+
+    /* 搜尋欄 */
+    .search-bar {
+        margin-bottom: 16px;
+    }
+
+    .search-bar input {
+        padding: 10px 14px;
+        font-size: 16px; /* 防止 iOS 自動縮放 */
+    }
+
+    /* 日曆 */
+    .calendar-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .calendar-controls h2 {
+        font-size: 1.3rem;
+        width: 100%;
+    }
+
+    .calendar-grid {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .calendar-weekday {
+        padding: 8px 4px;
+        font-size: 0.85rem;
+    }
+
+    .calendar-day {
+        padding: 6px 4px;
+        border-radius: 8px;
+    }
+
+    .calendar-day-number {
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+    }
+
+    .calendar-day-schedules {
+        font-size: 0.7rem;
+    }
+
+    /* 訂單表格 */
+    .orders-table-container {
+        padding: 12px;
+        border-radius: 12px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .orders-table {
+        min-width: 600px;
+    }
+
+    .orders-table th,
+    .orders-table td {
+        padding: 12px 8px;
+        font-size: 0.85rem;
+    }
+
+    /* 行程項目 */
+    .schedule-item {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    .schedule-item-header h4 {
+        font-size: 1rem;
+    }
+
+    .schedule-type-badge {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+    }
+
+    /* Modal */
+    .modal {
+        padding: 10px;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+        max-height: 100vh;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-header {
+        padding: 16px 20px;
+        flex-shrink: 0;
+    }
+
+    .modal-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .modal-content form {
+        padding: 20px 16px;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    /* 登入頁面 */
+    .login-container {
+        padding: 16px;
+    }
+
+    .login-card {
+        padding: 32px 24px;
+        border-radius: 12px;
+    }
+
+    .login-card h1 {
+        font-size: 1.75rem;
+    }
+
+    .login-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 24px;
+    }
+
+    /* 客戶卡片（網格） */
+    .customer-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .customer-card {
+        padding: 20px;
+    }
+
+    .customer-card-avatar {
+        width: 70px;
+        height: 70px;
+    }
+
+    /* 頭像上傳 */
+    .avatar-preview {
+        width: 120px;
+        height: 120px;
+    }
+
+    /* 側邊欄客戶清單 */
+    .customer-list {
+        padding: 16px;
+    }
+
+    .customer-item {
+        padding: 12px;
+        margin-bottom: 8px;
+    }
+
+    .customer-item-avatar {
+        width: 45px;
+        height: 45px;
+        margin-right: 12px;
+    }
+
+    .customer-item-name {
+        font-size: 0.95rem;
+    }
+
+    .customer-item-phone {
+        font-size: 0.8rem;
+    }
+
+    /* 空訊息 */
+    .empty-message {
+        padding: 32px 16px;
+        font-size: 0.9rem;
+    }
+
+    /* 載入和錯誤訊息 */
+    .loading, .error-message {
+        padding: 32px 16px;
+        font-size: 0.95rem;
+    }
+
+    /* 編輯模式 */
+    .editable-input,
+    .editable-textarea {
+        padding: 8px 10px;
+        font-size: 16px; /* 防止 iOS 自動縮放 */
+    }
+
+    .editable-input {
+        min-width: 100%;
+    }
+
+    /* 健康狀態 */
+    .health-status-full {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}
+
+/* 超小螢幕 (360px 以下) */
+@media (max-width: 360px) {
+    .header h1 {
+        font-size: 1.1rem;
+    }
+
+    .form-card h2, .detail-card h2 {
+        font-size: 1.25rem;
+    }
+
+    .customer-info-header h2 {
+        font-size: 1.4rem;
+    }
+
+    .calendar-weekday {
+        font-size: 0.8rem;
+        padding: 6px 2px;
+    }
+
+    .calendar-day-number {
+        font-size: 0.85rem;
+    }
+
+    .calendar-day-schedules {
+        font-size: 0.65rem;
+    }
+
+    .orders-table th,
+    .orders-table td {
+        padding: 10px 6px;
+        font-size: 0.8rem;
+    }
+
+    .btn-sm {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+}
+
+/* 橫向模式調整 */
+@media (max-width: 768px) and (orientation: landscape) {
+    .modal-content {
+        max-height: 90vh;
+    }
+
+    .calendar-grid {
+        padding: 12px;
+    }
+
+    .calendar-day {
+        padding: 4px 2px;
     }
 }
 
