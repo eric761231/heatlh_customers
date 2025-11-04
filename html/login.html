@@ -200,11 +200,19 @@
                 // 確保 Google Sign-In 已載入後再初始化
                 if (window.google && window.google.accounts && window.google.accounts.id) {
                     try {
+                        // 先禁用自動選擇，確保可以選擇帳號
+                        try {
+                            window.google.accounts.id.disableAutoSelect();
+                        } catch (e) {
+                            console.log('無法禁用自動選擇:', e);
+                        }
+                        
                         window.google.accounts.id.initialize({
                             client_id: GOOGLE_CLIENT_ID,
                             callback: handleCredentialResponse,
                             auto_select: false,
-                            cancel_on_tap_outside: true
+                            cancel_on_tap_outside: true,
+                            ux_mode: 'popup' // 使用彈出視窗模式，確保可以選擇帳號
                         });
                         
                         // 渲染登入按鈕
