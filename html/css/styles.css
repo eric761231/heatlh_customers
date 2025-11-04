@@ -162,7 +162,8 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s, visibility 0.3s;
@@ -559,7 +560,7 @@ body::before {
     gap: 30px;
     margin-bottom: 40px;
     padding-bottom: 30px;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .customer-avatar-large {
@@ -641,7 +642,7 @@ body::before {
 .detail-actions {
     margin-top: 40px;
     padding-top: 30px;
-    border-top: 2px solid #E8EDF2;
+    border-top: 1.5px solid rgba(255, 255, 255, 0.1);
 }
 
 .loading, .error-message {
@@ -1263,7 +1264,7 @@ body::before {
     grid-template-columns: repeat(7, 1fr);
     gap: 0;
     margin-bottom: 0;
-    border-bottom: 1.5px solid #E8EDF2;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
 }
 
 .calendar-weekday {
@@ -1285,7 +1286,7 @@ body::before {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 0;
-    border-top: 1.5px solid #E8EDF2;
+    border-top: 1.5px solid rgba(255, 255, 255, 0.1);
 }
 
 .calendar-day {
@@ -1585,7 +1586,7 @@ body::before {
 .customer-detail-content .detail-row {
     margin: 15px 0;
     padding: 12px 0;
-    border-bottom: 1px solid #E8EDF2;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     line-height: 1.7;
 }
 
