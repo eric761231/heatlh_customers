@@ -8,7 +8,7 @@ const GOOGLE_CLIENT_ID = '487197553483-ob3hv43l2kkvunkc0nqc9bd3kj6f8v8g.apps.goo
 
 // Supabase 配置
 const SUPABASE_URL = 'https://lvrcnmvnqbueghjyvxji.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // 請在 Supabase Dashboard > Settings > API 取得
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2cmNubXZucWJ1ZWdoanl2eGppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyNTgzOTUsImV4cCI6MjA3NzgzNDM5NX0.l6DMlnQx3YXqTe85yQqcDm3i9cIr7hAFdi3N-6OnAn0'; // 請在 Supabase Dashboard > Settings > API 取得
 
 // 資料來源選擇：'supabase' 或 'google-sheets'
 // 遷移期間可以切換以測試兩個系統

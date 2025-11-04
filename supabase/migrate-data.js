@@ -8,7 +8,7 @@
 
 // 請替換為您的 Supabase 專案資訊
 const SUPABASE_URL = 'https://lvrcnmvnqbueghjyvxji.supabase.co'; // 從 Supabase Dashboard 取得
-const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY'; // 從 Supabase Dashboard > Settings > API 取得
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2cmNubXZucWJ1ZWdoanl2eGppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyNTgzOTUsImV4cCI6MjA3NzgzNDM5NX0.l6DMlnQx3YXqTe85yQqcDm3i9cIr7hAFdi3N-6OnAn0'; // 從 Supabase Dashboard > Settings > API 取得
 
 // Google Apps Script URL（用於讀取現有資料）
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzeAZjeeu-i_zxZ7yqtMhF-GlqRolONshl3DVckvv9jNxdWlvUSSnscDaAeVfLUQ7Ss/exec';
