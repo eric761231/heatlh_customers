@@ -5,11 +5,27 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', '微軟正黑體', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: #EBF5F8;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', '微軟正黑體', Roboto, 'Helvetica Neue', 'SF Pro Display', Arial, sans-serif;
+    background: linear-gradient(135deg, #1A0026 0%, #2D1B3D 50%, #1A0026 100%);
     min-height: 100vh;
-    color: #2C3E50;
+    color: #FFFFFF;
     line-height: 1.6;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 抽象背景圖形 */
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    right: -20%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(ellipse at top right, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom left, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
 }
 
 /* 登入頁面 */
@@ -18,6 +34,8 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    position: relative;
+    z-index: 1;
 }
 
 .login-container {
@@ -27,27 +45,45 @@ body {
 }
 
 .login-card {
-    background: white;
-    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
     padding: 48px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     text-align: center;
-    border: 1px solid rgba(74, 144, 226, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .login-card h1 {
-    color: #2C3E50;
+    color: #FFFFFF;
     margin-bottom: 12px;
     font-size: 2rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
 }
 
 .login-subtitle {
-    color: #6C757D;
+    color: rgba(255, 255, 255, 0.8);
     margin-bottom: 32px;
     font-size: 1rem;
     font-weight: 400;
+    position: relative;
+    z-index: 1;
 }
 
 .login-status {
@@ -56,11 +92,13 @@ body {
 }
 
 .success-message {
-    color: #155724;
+    color: #FFFFFF;
     padding: 12px 16px;
-    background: #D4EDDA;
-    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.3) 0%, rgba(16, 185, 129, 0.3) 100%);
+    border-radius: 12px;
     font-size: 0.95rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 /* 側邊導航欄 */
@@ -70,12 +108,13 @@ body {
     top: 0;
     width: 320px;
     height: 100vh;
-    background: white;
-    box-shadow: 2px 0 16px rgba(0, 0, 0, 0.06);
+    background: linear-gradient(180deg, rgba(26, 0, 38, 0.95) 0%, rgba(45, 27, 61, 0.95) 100%);
+    backdrop-filter: blur(20px);
+    box-shadow: 2px 0 32px rgba(0, 0, 0, 0.5);
     transition: left 0.3s ease;
     z-index: 1000;
     overflow-y: auto;
-    border-right: 1px solid rgba(74, 144, 226, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar.active {
@@ -87,8 +126,9 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 24px;
-    background: #4A90E2;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%);
     color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-header h2 {
@@ -143,24 +183,28 @@ body {
     display: flex;
     align-items: center;
     padding: 14px 24px;
-    color: #2C3E50;
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     border-left: 3px solid transparent;
     font-size: 0.95rem;
+    border-radius: 0 12px 12px 0;
+    margin-right: 12px;
 }
 
 .nav-item:hover {
-    background: #F0F8FF;
-    border-left-color: #4A90E2;
-    color: #4A90E2;
+    background: linear-gradient(90deg, rgba(168, 85, 247, 0.2) 0%, transparent 100%);
+    border-left-color: #A855F7;
+    color: #FFFFFF;
+    transform: translateX(4px);
 }
 
 .nav-item.active {
-    background: #EBF5F8;
-    border-left-color: #4A90E2;
+    background: linear-gradient(90deg, rgba(168, 85, 247, 0.3) 0%, rgba(59, 130, 246, 0.2) 100%);
+    border-left-color: #A855F7;
     font-weight: 600;
-    color: #4A90E2;
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
 }
 
 .nav-icon {
@@ -172,7 +216,7 @@ body {
 
 .nav-divider {
     height: 1px;
-    background: #E8EDF2;
+    background: rgba(255, 255, 255, 0.1);
     margin: 12px 24px;
 }
 
@@ -186,18 +230,20 @@ body {
     align-items: center;
     padding: 14px;
     margin-bottom: 10px;
-    background: white;
-    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    border: 1px solid #E8EDF2;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .customer-item:hover {
-    background: #F0F8FF;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%);
     transform: translateX(4px);
-    border-color: #4A90E2;
-    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
+    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3);
 }
 
 .customer-item-avatar {
@@ -207,13 +253,14 @@ body {
     margin-right: 14px;
     overflow: hidden;
     flex-shrink: 0;
-    background: #4A90E2;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-weight: 600;
     font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
 }
 
 .customer-item-avatar img {
@@ -231,17 +278,17 @@ body {
     font-weight: 600;
     font-size: 1rem;
     margin-bottom: 4px;
-    color: #2C3E50;
+    color: #FFFFFF;
 }
 
 .customer-item-phone {
     font-size: 0.875rem;
-    color: #6C757D;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .empty-message {
     text-align: center;
-    color: #95A5A6;
+    color: rgba(255, 255, 255, 0.6);
     padding: 48px 24px;
     font-style: italic;
     font-size: 0.95rem;
@@ -250,44 +297,46 @@ body {
 /* 主內容區 */
 .main-content {
     transition: margin-left 0.3s ease;
+    position: relative;
+    z-index: 1;
 }
 
 .header {
-    background: white;
+    background: linear-gradient(135deg, rgba(26, 0, 38, 0.9) 0%, rgba(45, 27, 61, 0.9) 100%);
+    backdrop-filter: blur(20px);
     padding: 20px 32px;
     display: flex;
     align-items: center;
     gap: 20px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: 1px solid rgba(74, 144, 226, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .menu-btn {
-    background: #4A90E2;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
     border: none;
     color: white;
     font-size: 1.5rem;
     padding: 10px 14px;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
 }
 
 .menu-btn:hover {
-    background: #3A7BC8;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
 }
 
 .header h1 {
     flex: 1;
     font-size: 1.75rem;
-    color: #2C3E50;
-    font-weight: 600;
+    color: #FFFFFF;
+    font-weight: 700;
     letter-spacing: -0.5px;
 }
 
@@ -301,25 +350,43 @@ body {
     max-width: 900px;
     margin: 30px auto;
     padding: 0 20px;
+    position: relative;
+    z-index: 1;
 }
 
 /* 表單卡片 */
 .form-card, .detail-card {
-    background: white;
-    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
     padding: 40px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    border: 1px solid rgba(74, 144, 226, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.form-card::before, .detail-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .form-card h2, .detail-card h2 {
     margin-bottom: 32px;
-    color: #2C3E50;
+    color: #FFFFFF;
     font-size: 1.75rem;
-    border-bottom: 2px solid #4A90E2;
+    border-bottom: 2px solid rgba(168, 85, 247, 0.5);
     padding-bottom: 16px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: -0.3px;
+    position: relative;
+    z-index: 1;
 }
 
 /* 表單 */
@@ -342,12 +409,14 @@ body {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #34495E;
+    color: rgba(255, 255, 255, 0.9);
     font-size: 0.95rem;
+    position: relative;
+    z-index: 1;
 }
 
 .required {
-    color: #E74C3C;
+    color: #FF6B6B;
 }
 
 .form-group input[type="text"],
@@ -356,21 +425,30 @@ body {
 .form-group textarea {
     width: 100%;
     padding: 12px 16px;
-    border: 1.5px solid #E8EDF2;
-    border-radius: 10px;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
     font-size: 0.95rem;
     font-family: inherit;
-    transition: all 0.2s ease;
-    background: white;
-    color: #2C3E50;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: #FFFFFF;
+    position: relative;
+    z-index: 1;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #4A90E2;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .form-group textarea {
@@ -390,23 +468,25 @@ body {
 .avatar-preview {
     width: 150px;
     height: 150px;
-    border: 2px dashed #D1D9E0;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     overflow: hidden;
-    background: #F8FAFC;
-    color: #95A5A6;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    color: rgba(255, 255, 255, 0.6);
     font-size: 0.9rem;
     text-align: center;
 }
 
 .avatar-preview:hover {
-    border-color: #4A90E2;
-    background: #F0F8FF;
+    border-color: rgba(168, 85, 247, 0.6);
+    background: rgba(168, 85, 247, 0.15);
+    transform: scale(1.05);
 }
 
 .avatar-preview img {
@@ -429,39 +509,41 @@ body {
 }
 
 .btn-primary {
-    background: #4A90E2;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);
     color: white;
-    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
+    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-primary:hover {
-    background: #3A7BC8;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
 }
 
 .btn-secondary {
-    background: #6C757D;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
     color: white;
-    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-secondary:hover {
-    background: #5A6268;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.25);
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 .btn-danger {
-    background: #E74C3C;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.9) 100%);
     color: white;
-    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-danger:hover {
-    background: #C0392B;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 }
 
 .form-actions {
@@ -499,7 +581,7 @@ body {
 .avatar-placeholder {
     width: 100%;
     height: 100%;
-    background: #4A90E2;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -510,15 +592,15 @@ body {
 
 .customer-info-header h2 {
     margin-bottom: 12px;
-    color: #2C3E50;
+    color: #FFFFFF;
     font-size: 2rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: -0.5px;
 }
 
 .customer-phone, .customer-region {
     margin: 8px 0;
-    color: #6C757D;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 1.05rem;
 }
 
@@ -527,21 +609,22 @@ body {
 }
 
 .detail-section h3 {
-    color: #4A90E2;
+    color: rgba(168, 85, 247, 0.9);
     margin-bottom: 16px;
     font-size: 1.3rem;
     padding-bottom: 12px;
-    border-bottom: 2px solid #E8EDF2;
-    font-weight: 600;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    font-weight: 700;
 }
 
 .detail-content {
-    background: #F8FAFC;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 16px;
     line-height: 1.8;
-    color: #34495E;
-    border: 1px solid #E8EDF2;
+    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .detail-content p {
@@ -550,7 +633,7 @@ body {
 }
 
 .no-data {
-    color: #95A5A6;
+    color: rgba(255, 255, 255, 0.6);
     font-style: italic;
     font-size: 0.95rem;
 }
@@ -564,12 +647,12 @@ body {
 .loading, .error-message {
     text-align: center;
     padding: 48px;
-    color: #6C757D;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 1.05rem;
 }
 
 .error-message {
-    color: #E74C3C;
+    color: #FF6B6B;
 }
 
 /* 響應式設計 */
@@ -1119,24 +1202,25 @@ body {
 }
 
 .calendar-controls h2 {
-    color: #2C3E50;
+    color: #FFFFFF;
     font-size: 1.5rem;
     margin: 0;
-    font-weight: 600;
+    font-weight: 700;
     flex: 1;
     text-align: center;
 }
 
 /* 日曆導航按鈕 */
 .btn-calendar-nav {
-    background: white;
-    border: 1.5px solid #E8EDF2;
-    color: #4A90E2;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
     font-size: 1.2rem;
     padding: 8px 12px;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     min-width: 44px;
     height: 44px;
     display: flex;
@@ -1146,18 +1230,32 @@ body {
 }
 
 .btn-calendar-nav:hover {
-    background: #F0F8FF;
-    border-color: #4A90E2;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.15);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%);
+    border-color: rgba(168, 85, 247, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
 }
 
 .calendar-grid {
-    background: white;
-    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
     padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    border: 1px solid rgba(74, 144, 226, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.calendar-grid::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .calendar-weekdays {
@@ -1171,10 +1269,12 @@ body {
 .calendar-weekday {
     text-align: center;
     font-weight: 600;
-    color: #4A90E2;
+    color: rgba(255, 255, 255, 0.9);
     padding: 12px 8px;
     font-size: 0.95rem;
-    border-right: 1px solid #E8EDF2;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .calendar-weekday:last-child {
@@ -1190,13 +1290,13 @@ body {
 
 .calendar-day {
     aspect-ratio: 1;
-    border-right: 1px solid #E8EDF2;
-    border-bottom: 1px solid #E8EDF2;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 0;
     padding: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    background: white;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
     min-height: 60px;
     display: flex;
     flex-direction: column;
@@ -1210,33 +1310,38 @@ body {
 }
 
 .calendar-day:hover {
-    background: #F0F8FF;
+    background: rgba(168, 85, 247, 0.2);
     z-index: 1;
     position: relative;
+    transform: scale(1.05);
 }
 
 .calendar-day.today {
-    background: #E8F4FD;
-    font-weight: 600;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%);
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
 }
 
 .calendar-day.today .calendar-day-number {
-    color: #4A90E2;
+    color: #FFFFFF;
+    font-size: 1.1rem;
 }
 
 .calendar-day.empty {
-    background: #F8FAFC;
+    background: rgba(255, 255, 255, 0.02);
     cursor: default;
 }
 
 .calendar-day-number {
     font-size: 1rem;
     margin-bottom: 5px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
 }
 
 .calendar-day-schedules {
     font-size: 0.75rem;
-    color: #4A90E2;
+    color: rgba(168, 85, 247, 0.9);
     font-weight: 600;
 }
 
@@ -1249,22 +1354,36 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(44, 62, 80, 0.5);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
     overflow: auto;
 }
 
 .modal-content {
-    background: white;
+    background: linear-gradient(135deg, rgba(26, 0, 38, 0.95) 0%, rgba(45, 27, 61, 0.95) 100%);
+    backdrop-filter: blur(20px);
     margin: 5% auto;
     padding: 0;
-    border-radius: 16px;
+    border-radius: 24px;
     width: 90%;
     max-width: 600px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     max-height: 90vh;
     overflow-y: auto;
-    border: 1px solid rgba(74, 144, 226, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .modal-header {
@@ -1272,22 +1391,24 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 24px 32px;
-    border-bottom: 1.5px solid #E8EDF2;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 1;
 }
 
 .modal-header h2 {
     margin: 0;
-    color: #2C3E50;
-    font-weight: 600;
+    color: #FFFFFF;
+    font-weight: 700;
     font-size: 1.5rem;
     letter-spacing: -0.3px;
 }
 
 .modal-close {
-    background: none;
+    background: rgba(255, 255, 255, 0.1);
     border: none;
     font-size: 1.75rem;
-    color: #95A5A6;
+    color: rgba(255, 255, 255, 0.8);
     cursor: pointer;
     padding: 0;
     width: 32px;
@@ -1295,13 +1416,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     border-radius: 8px;
 }
 
 .modal-close:hover {
-    color: #2C3E50;
-    background: #F8FAFC;
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
 }
 
 .modal-content form {
@@ -1315,23 +1437,42 @@ body {
 
 /* 客戶列表項目（手風琴式） */
 .customer-list-item {
-    background: white;
-    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
     margin-bottom: 16px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     overflow: hidden;
-    transition: all 0.2s ease;
-    border: 1px solid rgba(74, 144, 226, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.customer-list-item::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.customer-list-item:hover::before {
+    opacity: 1;
 }
 
 .customer-list-item:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(168, 85, 247, 0.3);
+    transform: translateY(-2px);
 }
 
 .customer-list-item.expanded {
-    box-shadow: 0 6px 24px rgba(74, 144, 226, 0.15);
-    border-color: #4A90E2;
+    box-shadow: 0 8px 32px rgba(168, 85, 247, 0.4);
+    border-color: rgba(168, 85, 247, 0.5);
 }
 
 .customer-list-header {
@@ -1344,7 +1485,7 @@ body {
 }
 
 .customer-list-header:hover {
-    background: #F8FAFC;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .customer-list-avatar {
@@ -1353,8 +1494,10 @@ body {
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    border: 2.5px solid #4A90E2;
-    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.15);
+    border: 2.5px solid rgba(168, 85, 247, 0.6);
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    position: relative;
+    z-index: 1;
 }
 
 .customer-list-avatar img {
@@ -1366,7 +1509,7 @@ body {
 .avatar-placeholder-list {
     width: 100%;
     height: 100%;
-    background: #4A90E2;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1382,16 +1525,20 @@ body {
 
 .customer-list-summary h3 {
     margin: 0 0 8px 0;
-    color: #2C3E50;
+    color: #FFFFFF;
     font-size: 1.2rem;
-    font-weight: 600;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
 }
 
 .customer-list-health {
     margin: 0;
-    color: #6C757D;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 0.95rem;
     line-height: 1.5;
+    position: relative;
+    z-index: 1;
 }
 
 .customer-list-expand-icon {
@@ -1402,8 +1549,10 @@ body {
 
 .expand-icon {
     font-size: 1.2rem;
-    color: #4A90E2;
-    transition: transform 0.2s ease;
+    color: rgba(168, 85, 247, 0.9);
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
 }
 
 .customer-list-item.expanded .expand-icon {
@@ -1411,9 +1560,11 @@ body {
 }
 
 .customer-list-detail {
-    border-top: 1.5px solid #E8EDF2;
-    background: #F8FAFC;
+    border-top: 1.5px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     animation: slideDown 0.3s ease-out;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes slideDown {
@@ -1443,17 +1594,21 @@ body {
 }
 
 .customer-detail-content .detail-row strong {
-    color: #4A90E2;
+    color: rgba(168, 85, 247, 0.9);
     margin-right: 12px;
     display: inline-block;
     min-width: 120px;
     font-weight: 600;
 }
 
+.customer-detail-content .detail-row {
+    color: rgba(255, 255, 255, 0.9);
+}
+
 /* 編輯模式樣式 */
 .customer-list-item.editable {
-    border: 2px solid #4A90E2;
-    box-shadow: 0 4px 16px rgba(74, 144, 226, 0.2);
+    border: 2px solid rgba(168, 85, 247, 0.6);
+    box-shadow: 0 6px 24px rgba(168, 85, 247, 0.4);
 }
 
 .editable-text {
@@ -1464,13 +1619,20 @@ body {
 .editable-textarea {
     width: 100%;
     padding: 8px 12px;
-    border: 1.5px solid #E8EDF2;
-    border-radius: 8px;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
     font-size: 0.95rem;
     font-family: inherit;
-    background: white;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: #FFFFFF;
     margin-top: 5px;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+}
+
+.editable-input::placeholder,
+.editable-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .editable-input {
@@ -1488,8 +1650,9 @@ body {
 .editable-input:focus,
 .editable-textarea:focus {
     outline: none;
-    border-color: #4A90E2;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .detail-row .editable-input,
@@ -1500,11 +1663,13 @@ body {
 .health-status-full {
     margin-top: 8px;
     padding: 12px;
-    background: white;
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
     white-space: pre-wrap;
     word-wrap: break-word;
-    border: 1px solid #E8EDF2;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .customer-detail-actions {
@@ -1522,19 +1687,39 @@ body {
 }
 
 .customer-card {
-    background: white;
-    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
     padding: 24px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    transition: all 0.2s ease;
-    border: 1px solid rgba(74, 144, 226, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.customer-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.customer-card:hover::before {
+    opacity: 1;
 }
 
 .customer-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    border-color: #4A90E2;
+    box-shadow: 0 8px 28px rgba(168, 85, 247, 0.4);
+    border-color: rgba(168, 85, 247, 0.5);
 }
 
 .customer-card-avatar {
@@ -1543,8 +1728,10 @@ body {
     border-radius: 50%;
     overflow: hidden;
     margin: 0 auto 16px;
-    border: 2.5px solid #4A90E2;
-    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.15);
+    border: 2.5px solid rgba(168, 85, 247, 0.6);
+    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
+    position: relative;
+    z-index: 1;
 }
 
 .customer-card-avatar img {
@@ -1556,7 +1743,7 @@ body {
 .avatar-placeholder-small {
     width: 100%;
     height: 100%;
-    background: #4A90E2;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1567,17 +1754,19 @@ body {
 
 .customer-card-info {
     text-align: center;
+    position: relative;
+    z-index: 1;
 }
 
 .customer-card-info h3 {
     margin: 10px 0;
-    color: #2C3E50;
-    font-weight: 600;
+    color: #FFFFFF;
+    font-weight: 700;
 }
 
 .customer-card-phone, .customer-card-address {
     font-size: 0.9rem;
-    color: #6C757D;
+    color: rgba(255, 255, 255, 0.8);
     margin: 5px 0;
 }
 
@@ -1589,28 +1778,49 @@ body {
 .search-bar input {
     width: 100%;
     padding: 12px 16px;
-    border: 1.5px solid #E8EDF2;
-    border-radius: 10px;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
     font-size: 0.95rem;
     font-family: inherit;
-    background: white;
-    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: #FFFFFF;
+    transition: all 0.3s ease;
+}
+
+.search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .search-bar input:focus {
     outline: none;
-    border-color: #4A90E2;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 /* 訂單表格 */
 .orders-table-container {
-    background: white;
-    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
     padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     overflow-x: auto;
-    border: 1px solid rgba(74, 144, 226, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.orders-table-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .orders-table {
@@ -1619,26 +1829,29 @@ body {
 }
 
 .orders-table th {
-    background: #F8FAFC;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
     padding: 10px 8px;
     text-align: left;
     font-weight: 600;
-    color: #2C3E50;
-    border-bottom: 2px solid #E8EDF2;
+    color: rgba(255, 255, 255, 0.9);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     font-size: 0.875rem;
     white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .orders-table td {
     padding: 10px 8px;
-    border-bottom: 1px solid #E8EDF2;
-    color: #34495E;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
     font-size: 0.875rem;
     vertical-align: middle;
 }
 
 .orders-table tr:hover {
-    background: #F8FAFC;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .btn-sm {
@@ -1656,13 +1869,15 @@ body {
 }
 
 .badge-success {
-    background: #d4edda;
-    color: #155724;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.3) 0%, rgba(16, 185, 129, 0.3) 100%);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .badge-warning {
-    background: #fff3cd;
-    color: #856404;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(245, 158, 11, 0.3) 100%);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* 行程相關 */
@@ -1671,21 +1886,41 @@ body {
 }
 
 .schedule-item {
-    background: white;
-    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
     padding: 16px;
     margin-bottom: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    border-left: 3px solid #4A90E2;
-    border: 1px solid rgba(74, 144, 226, 0.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    border-left: 3px solid rgba(168, 85, 247, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.schedule-item::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.schedule-item:hover::before {
+    opacity: 1;
 }
 
 .schedule-item:hover {
-    background: #F0F8FF;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%);
     transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.1);
+    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3);
 }
 
 .schedule-item-header {
@@ -1697,17 +1932,22 @@ body {
 
 .schedule-item-header h4 {
     margin: 0;
-    color: #2C3E50;
-    font-weight: 600;
+    color: #FFFFFF;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
 }
 
 .schedule-type-badge {
-    background: #4A90E2;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
     color: white;
     padding: 4px 10px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 600;
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
+    position: relative;
+    z-index: 1;
 }
 
 .schedule-detail {
@@ -1721,8 +1961,12 @@ body {
 }
 
 .detail-row strong {
-    color: #4A90E2;
+    color: rgba(168, 85, 247, 0.9);
     margin-right: 12px;
     font-weight: 600;
+}
+
+.detail-row {
+    color: rgba(255, 255, 255, 0.9);
 }
 
