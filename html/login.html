@@ -123,20 +123,32 @@
         function checkAndShowLogoutButton() {
             const loginInfo = localStorage.getItem('googleLogin');
             const logoutBtn = document.getElementById('logoutBtn');
+            const signinButton = document.getElementById('g_id_signin');
             
-            if (loginInfo && logoutBtn) {
+            if (!logoutBtn) return;
+            
+            // 檢查是否有登入資訊
+            if (loginInfo) {
                 try {
                     const userInfo = JSON.parse(loginInfo);
                     if (userInfo.email) {
                         // 有登入資訊，顯示登出按鈕
+                        // 確保按鈕在登入按鈕下方正確顯示
                         logoutBtn.style.display = 'flex';
+                        logoutBtn.style.marginTop = '16px';
+                        
+                        // 如果登入按鈕已經渲染，確保登出按鈕緊跟在後面
+                        if (signinButton && signinButton.children.length > 0) {
+                            // 登入按鈕已渲染，登出按鈕應該顯示在下方
+                            console.log('登出按鈕已顯示在登入按鈕下方');
+                        }
                     } else {
                         logoutBtn.style.display = 'none';
                     }
                 } catch (e) {
                     logoutBtn.style.display = 'none';
                 }
-            } else if (logoutBtn) {
+            } else {
                 logoutBtn.style.display = 'none';
             }
         }
@@ -417,6 +429,11 @@
                         // 強制顯示帳號選擇
                         login_uri: window.location.origin + '/login.html'
                     });
+                    
+                    // 按鈕渲染完成後，檢查並顯示登出按鈕
+                    setTimeout(() => {
+                        checkAndShowLogoutButton();
+                    }, 300);
                 }
             } catch (error) {
                 console.error('Google Sign-In 初始化錯誤:', error);
@@ -428,10 +445,13 @@
         // 頁面載入時檢查登入狀態並初始化
         window.addEventListener('DOMContentLoaded', function() {
             checkLoginStatus();
-            checkAndShowLogoutButton();
             // 延遲一點時間確保所有狀態已清除
             setTimeout(() => {
                 initializeGoogleSignIn();
+                // 初始化後檢查登出按鈕
+                setTimeout(() => {
+                    checkAndShowLogoutButton();
+                }, 500);
             }, 100);
         });
         

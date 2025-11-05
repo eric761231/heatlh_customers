@@ -125,12 +125,13 @@ body::before {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    display: flex;
+    display: none; /* 預設隱藏，由 JavaScript 控制顯示 */
     align-items: center;
     justify-content: center;
     gap: 8px;
     position: relative;
     z-index: 1;
+    box-sizing: border-box;
 }
 
 .btn-logout:hover {
