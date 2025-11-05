@@ -132,6 +132,14 @@ body::before {
     position: relative;
     z-index: 1;
     box-sizing: border-box;
+    visibility: visible;
+    opacity: 1;
+}
+
+/* 當顯示時覆蓋預設隱藏 */
+.btn-logout[style*="display: flex"],
+.btn-logout[style*="display:flex"] {
+    display: flex !important;
 }
 
 .btn-logout:hover {

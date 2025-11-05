@@ -15,7 +15,7 @@
             
             <div id="g_id_signin" class="g_id_signin"></div>
             
-            <button id="logoutBtn" class="btn-logout" onclick="logoutAccount()" style="display: none;">
+            <button id="logoutBtn" class="btn-logout" onclick="logoutAccount()">
                 <span>🚪</span>
                 <span>登出帳號</span>
             </button>
@@ -125,30 +125,45 @@
             const logoutBtn = document.getElementById('logoutBtn');
             const signinButton = document.getElementById('g_id_signin');
             
-            if (!logoutBtn) return;
+            console.log('檢查登出按鈕顯示狀態...');
+            console.log('登入資訊:', loginInfo);
+            
+            if (!logoutBtn) {
+                console.error('找不到登出按鈕元素');
+                return;
+            }
             
             // 檢查是否有登入資訊
             if (loginInfo) {
                 try {
                     const userInfo = JSON.parse(loginInfo);
+                    console.log('解析後的用戶資訊:', userInfo);
+                    
                     if (userInfo.email) {
                         // 有登入資訊，顯示登出按鈕
-                        // 確保按鈕在登入按鈕下方正確顯示
-                        logoutBtn.style.display = 'flex';
+                        // 使用 !important 確保覆蓋 CSS 的 display: none
+                        logoutBtn.style.setProperty('display', 'flex', 'important');
                         logoutBtn.style.marginTop = '16px';
+                        logoutBtn.style.visibility = 'visible';
+                        logoutBtn.style.opacity = '1';
+                        
+                        console.log('✓ 登出按鈕已顯示');
+                        console.log('登出按鈕 display:', window.getComputedStyle(logoutBtn).display);
                         
                         // 如果登入按鈕已經渲染，確保登出按鈕緊跟在後面
                         if (signinButton && signinButton.children.length > 0) {
-                            // 登入按鈕已渲染，登出按鈕應該顯示在下方
-                            console.log('登出按鈕已顯示在登入按鈕下方');
+                            console.log('登入按鈕已渲染，登出按鈕應該顯示在下方');
                         }
                     } else {
+                        console.log('用戶資訊中沒有 email，隱藏登出按鈕');
                         logoutBtn.style.display = 'none';
                     }
                 } catch (e) {
+                    console.error('解析登入資訊失敗:', e);
                     logoutBtn.style.display = 'none';
                 }
             } else {
+                console.log('沒有登入資訊，隱藏登出按鈕');
                 logoutBtn.style.display = 'none';
             }
         }
@@ -318,11 +333,10 @@
                 
                 statusDiv.innerHTML = '<div class="success-message">登入成功！正在跳轉...</div>';
                 
-                // 隱藏登出按鈕（因為要跳轉了）
-                const logoutBtn = document.getElementById('logoutBtn');
-                if (logoutBtn) {
-                    logoutBtn.style.display = 'none';
-                }
+                // 登入成功後顯示登出按鈕（在跳轉前）
+                setTimeout(() => {
+                    checkAndShowLogoutButton();
+                }, 100);
                 
                 // 跳轉到主頁面
                 setTimeout(() => {
