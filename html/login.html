@@ -215,9 +215,13 @@
                         // 檢查是否過期（24小時）
                         const now = Date.now();
                         if (now < userInfo.exp) {
-                            // 已登入且未過期，直接跳轉
-                            window.location.href = 'calendar.html';
-                            return;
+                            // 已登入且未過期，顯示登出按鈕但不自動跳轉
+                            // 讓用戶可以選擇登出或繼續使用
+                            console.log('已登入狀態，顯示登出按鈕');
+                            // 不自動跳轉，讓用戶看到登出按鈕
+                            // 如果需要自動跳轉，可以取消下面的註解
+                            // window.location.href = 'calendar.html';
+                            // return;
                         } else {
                             // 已過期，清除登入資訊
                             localStorage.removeItem('googleLogin');
