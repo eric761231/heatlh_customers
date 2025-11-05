@@ -1,82 +1,76 @@
 // 登入驗證
-function checkAuth() {
-    const loginInfo = localStorage.getItem('googleLogin');
-    if (!loginInfo) {
-        window.location.href = 'login.html';
-        return false;
-    }
-    
+async function checkAuth() {
     try {
-        const userInfo = JSON.parse(loginInfo);
-        if (userInfo.email && userInfo.exp) {
-            const now = Date.now();
-            if (now >= userInfo.exp) {
-                // 已過期，清除登入資訊並跳轉
-                localStorage.removeItem('googleLogin');
-                window.location.href = 'login.html';
-                return false;
-            }
-            return true;
+        // 檢查 Supabase 會話
+        if (typeof supabase === 'undefined' || typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') {
+            window.location.href = 'login.html';
+            return false;
         }
+        
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { data: { session }, error } = await client.auth.getSession();
+        
+        if (error || !session || !session.user) {
+            window.location.href = 'login.html';
+            return false;
+        }
+        
+        return true;
     } catch (e) {
-        localStorage.removeItem('googleLogin');
+        console.error('驗證登入狀態失敗:', e);
         window.location.href = 'login.html';
         return false;
     }
-    
-    window.location.href = 'login.html';
-    return false;
 }
 
 // 登出
-function logout() {
+async function logout() {
     if (confirm('確定要登出嗎？')) {
-        // 清除所有登入資訊
-        localStorage.removeItem('googleLogin');
-        
-        // 清除所有相關的 localStorage
-        const keysToRemove = [];
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && (key.includes('googleLogin') || key.includes('cache'))) {
-                keysToRemove.push(key);
-            }
-        }
-        keysToRemove.forEach(key => localStorage.removeItem(key));
-        
-        // 清除客戶資料快取（如果存在）
-        if (typeof dataCache !== 'undefined' && dataCache) {
-            dataCache.customers = null;
-            dataCache.customersTimestamp = 0;
-        }
-        
-        // 清除當前使用者快取
-        if (typeof currentUser !== 'undefined') {
-            currentUser = null;
-        }
-        
-        // 清除 window 物件上的快取
-        if (typeof window !== 'undefined') {
-            if (typeof window.dataCache !== 'undefined') {
-                window.dataCache = null;
-            }
-            if (typeof window.currentUser !== 'undefined') {
-                window.currentUser = null;
-            }
-        }
-        
-        // 清除 Google Sign-In 會話（如果可用）
         try {
-            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-                google.accounts.id.disableAutoSelect();
-                google.accounts.id.cancel();
+            // 清除 Supabase 會話
+            if (typeof supabase !== 'undefined' && typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined') {
+                const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                await client.auth.signOut();
             }
+            
+            // 清除所有相關的 localStorage
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.includes('cache') || key.includes('supabase'))) {
+                    keysToRemove.push(key);
+                }
+            }
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+            
+            // 清除客戶資料快取（如果存在）
+            if (typeof dataCache !== 'undefined' && dataCache) {
+                dataCache.customers = null;
+                dataCache.customersTimestamp = 0;
+            }
+            
+            // 清除當前使用者快取
+            if (typeof currentUser !== 'undefined') {
+                currentUser = null;
+            }
+            
+            // 清除 window 物件上的快取
+            if (typeof window !== 'undefined') {
+                if (typeof window.dataCache !== 'undefined') {
+                    window.dataCache = null;
+                }
+                if (typeof window.currentUser !== 'undefined') {
+                    window.currentUser = null;
+                }
+            }
+            
+            // 跳轉到登入頁面
+            window.location.href = 'login.html';
         } catch (e) {
-            console.log('清除 Google Sign-In 會話時出錯:', e);
+            console.error('登出失敗:', e);
+            // 即使登出失敗也跳轉到登入頁面
+            window.location.href = 'login.html';
         }
-        
-        // 跳轉到登入頁面，並帶上 logout 參數以強制清除 Google Sign-In 會話
-        window.location.href = 'login.html?logout=true';
     }
 }
 
@@ -132,8 +126,16 @@ if (typeof window !== 'undefined') {
     window.dataCache = dataCache;
 }
 
-// API 呼叫函數（支援 Supabase 和 Google Sheets 切換）
+// API 呼叫函數（支援 Java API、Supabase 和 Google Sheets 切換）
 async function apiCall(action, data = null, customerId = null) {
+    // 如果使用 Java API，調用 Java 後端
+    if (typeof DATA_SOURCE !== 'undefined' && DATA_SOURCE === 'java-api') {
+        if (typeof supabaseCall === 'undefined') {
+            throw new Error('Java API 客戶端未載入，請確認已載入 java-api-client.js');
+        }
+        return await supabaseCall(action, data, customerId);
+    }
+    
     // 如果使用 Supabase，調用 Supabase API
     if (typeof DATA_SOURCE !== 'undefined' && DATA_SOURCE === 'supabase') {
         if (typeof supabaseCall === 'undefined') {
@@ -172,24 +174,24 @@ async function apiCall(action, data = null, customerId = null) {
         try {
             const response = await fetch(url, { ...options, signal: controller.signal });
             clearTimeout(timeoutId);
-            
-            if (!response.ok) {
+        
+        if (!response.ok) {
                 // 處理特定的 HTTP 狀態碼
                 if (response.status === 429) {
                     throw new Error('請求過於頻繁，請稍後再試 (429 Too Many Requests)');
                 } else if (response.status === 0) {
                     throw new Error('網路連線失敗，請檢查網路連線');
                 } else {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            }
+        }
 
-            const result = await response.json();
-            
-            if (result.success) {
-                return result.data;
-            } else {
-                throw new Error(result.error || '操作失敗');
+        const result = await response.json();
+        
+        if (result.success) {
+            return result.data;
+        } else {
+            throw new Error(result.error || '操作失敗');
             }
         } catch (error) {
             clearTimeout(timeoutId);

@@ -5,33 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>葡眾愛客戶</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // 檢查登入狀態，如果未登入則跳轉到登入頁面
-        window.addEventListener('DOMContentLoaded', function() {
-            const loginInfo = localStorage.getItem('googleLogin');
-            if (!loginInfo) {
-                window.location.href = 'login.html';
-                return;
-            }
-            
+        window.addEventListener('DOMContentLoaded', async function() {
             try {
-                const userInfo = JSON.parse(loginInfo);
-                if (userInfo.email && userInfo.exp) {
-                    const now = Date.now();
-                    if (now >= userInfo.exp) {
-                        localStorage.removeItem('googleLogin');
-                        window.location.href = 'login.html';
-                        return;
-                    }
-                    // 已登入且未過期，跳轉到行事曆主頁
-                    window.location.href = 'calendar.html';
+                if (typeof supabase === 'undefined' || typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') {
+                    window.location.href = 'login.html';
                     return;
                 }
+                
+                const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                const { data: { session }, error } = await client.auth.getSession();
+                
+                if (error || !session || !session.user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // 已登入，跳轉到行事曆主頁
+                window.location.href = 'calendar.html';
             } catch (e) {
-                localStorage.removeItem('googleLogin');
+                console.error('檢查登入狀態失敗:', e);
+                window.location.href = 'login.html';
             }
-            
-            window.location.href = 'login.html';
         });
     </script>
 </head>

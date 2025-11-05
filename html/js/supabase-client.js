@@ -37,87 +37,78 @@ function initSupabase() {
         supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
     
-    // 設定當前使用者 Email 到 Supabase 請求標頭（用於 RLS）
-    const user = getCurrentUser();
-    if (user && user.email) {
-        // 使用 Supabase 的 setAuth 或自定義標頭
-        // 注意：Supabase 的 RLS 會自動使用 JWT token，但我們需要通過其他方式
-        // 這裡我們在查詢時直接過濾 created_by
-    }
+    // Supabase Auth 會自動處理會話和 RLS
     
     return supabaseClient;
 }
 
 /**
- * 取得當前使用者（從 localStorage）
+ * 取得當前使用者（從 Supabase Auth）
  */
-function getCurrentUser() {
+async function getCurrentUser() {
     try {
-        const loginInfo = localStorage.getItem('googleLogin');
-        if (loginInfo) {
-            const userInfo = JSON.parse(loginInfo);
-            const userEmail = userInfo.email;
-            
-            // 如果使用者已變更，清除舊的快取
-            if (currentUser && currentUser.email !== userEmail) {
-                currentUser = null;
-            }
-            
-            // 如果沒有快取或使用者已變更，建立新的使用者物件
-            if (!currentUser || currentUser.email !== userEmail) {
-                currentUser = {
-                    id: userEmail, // 使用 email 作為使用者 ID
-                    email: userEmail,
-                    name: userInfo.name || '使用者',
-                    picture: userInfo.picture || ''
-                };
-            }
-            
-            return currentUser;
+        const client = initSupabase();
+        if (!client) {
+            return null;
         }
+        
+        // 從 Supabase Auth 獲取當前會話
+        const { data: { session }, error } = await client.auth.getSession();
+        
+        if (error || !session || !session.user) {
+            currentUser = null;
+            return null;
+        }
+        
+        const user = session.user;
+        const userEmail = user.email;
+        
+        // 從 users 表獲取用戶資料（取得 user_login）
+        let userData = null;
+        let userLogin = null;
+        try {
+            const { data, error: userError } = await client
+                .from('users')
+                .select('name, picture, user_login')
+                .eq('id', user.id)
+                .single();
+            
+            if (!userError && data) {
+                userData = data;
+                userLogin = data.user_login;
+            }
+        } catch (e) {
+            console.log('無法從 users 表獲取用戶資料:', e);
+        }
+        
+        // 如果沒有 user_login，使用 email 作為 fallback
+        if (!userLogin) {
+            userLogin = userEmail;
+        }
+        
+        // 如果使用者已變更，清除舊的快取
+        if (currentUser && currentUser.userLogin !== userLogin) {
+            currentUser = null;
+        }
+        
+        // 如果沒有快取或使用者已變更，建立新的使用者物件
+        if (!currentUser || currentUser.userLogin !== userLogin) {
+            currentUser = {
+                id: user.id, // 使用 Supabase Auth 的 user ID
+                email: userEmail,
+                userLogin: userLogin, // 使用 user_login 作為串聯欄位
+                name: userData?.name || user.user_metadata?.name || userEmail?.split('@')[0] || '使用者',
+                picture: userData?.picture || user.user_metadata?.picture || ''
+            };
+        }
+        
+        return currentUser;
     } catch (e) {
         console.error('取得使用者資訊失敗:', e);
         currentUser = null;
     }
     
     return null;
-}
-
-/**
- * 建立或更新使用者（登入時呼叫）
- */
-async function createOrUpdateUser(userData) {
-    const client = initSupabase();
-    if (!client) {
-        throw new Error('Supabase 客戶端未初始化');
-    }
-    
-    const userId = userData.email; // 使用 email 作為 ID
-    
-    const { data, error } = await client
-        .from('users')
-        .upsert({
-            id: userId,
-            email: userData.email,
-            name: userData.name || '',
-            picture: userData.picture || '',
-            google_id: userData.googleId || null,
-            last_login: new Date().toISOString()
-        }, { onConflict: 'id' })
-        .select()
-        .single();
-    
-    if (error) throw error;
-    
-    // 更新當前使用者資訊
-    currentUser = {
-        id: data.id,
-        email: data.email,
-        name: data.name,
-        picture: data.picture
-    };
-    
-    return data;
 }
 
 /**
@@ -167,16 +158,16 @@ async function supabaseCall(action, data = null, id = null) {
 // ==================== 客戶資料操作 ====================
 
 async function getAllCustomersFromSupabase() {
-    const user = getCurrentUser();
-    if (!user) {
+    const user = await getCurrentUser();
+    if (!user || !user.userLogin) {
         throw new Error('未登入，無法取得客戶資料');
     }
     
-    // 只查詢當前使用者建立的客戶
+    // 只查詢當前使用者建立的客戶（使用 user_login 串聯）
     const { data, error } = await supabaseClient
         .from('customers')
         .select('*')
-        .eq('created_by', user.email) // 只取得當前使用者的資料
+        .eq('user_login', user.userLogin) // 使用 user_login 串聯
         .order('created_at', { ascending: false });
     
     if (error) throw error;
@@ -206,17 +197,17 @@ async function getAllCustomersFromSupabase() {
 }
 
 async function getCustomerByIdFromSupabase(id) {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) {
         throw new Error('未登入，無法取得客戶資料');
     }
     
-    // 只查詢當前使用者建立的客戶
+    // 只查詢當前使用者建立的客戶（使用 user_login 串聯）
     const { data, error } = await supabaseClient
         .from('customers')
         .select('*')
         .eq('id', id)
-        .eq('created_by', user.email) // 確保只能取得自己的資料
+        .eq('user_login', user.userLogin) // 使用 user_login 串聯
         .single();
     
     if (error) {
@@ -251,7 +242,7 @@ async function getCustomerByIdFromSupabase(id) {
 
 async function addCustomerToSupabase(customerData) {
     const id = Date.now().toString();
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     
     const { data, error } = await supabaseClient
         .from('customers')
@@ -274,7 +265,7 @@ async function addCustomerToSupabase(customerData) {
             medications: customerData.medications || '',
             supplements: customerData.supplements || '',
             avatar: customerData.avatar || '',
-            created_by: user ? user.email : null
+            user_login: user ? user.userLogin : null // 使用 user_login
         })
         .select()
         .single();
@@ -288,17 +279,17 @@ async function addCustomerToSupabase(customerData) {
 }
 
 async function updateCustomerInSupabase(id, customerData) {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) {
         throw new Error('未登入，無法更新客戶資料');
     }
     
-    // 先檢查是否為自己的資料
+    // 先檢查是否為自己的資料（使用 user_login 串聯）
     const { data: existing, error: checkError } = await supabaseClient
         .from('customers')
-        .select('created_by')
+        .select('user_login')
         .eq('id', id)
-        .eq('created_by', user.email)
+        .eq('user_login', user.userLogin)
         .single();
     
     if (checkError || !existing) {
@@ -324,11 +315,10 @@ async function updateCustomerInSupabase(id, customerData) {
             health_status: customerData.healthStatus || '',
             medications: customerData.medications || '',
             supplements: customerData.supplements || '',
-            avatar: customerData.avatar || '',
-            updated_by: user.email
+            avatar: customerData.avatar || ''
         })
         .eq('id', id)
-        .eq('created_by', user.email) // 確保只能更新自己的資料
+        .eq('user_login', user.userLogin) // 使用 user_login 串聯
         .select()
         .single();
     
@@ -341,17 +331,17 @@ async function updateCustomerInSupabase(id, customerData) {
 }
 
 async function deleteCustomerFromSupabase(id) {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) {
         throw new Error('未登入，無法刪除客戶資料');
     }
     
-    // 確保只能刪除自己的資料
+    // 確保只能刪除自己的資料（使用 user_login 串聯）
     const { error } = await supabaseClient
         .from('customers')
         .delete()
         .eq('id', id)
-        .eq('created_by', user.email); // 只刪除自己建立的資料
+        .eq('user_login', user.userLogin); // 使用 user_login 串聯
     
     if (error) {
         if (error.code === 'PGRST116') {
@@ -366,16 +356,16 @@ async function deleteCustomerFromSupabase(id) {
 // ==================== 行程資料操作 ====================
 
 async function getAllSchedulesFromSupabase() {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) {
         throw new Error('未登入，無法取得行程資料');
     }
     
-    // 只取得當前使用者建立的行程
+    // 只取得當前使用者建立的行程（使用 user_login 串聯）
     const { data: schedules, error: schedulesError } = await supabaseClient
         .from('schedules')
         .select('*')
-        .eq('created_by', user.email) // 只取得自己的行程
+        .eq('user_login', user.userLogin) // 使用 user_login 串聯
         .order('date', { ascending: true });
     
     if (schedulesError) throw schedulesError;
@@ -389,7 +379,7 @@ async function getAllSchedulesFromSupabase() {
             .from('customers')
             .select('id, name')
             .in('id', customerIds)
-            .eq('created_by', user.email); // 只取得自己的客戶
+            .eq('user_login', user.userLogin); // 使用 user_login 串聯
         
         if (customersError) throw customersError;
         
@@ -413,7 +403,7 @@ async function getAllSchedulesFromSupabase() {
 
 async function addScheduleToSupabase(scheduleData) {
     const id = Date.now().toString();
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     
     const { data, error } = await supabaseClient
         .from('schedules')
@@ -426,7 +416,7 @@ async function addScheduleToSupabase(scheduleData) {
             type: scheduleData.type || 'other',
             customer_id: scheduleData.customerId || null,
             notes: scheduleData.notes || '',
-            created_by: user ? user.email : null
+            user_login: user ? user.userLogin : null // 使用 user_login
         })
         .select()
         .single();
@@ -440,17 +430,17 @@ async function addScheduleToSupabase(scheduleData) {
 }
 
 async function deleteScheduleFromSupabase(id) {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) {
         throw new Error('未登入，無法刪除行程');
     }
     
-    // 確保只能刪除自己的行程
+    // 確保只能刪除自己的行程（使用 user_login 串聯）
     const { error } = await supabaseClient
         .from('schedules')
         .delete()
         .eq('id', id)
-        .eq('created_by', user.email); // 只刪除自己建立的行程
+        .eq('user_login', user.userLogin); // 使用 user_login 串聯
     
     if (error) {
         if (error.code === 'PGRST116') {
@@ -465,16 +455,16 @@ async function deleteScheduleFromSupabase(id) {
 // ==================== 訂單資料操作 ====================
 
 async function getAllOrdersFromSupabase() {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) {
         throw new Error('未登入，無法取得訂單資料');
     }
     
-    // 只取得當前使用者建立的訂單
+    // 只取得當前使用者建立的訂單（使用 user_login 串聯）
     const { data: orders, error: ordersError } = await supabaseClient
         .from('orders')
         .select('*')
-        .eq('created_by', user.email) // 只取得自己的訂單
+        .eq('user_login', user.userLogin) // 使用 user_login 串聯
         .order('date', { ascending: false });
     
     if (ordersError) throw ordersError;
@@ -488,7 +478,7 @@ async function getAllOrdersFromSupabase() {
             .from('customers')
             .select('id, name')
             .in('id', customerIds)
-            .eq('created_by', user.email); // 只取得自己的客戶
+            .eq('user_login', user.userLogin); // 使用 user_login 串聯
         
         if (customersError) throw customersError;
         
@@ -512,7 +502,7 @@ async function getAllOrdersFromSupabase() {
 
 async function addOrderToSupabase(orderData) {
     const id = Date.now().toString();
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     
     const { data, error } = await supabaseClient
         .from('orders')
@@ -525,7 +515,7 @@ async function addOrderToSupabase(orderData) {
             amount: orderData.amount || 0,
             paid: orderData.paid === true || orderData.paid === 'true',
             notes: orderData.notes || '',
-            created_by: user ? user.email : null
+            user_login: user ? user.userLogin : null // 使用 user_login
         })
         .select()
         .single();
@@ -539,12 +529,12 @@ async function addOrderToSupabase(orderData) {
 }
 
 async function updateOrderInSupabase(id, orderData) {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) {
         throw new Error('未登入，無法更新訂單');
     }
     
-    // 確保只能更新自己的訂單
+    // 確保只能更新自己的訂單（使用 user_login 串聯）
     const { data, error } = await supabaseClient
         .from('orders')
         .update({
@@ -554,11 +544,10 @@ async function updateOrderInSupabase(id, orderData) {
             quantity: orderData.quantity || 1,
             amount: orderData.amount || 0,
             paid: orderData.paid === true || orderData.paid === 'true',
-            notes: orderData.notes || '',
-            updated_by: user.email
+            notes: orderData.notes || ''
         })
         .eq('id', id)
-        .eq('created_by', user.email) // 確保只能更新自己的訂單
+        .eq('user_login', user.userLogin) // 使用 user_login 串聯
         .select()
         .single();
     
@@ -576,17 +565,17 @@ async function updateOrderInSupabase(id, orderData) {
 }
 
 async function deleteOrderFromSupabase(id) {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) {
         throw new Error('未登入，無法刪除訂單');
     }
     
-    // 確保只能刪除自己的訂單
+    // 確保只能刪除自己的訂單（使用 user_login 串聯）
     const { error } = await supabaseClient
         .from('orders')
         .delete()
         .eq('id', id)
-        .eq('created_by', user.email); // 只刪除自己建立的訂單
+        .eq('user_login', user.userLogin); // 使用 user_login 串聯
     
     if (error) {
         if (error.code === 'PGRST116') {

@@ -1,0 +1,27 @@
+# 編譯產物
+build/
+target/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# 日誌
+*.log
+
+# 系統檔案
+.DS_Store
+Thumbs.db
+
+# 依賴庫（由 Maven 管理）
+lib/
+
+# 配置檔案中的敏感資訊（請手動設定）
+src/main/resources/application-local.properties
+

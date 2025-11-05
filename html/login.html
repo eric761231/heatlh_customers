@@ -3,524 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
     <title>登入系統</title>
     <link rel="stylesheet" href="css/styles.css">
-</head>
-<body class="login-page">
-    <div class="login-container">
-        <div class="login-card">
-            <h1>葡眾愛客戶</h1>
-            <p class="login-subtitle">請使用 Google 帳號登入</p>
-            
-            <div id="g_id_signin" class="g_id_signin"></div>
-            
-            <button id="logoutBtn" class="btn-logout" onclick="logoutAccount()" style="display: none;">
-                <span>🚪</span>
-                <span>登出帳號</span>
-            </button>
-            
-            <div id="loginStatus" class="login-status"></div>
-        </div>
-    </div>
-
     <script src="js/config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
+</head>
+<body class="login-page">
+    <div class="login-header">
+        <button class="back-btn" onclick="window.history.back()" style="display: none;" id="backBtn">
+            <span>←</span> 返回
+        </button>
+        <button class="skip-btn" onclick="window.location.href='calendar.html'">Skip</button>
+        <h1 class="welcome-title" id="welcomeTitle">歡迎回來</h1>
+    </div>
+    
+    <div class="login-content-card">
+        <h2 class="login-title">登入</h2>
+        
+        <div id="status" class="login-status"></div>
+        
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group-modern">
+                <input type="email" id="email" name="email" required placeholder="Your email" autocomplete="email" class="modern-input">
+            </div>
+            
+            <div class="form-group-modern">
+                <input type="password" id="password" name="password" required placeholder="Password" autocomplete="current-password" class="modern-input">
+                <a href="#" class="forgot-password" onclick="event.preventDefault(); alert('請聯絡系統管理員重設密碼');">忘記密碼？</a>
+            </div>
+            
+            <button type="submit" class="btn-login-gradient">
+                登入
+            </button>
+        </form>
+        
+        <div class="signup-link">
+            <span>還沒有帳號？</span>
+            <a href="register.html">立即註冊</a>
+        </div>
+    </div>
+
     <script>
-        // 清除 Google Sign-In 會話
-        function clearGoogleSignInSession() {
+        // 初始化 Supabase
+        let supabaseClient = null;
+        
+        function initSupabase() {
+            if (typeof supabase === 'undefined') {
+                console.error('Supabase JS 庫未載入');
+                return null;
+            }
+            
+            if (typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') {
+                console.error('Supabase 配置未設定');
+                return null;
+            }
+            
+            if (!supabaseClient) {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+            
+            return supabaseClient;
+        }
+
+        // 檢查登入狀態
+        async function checkLoginStatus() {
+            const client = initSupabase();
+            if (!client) return;
+            
+            // 檢查是否有有效的會話
+            const { data: { session }, error } = await client.auth.getSession();
+            
+            if (session && session.user) {
+                // 已登入，跳轉到主頁
+                window.location.href = 'calendar.html';
+                return;
+            }
+            
+            // 更新歡迎標題（如果有使用者名稱）
             try {
-                if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-                    // 禁用自動選擇
-                    google.accounts.id.disableAutoSelect();
-                    // 清除提示
-                    google.accounts.id.cancel();
-                    // 清除記住的帳號
-                    try {
-                        google.accounts.id.storeCredential(null);
-                    } catch (e) {
-                        console.log('清除憑證時出錯:', e);
-                    }
-                    
-                    // 嘗試清除所有可能的 Google 相關狀態
-                    try {
-                        // 清除 Google Sign-In 的會話標記
-                        if (google.accounts.id.prompt) {
-                            google.accounts.id.cancel();
-                        }
-                    } catch (e) {
-                        console.log('清除提示時出錯:', e);
-                    }
+                const { data: userData } = await client
+                    .from('users')
+                    .select('name')
+                    .eq('id', session?.user?.id || '')
+                    .single();
+                
+                if (userData && userData.name) {
+                    document.getElementById('welcomeTitle').textContent = `歡迎回來，${userData.name}`;
                 }
             } catch (e) {
-                console.log('清除 Google Sign-In 會話時出錯:', e);
+                // 忽略錯誤
             }
             
-            // 嘗試清除可能的 Google 相關 Cookie（通過設定過期 Cookie）
-            // 注意：由於同源政策，我們無法直接清除 Google 網域的 Cookie
-            // 但可以嘗試清除本網域可能存在的相關 Cookie
-            try {
-                const cookies = document.cookie.split(';');
-                cookies.forEach(cookie => {
-                    const eqPos = cookie.indexOf('=');
-                    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-                    // 清除可能與 Google 相關的 Cookie
-                    if (name.toLowerCase().includes('google') || 
-                        name.toLowerCase().includes('gsi') ||
-                        name.toLowerCase().includes('oauth')) {
-                        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
-                        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=' + window.location.hostname;
-                        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.' + window.location.hostname;
-                    }
-                });
-            } catch (e) {
-                console.log('清除 Cookie 時出錯:', e);
-            }
-        }
-        
-        // 清除所有登入相關資料
-        function clearAllLoginData() {
-            console.log('開始清除所有登入資料...');
-            
-            // 1. 清除 localStorage 中的登入資訊
-            localStorage.removeItem('googleLogin');
-            console.log('✓ 已清除 localStorage.googleLogin');
-            
-            // 2. 清除所有相關的 localStorage（包含 cache）
-            const keysToRemove = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && (key.includes('googleLogin') || key.includes('cache') || key.includes('google') || key.includes('login') || key.includes('gsi') || key.includes('oauth'))) {
-                    keysToRemove.push(key);
-                    console.log('找到相關鍵:', key);
-                }
-            }
-            keysToRemove.forEach(key => {
-                localStorage.removeItem(key);
-                console.log('✓ 已清除 localStorage.' + key);
-            });
-            
-            // 3. 清除 sessionStorage（如果有的話）
-            try {
-                sessionStorage.clear();
-                console.log('✓ 已清除 sessionStorage');
-            } catch (e) {
-                console.log('清除 sessionStorage 時出錯:', e);
+            // 檢查是否有返回按鈕需要顯示
+            if (document.referrer && document.referrer.includes('register.html')) {
+                document.getElementById('backBtn').style.display = 'block';
             }
             
-            // 4. 清除 Google Sign-In 會話
-            clearGoogleSignInSession();
-            console.log('✓ 已清除 Google Sign-In 會話');
-            
-            // 5. 清除快取變數
-            if (typeof window !== 'undefined') {
-                if (typeof window.dataCache !== 'undefined') {
-                    window.dataCache = null;
-                    console.log('✓ 已清除 window.dataCache');
-                }
-                if (typeof window.currentUser !== 'undefined') {
-                    window.currentUser = null;
-                    console.log('✓ 已清除 window.currentUser');
-                }
-            }
-            
-            // 6. 強制重新載入 Google Sign-In（清除所有快取）
-            try {
-                // 移除現有的 Google Sign-In 腳本
-                const existingScripts = document.querySelectorAll('script[src*="accounts.google.com/gsi/client"]');
-                existingScripts.forEach(script => script.remove());
-                
-                // 清除 google 物件
-                if (typeof google !== 'undefined') {
-                    delete window.google;
-                }
-            } catch (e) {
-                console.log('清除 Google 腳本時出錯:', e);
-            }
-            
-            console.log('所有登入資料已清除完成');
-        }
-        
-        // 登出帳號功能
-        function logoutAccount() {
-            if (confirm('確定要登出所有帳號嗎？這將清除所有已儲存的登入資訊。')) {
-                clearAllLoginData();
-                
-                // 顯示成功訊息
-                const statusDiv = document.getElementById('loginStatus');
-                statusDiv.innerHTML = '<div class="success-message">已清除所有登入資料，請重新登入</div>';
-                
-                // 隱藏登出按鈕
-                const logoutBtn = document.getElementById('logoutBtn');
-                if (logoutBtn) {
-                    logoutBtn.style.display = 'none';
-                }
-                
-                // 重新初始化 Google Sign-In
-                setTimeout(() => {
-                    initializeGoogleSignIn();
-                }, 500);
-            }
-        }
-        
-        // 檢查並顯示登出按鈕
-        function checkAndShowLogoutButton() {
-            const loginInfo = localStorage.getItem('googleLogin');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const signinButton = document.getElementById('g_id_signin');
-            
-            if (!logoutBtn) return;
-            
-            // 檢查是否有登入資訊
-            if (loginInfo) {
-                try {
-                    const userInfo = JSON.parse(loginInfo);
-                    if (userInfo.email) {
-                        // 有登入資訊，顯示登出按鈕
-                        // 確保按鈕在登入按鈕下方正確顯示
-                        logoutBtn.style.display = 'flex';
-                        logoutBtn.style.marginTop = '16px';
-                        
-                        // 如果登入按鈕已經渲染，確保登出按鈕緊跟在後面
-                        if (signinButton && signinButton.children.length > 0) {
-                            // 登入按鈕已渲染，登出按鈕應該顯示在下方
-                            console.log('登出按鈕已顯示在登入按鈕下方');
-                        }
-                    } else {
-                        logoutBtn.style.display = 'none';
-                    }
-                } catch (e) {
-                    logoutBtn.style.display = 'none';
-                }
-            } else {
-                logoutBtn.style.display = 'none';
-            }
-        }
-        
-        // 檢查是否已登入
-        function checkLoginStatus() {
-            // 如果 URL 中有 logout 參數，清除所有登入狀態
+            // 檢查 URL 參數
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('logout') === 'true') {
-                // 清除所有登入資訊
-                localStorage.removeItem('googleLogin');
-                
-                // 清除所有相關的 localStorage
-                const keysToRemove = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && (key.includes('googleLogin') || key.includes('cache'))) {
-                        keysToRemove.push(key);
-                    }
-                }
-                keysToRemove.forEach(key => localStorage.removeItem(key));
-                
-                // 清除快取
-                if (typeof window !== 'undefined' && typeof window.dataCache !== 'undefined') {
-                    window.dataCache = null;
-                }
-                if (typeof window !== 'undefined' && typeof window.currentUser !== 'undefined') {
-                    window.currentUser = null;
-                }
-                
-                // 清除 Google Sign-In 會話
-                clearGoogleSignInSession();
-                
-                // 清除 URL 參數
-                window.history.replaceState({}, document.title, window.location.pathname);
-                
-                // 強制重新初始化 Google Sign-In
-                setTimeout(() => {
-                    initializeGoogleSignIn();
-                }, 500);
+            if (urlParams.get('registered') === 'true') {
+                const statusDiv = document.getElementById('status');
+                statusDiv.innerHTML = '<div class="success-message">註冊成功！請使用您的 Email 和密碼登入</div>';
+            }
+        }
+
+        // 處理登入
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const statusDiv = document.getElementById('status');
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            
+            // 獲取表單資料
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            // 驗證
+            if (!email || !password) {
+                statusDiv.innerHTML = '<div class="error-message">請填寫 Email 和密碼</div>';
                 return;
             }
             
-            const loginInfo = localStorage.getItem('googleLogin');
-            if (loginInfo) {
+            // 初始化 Supabase
+            const client = initSupabase();
+            if (!client) {
+                statusDiv.innerHTML = '<div class="error-message">系統初始化失敗，請重新整理頁面</div>';
+                return;
+            }
+            
+            // 顯示載入狀態
+            submitBtn.disabled = true;
+            submitBtn.textContent = '登入中...';
+            statusDiv.innerHTML = '<div style="color: #6B7280; padding: 12px; text-align: center;">正在登入，請稍候...</div>';
+            
+            try {
+                // 登入
+                const { data, error } = await client.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                if (!data.user) {
+                    throw new Error('登入失敗，請重試');
+                }
+                
+                // 登入成功，更新用戶資料到 users 表（確保 user_login 正確設定）
                 try {
-                    const userInfo = JSON.parse(loginInfo);
-                    if (userInfo.email && userInfo.exp) {
-                        // 檢查是否過期（24小時）
-                        const now = Date.now();
-                        if (now < userInfo.exp) {
-                            // 已登入且未過期，直接跳轉
-                            window.location.href = 'calendar.html';
-                            return;
-                        } else {
-                            // 已過期，清除登入資訊
-                            localStorage.removeItem('googleLogin');
-                        }
+                    // 先查詢是否已有 user_login
+                    const { data: existingUser, error: checkError } = await client
+                        .from('users')
+                        .select('user_login')
+                        .eq('id', data.user.id)
+                        .single();
+                    
+                    // 如果沒有 user_login，使用 email 作為預設值
+                    const userLogin = existingUser?.user_login || data.user.email;
+                    
+                    const { data: userData, error: userError } = await client
+                        .from('users')
+                        .upsert({
+                            id: data.user.id,
+                            email: data.user.email,
+                            user_login: userLogin, // 確保 user_login 正確設定
+                            name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || '使用者',
+                            last_login: new Date().toISOString()
+                        }, { onConflict: 'id' })
+                        .select()
+                        .single();
+                    
+                    if (userError) {
+                        console.error('更新用戶資料失敗:', userError);
                     }
                 } catch (e) {
-                    localStorage.removeItem('googleLogin');
-                }
-            }
-            
-            // 即使沒有 logout 參數，也清除任何已儲存的 Google 會話
-            // 確保每次進入登入頁面都要求選擇帳號
-            clearGoogleSignInSession();
-        }
-
-        // Base64 URL-safe 解碼函數
-        function base64UrlDecode(str) {
-            // 將 base64url 轉換為標準 base64
-            str = str.replace(/-/g, '+').replace(/_/g, '/');
-            
-            // 添加填充
-            while (str.length % 4) {
-                str += '=';
-            }
-            
-            try {
-                // 解碼 base64
-                return atob(str);
-            } catch (e) {
-                console.error('Base64 解碼錯誤:', e);
-                throw e;
-            }
-        }
-
-        // 處理 Google 登入回應
-        async function handleCredentialResponse(response) {
-            const statusDiv = document.getElementById('loginStatus');
-            
-            console.log('Google 登入回應:', response);
-            
-            // 檢查回應格式
-            if (!response || !response.credential) {
-                statusDiv.innerHTML = '<div class="error-message">登入回應格式錯誤，請重試</div>';
-                console.error('無效的登入回應:', response);
-                return;
-            }
-            
-            try {
-                // 分割 JWT token（格式：header.payload.signature）
-                const parts = response.credential.split('.');
-                if (parts.length !== 3) {
-                    throw new Error('JWT token 格式錯誤');
+                    console.error('更新用戶資料時出錯:', e);
                 }
                 
-                // 解碼 payload（第二部分）
-                const decodedPayload = base64UrlDecode(parts[1]);
-                const payload = JSON.parse(decodedPayload);
-                
-                console.log('解碼後的 payload:', payload);
-                
-                // 驗證必要的欄位
-                if (!payload.email) {
-                    throw new Error('缺少 email 資訊');
-                }
-                
-                // 清除所有舊的登入資訊和快取（確保可以切換帳號）
-                // 強制清除所有相關的 localStorage
-                const keysToRemove = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && (key.includes('googleLogin') || key.includes('cache'))) {
-                        keysToRemove.push(key);
-                    }
-                }
-                keysToRemove.forEach(key => localStorage.removeItem(key));
-                
-                // 清除客戶資料快取（如果存在）
-                if (typeof window !== 'undefined' && typeof window.dataCache !== 'undefined') {
-                    window.dataCache = null;
-                }
-                
-                // 清除當前使用者快取
-                if (typeof window !== 'undefined' && typeof window.currentUser !== 'undefined') {
-                    window.currentUser = null;
-                }
-                
-                // 儲存新的登入資訊
-                const loginInfo = {
-                    email: payload.email,
-                    name: payload.name || payload.given_name || '使用者',
-                    picture: payload.picture || '',
-                    googleId: payload.sub || '', // Google 使用者 ID
-                    exp: Date.now() + (24 * 60 * 60 * 1000) // 24小時後過期
-                };
-                
-                localStorage.setItem('googleLogin', JSON.stringify(loginInfo));
-                
-                // 如果使用 Supabase，儲存使用者到資料庫
-                if (typeof DATA_SOURCE !== 'undefined' && DATA_SOURCE === 'supabase' && typeof createOrUpdateUser !== 'undefined') {
-                    try {
-                        await createOrUpdateUser({
-                            email: payload.email,
-                            name: payload.name || payload.given_name || '使用者',
-                            picture: payload.picture || '',
-                            googleId: payload.sub || ''
-                        });
-                        console.log('使用者資料已儲存到 Supabase');
-                    } catch (error) {
-                        console.error('儲存使用者資料失敗:', error);
-                        // 即使儲存失敗也繼續登入流程
-                    }
-                }
-                
+                // 登入成功
                 statusDiv.innerHTML = '<div class="success-message">登入成功！正在跳轉...</div>';
-                
-                // 隱藏登出按鈕（因為要跳轉了）
-                const logoutBtn = document.getElementById('logoutBtn');
-                if (logoutBtn) {
-                    logoutBtn.style.display = 'none';
-                }
                 
                 // 跳轉到主頁面
                 setTimeout(() => {
                     window.location.href = 'calendar.html';
                 }, 1000);
+                
             } catch (error) {
-                statusDiv.innerHTML = '<div class="error-message">登入失敗：' + error.message + '</div>';
                 console.error('登入錯誤:', error);
-                console.error('回應內容:', response);
-            }
-        }
-
-        // 初始化 Google Sign-In
-        function initializeGoogleSignIn() {
-            // 檢查 Client ID 是否已設定
-            if (typeof GOOGLE_CLIENT_ID === 'undefined' || !GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
-                document.getElementById('loginStatus').innerHTML = 
-                    '<div class="error-message">請在 config.js 中設定 GOOGLE_CLIENT_ID</div>';
-                return;
-            }
-
-            // 清除現有的按鈕內容
-            const signinButton = document.getElementById('g_id_signin');
-            if (signinButton) {
-                signinButton.innerHTML = '';
-            }
-
-            // 如果 Google API 已經載入，先清除所有狀態
-            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-                try {
-                    google.accounts.id.disableAutoSelect();
-                    google.accounts.id.cancel();
-                    google.accounts.id.storeCredential(null);
-                } catch (e) {
-                    console.log('清除 Google 狀態:', e);
-                }
-            }
-
-            // 載入 Google Sign-In 腳本（如果尚未載入）
-            if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-                const script = document.createElement('script');
-                script.src = 'https://accounts.google.com/gsi/client';
-                script.async = true;
-                script.defer = true;
-                script.onload = function() {
-                    initGoogleSignInButton();
-                };
-                script.onerror = function() {
-                    console.error('無法載入 Google Sign-In 腳本');
-                    document.getElementById('loginStatus').innerHTML = 
-                        '<div class="error-message">無法載入 Google 登入服務，請檢查網路連線</div>';
-                };
-                document.head.appendChild(script);
-            } else {
-                // 如果已經載入，直接初始化
-                initGoogleSignInButton();
-            }
-        }
-
-        // 初始化 Google Sign-In 按鈕
-        function initGoogleSignInButton() {
-            if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-                console.error('Google Sign-In 腳本未正確載入');
-                return;
-            }
-
-            try {
-                // 強制清除所有狀態
-                try {
-                    google.accounts.id.disableAutoSelect();
-                    google.accounts.id.cancel();
-                    google.accounts.id.storeCredential(null);
-                } catch (e) {
-                    console.log('清除狀態時出錯:', e);
-                }
-
-                // 生成隨機 nonce 來強制新的會話
-                const nonce = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                let errorMessage = '登入失敗，請重試';
                 
-                // 初始化 Google Sign-In
-                google.accounts.id.initialize({
-                    client_id: GOOGLE_CLIENT_ID,
-                    callback: handleCredentialResponse,
-                    auto_select: false, // 禁用自動選擇帳號
-                    cancel_on_tap_outside: true,
-                    ux_mode: 'popup', // 使用彈出視窗模式
-                    itp_support: false,
-                    use_fedcm_for_prompt: false,
-                    nonce: nonce // 使用 nonce 強制新的會話
-                });
-                
-                // 渲染登入按鈕，使用 select_account 模式強制選擇帳號
-                const signinButton = document.getElementById('g_id_signin');
-                if (signinButton) {
-                    google.accounts.id.renderButton(signinButton, {
-                        type: 'standard',
-                        size: 'large',
-                        theme: 'outline',
-                        text: 'signin_with', // 使用 signin_with 而不是 sign_in_with
-                        shape: 'rectangular',
-                        logo_alignment: 'left',
-                        context: 'signin',
-                        ux_mode: 'popup',
-                        // 強制顯示帳號選擇
-                        login_uri: window.location.origin + '/login.html'
-                    });
-                    
-                    // 按鈕渲染完成後，檢查並顯示登出按鈕
-                    setTimeout(() => {
-                        checkAndShowLogoutButton();
-                    }, 300);
-                    
-                    // 監聽按鈕點擊事件，強制清除會話
-                    signinButton.addEventListener('click', function() {
-                        // 在點擊登入按鈕時，再次清除會話確保可以選擇帳號
-                        setTimeout(() => {
-                            clearGoogleSignInSession();
-                        }, 100);
-                    }, true);
+                if (error.message) {
+                    if (error.message.includes('Invalid login credentials') || error.message.includes('Invalid credentials')) {
+                        errorMessage = 'Email 或密碼錯誤';
+                    } else if (error.message.includes('Email not confirmed')) {
+                        errorMessage = '請先確認您的 Email';
+                    } else {
+                        errorMessage = error.message;
+                    }
                 }
-            } catch (error) {
-                console.error('Google Sign-In 初始化錯誤:', error);
-                document.getElementById('loginStatus').innerHTML = 
-                    '<div class="error-message">初始化登入功能失敗，請重新整理頁面</div>';
+                
+                statusDiv.innerHTML = `<div class="error-message">${errorMessage}</div>`;
+                submitBtn.disabled = false;
+                submitBtn.textContent = '登入';
             }
         }
 
-        // 頁面載入時檢查登入狀態並初始化
+        // 頁面載入時檢查
         window.addEventListener('DOMContentLoaded', function() {
             checkLoginStatus();
-            // 延遲一點時間確保所有狀態已清除
-            setTimeout(() => {
-                initializeGoogleSignIn();
-                // 初始化後檢查登出按鈕
-                setTimeout(() => {
-                    checkAndShowLogoutButton();
-                }, 500);
-            }, 100);
-        });
-        
-        // 在頁面可見時也重新初始化（處理瀏覽器返回的情況）
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                setTimeout(() => {
-                    clearGoogleSignInSession();
-                    const signinButton = document.getElementById('g_id_signin');
-                    if (signinButton && signinButton.innerHTML === '') {
-                        initializeGoogleSignIn();
-                    }
-                }, 100);
-            }
         });
     </script>
 </body>
 </html>
-
