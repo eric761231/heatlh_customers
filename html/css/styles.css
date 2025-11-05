@@ -6,7 +6,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', '微軟正黑體', Roboto, 'Helvetica Neue', 'SF Pro Display', Arial, sans-serif;
-    background: linear-gradient(135deg, #1A0026 0%, #2D1B3D 50%, #1A0026 100%);
+    background: linear-gradient(135deg, #0F766E 0%, #14B8A6 50%, #0F766E 100%);
     min-height: 100vh;
     color: #FFFFFF;
     line-height: 1.6;
@@ -22,8 +22,8 @@ body::before {
     right: -20%;
     width: 100%;
     height: 200%;
-    background: radial-gradient(ellipse at top right, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at bottom left, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+    background: radial-gradient(ellipse at top right, rgba(20, 184, 166, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom left, rgba(13, 148, 136, 0.1) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
 }
@@ -62,7 +62,7 @@ body::before {
     font-weight: 500;
     cursor: pointer;
     padding: 8px 12px;
-    border-radius: 8px;
+    border-radius: 16px;
     transition: background-color 0.2s;
 }
 
@@ -81,7 +81,7 @@ body::before {
     font-weight: 500;
     cursor: pointer;
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: 16px;
     transition: background-color 0.2s;
 }
 
@@ -101,7 +101,7 @@ body::before {
 /* 底部白色卡片 */
 .login-content-card {
     background: #FFFFFF;
-    border-radius: 32px 32px 0 0;
+    border-radius: 48px 48px 0 0;
     padding: 40px 24px 60px;
     margin-top: -32px;
     position: relative;
@@ -133,7 +133,7 @@ body::before {
     width: 100%;
     padding: 16px 20px;
     border: 1.5px solid #E5E7EB;
-    border-radius: 16px;
+    border-radius: 24px;
     font-size: 1rem;
     color: #1F2937;
     background: #FFFFFF;
@@ -170,7 +170,7 @@ body::before {
     padding: 16px 24px;
     background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
     border: none;
-    border-radius: 16px;
+    border-radius: 24px;
     color: #FFFFFF;
     font-size: 1.125rem;
     font-weight: 600;
@@ -228,7 +228,7 @@ body::before {
     
     .login-content-card {
         padding: 32px 20px 40px;
-        border-radius: 28px 28px 0 0;
+        border-radius: 40px 40px 0 0;
     }
     
     .login-title {
@@ -305,7 +305,7 @@ body::before {
     color: #065F46;
     padding: 12px 16px;
     background: #D1FAE5;
-    border-radius: 12px;
+    border-radius: 24px;
     font-size: 0.95rem;
     border: 1px solid #10B981;
     margin-bottom: 16px;
@@ -315,7 +315,7 @@ body::before {
     color: #991B1B;
     padding: 12px 16px;
     background: #FEE2E2;
-    border-radius: 12px;
+    border-radius: 24px;
     font-size: 0.95rem;
     border: 1px solid #EF4444;
     margin-bottom: 16px;
@@ -328,7 +328,7 @@ body::before {
     top: 0;
     width: 320px;
     height: 100vh;
-    background: linear-gradient(180deg, rgba(26, 0, 38, 0.95) 0%, rgba(45, 27, 61, 0.95) 100%);
+    background: linear-gradient(180deg, rgba(15, 118, 110, 0.95) 0%, rgba(20, 184, 166, 0.95) 100%);
     backdrop-filter: blur(20px);
     box-shadow: 2px 0 32px rgba(0, 0, 0, 0.5);
     transition: left 0.3s ease;
@@ -346,7 +346,7 @@ body::before {
     justify-content: space-between;
     align-items: center;
     padding: 24px;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.3) 0%, rgba(13, 148, 136, 0.3) 100%);
     color: white;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -414,18 +414,18 @@ body::before {
 }
 
 .nav-item:hover {
-    background: linear-gradient(90deg, rgba(168, 85, 247, 0.2) 0%, transparent 100%);
-    border-left-color: #A855F7;
+    background: linear-gradient(90deg, rgba(20, 184, 166, 0.2) 0%, transparent 100%);
+    border-left-color: #14B8A6;
     color: #FFFFFF;
     transform: translateX(4px);
 }
 
 .nav-item.active {
-    background: linear-gradient(90deg, rgba(168, 85, 247, 0.3) 0%, rgba(59, 130, 246, 0.2) 100%);
-    border-left-color: #A855F7;
+    background: linear-gradient(90deg, rgba(20, 184, 166, 0.3) 0%, rgba(13, 148, 136, 0.2) 100%);
+    border-left-color: #14B8A6;
     font-weight: 600;
     color: #FFFFFF;
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.2);
 }
 
 .nav-icon {
@@ -451,9 +451,9 @@ body::before {
     align-items: center;
     padding: 14px;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
     backdrop-filter: blur(20px);
-    border-radius: 16px;
+    border-radius: 24px;
     cursor: pointer;
     transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -461,10 +461,10 @@ body::before {
 }
 
 .customer-item:hover {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.25) 0%, rgba(13, 148, 136, 0.25) 100%);
     transform: translateX(4px);
-    border-color: rgba(168, 85, 247, 0.5);
-    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3);
+    border-color: rgba(20, 184, 166, 0.5);
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.3);
 }
 
 .customer-item-avatar {
@@ -474,14 +474,14 @@ body::before {
     margin-right: 14px;
     overflow: hidden;
     flex-shrink: 0;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.8) 0%, rgba(13, 148, 136, 0.8) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-weight: 600;
     font-size: 1.2rem;
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
 }
 
 .customer-item-avatar img {
@@ -537,20 +537,20 @@ body::before {
 }
 
 .menu-btn {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.8) 0%, rgba(13, 148, 136, 0.8) 100%);
     border: none;
     color: white;
     font-size: 1.5rem;
     padding: 10px 14px;
-    border-radius: 12px;
+    border-radius: 24px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 4px 16px rgba(20, 184, 166, 0.3);
 }
 
 .menu-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
 }
 
 .header h1 {
@@ -577,7 +577,7 @@ body::before {
 
 /* 表單卡片 */
 .form-card, .detail-card {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
     backdrop-filter: blur(20px);
     border-radius: 24px;
     padding: 40px;
@@ -594,7 +594,7 @@ body::before {
     right: -20%;
     width: 100%;
     height: 200%;
-    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(20, 184, 166, 0.1) 0%, transparent 70%);
     pointer-events: none;
 }
 
@@ -602,7 +602,7 @@ body::before {
     margin-bottom: 32px;
     color: #FFFFFF;
     font-size: 1.75rem;
-    border-bottom: 2px solid rgba(168, 85, 247, 0.5);
+    border-bottom: 2px solid rgba(20, 184, 166, 0.5);
     padding-bottom: 16px;
     font-weight: 700;
     letter-spacing: -0.3px;
@@ -647,7 +647,7 @@ body::before {
     width: 100%;
     padding: 12px 16px;
     border: 1.5px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
+    border-radius: 24px;
     font-size: 0.95rem;
     font-family: inherit;
     transition: all 0.3s ease;
@@ -667,9 +667,10 @@ body::before {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: rgba(168, 85, 247, 0.6);
-    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+    border-color: rgba(20, 184, 166, 0.6);
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
     background: rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
 }
 
 .form-group textarea {
@@ -705,8 +706,8 @@ body::before {
 }
 
 .avatar-preview:hover {
-    border-color: rgba(168, 85, 247, 0.6);
-    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(20, 184, 166, 0.6);
+    background: rgba(20, 184, 166, 0.15);
     transform: scale(1.05);
 }
 
@@ -730,15 +731,16 @@ body::before {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.9) 0%, rgba(13, 148, 136, 0.9) 100%);
     color: white;
-    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 4px 16px rgba(20, 184, 166, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
 }
 
 .btn-secondary {
@@ -747,6 +749,7 @@ body::before {
     color: white;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
 }
 
 .btn-secondary:hover {
@@ -760,6 +763,7 @@ body::before {
     color: white;
     box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
 }
 
 .btn-danger:hover {
@@ -802,7 +806,7 @@ body::before {
 .avatar-placeholder {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.8) 0%, rgba(13, 148, 136, 0.8) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -830,7 +834,7 @@ body::before {
 }
 
 .detail-section h3 {
-    color: rgba(168, 85, 247, 0.9);
+    color: rgba(20, 184, 166, 0.9);
     margin-bottom: 16px;
     font-size: 1.3rem;
     padding-bottom: 12px;
@@ -1282,21 +1286,86 @@ body::before {
     }
 
     /* 訂單表格 */
-    .orders-table-container {
-        padding: 12px;
-        border-radius: 12px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    .orders-cards-container {
+        gap: 12px;
     }
 
-    .orders-table {
-        min-width: 600px;
+    .order-card {
+        padding: 16px;
+        border-radius: 20px;
     }
 
-    .orders-table th,
-    .orders-table td {
-        padding: 10px 8px;
-        font-size: 0.85rem;
+    .order-card-header {
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+
+    .order-customer-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+
+    .order-customer-name {
+        font-size: 0.9375rem;
+    }
+
+    .order-status {
+        padding: 5px 10px;
+        font-size: 0.8125rem;
+    }
+
+    .order-product-section {
+        padding: 10px;
+        margin-bottom: 12px;
+        gap: 10px;
+    }
+
+    .order-product-image {
+        width: 70px;
+        height: 70px;
+    }
+
+    .order-product-placeholder {
+        font-size: 1.5rem;
+    }
+
+    .order-product-name {
+        font-size: 0.875rem;
+        margin-bottom: 6px;
+    }
+
+    .order-product-quantity {
+        font-size: 0.8125rem;
+    }
+
+    .order-summary {
+        padding: 10px 0;
+        margin-bottom: 12px;
+    }
+
+    .order-date {
+        font-size: 0.8125rem;
+    }
+
+    .order-total-label {
+        font-size: 0.8125rem;
+    }
+
+    .order-total-amount {
+        font-size: 1.125rem;
+    }
+
+    .order-actions {
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .btn-order-primary,
+    .btn-order-secondary {
+        padding: 10px 16px;
+        font-size: 0.875rem;
+        border-radius: 14px;
     }
 
     /* 行程項目 */
@@ -1543,14 +1612,14 @@ body::before {
 }
 
 .btn-calendar-nav:hover {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%);
-    border-color: rgba(168, 85, 247, 0.5);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.3) 0%, rgba(13, 148, 136, 0.3) 100%);
+    border-color: rgba(20, 184, 166, 0.5);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
 }
 
 .calendar-grid {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
     backdrop-filter: blur(20px);
     border-radius: 24px;
     padding: 24px;
@@ -1567,7 +1636,7 @@ body::before {
     right: -20%;
     width: 100%;
     height: 200%;
-    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(20, 184, 166, 0.1) 0%, transparent 70%);
     pointer-events: none;
 }
 
@@ -1635,16 +1704,16 @@ body::before {
 }
 
 .calendar-day:hover {
-    background: rgba(168, 85, 247, 0.2);
+    background: rgba(20, 184, 166, 0.2);
     z-index: 1;
     position: relative;
     transform: scale(1.05);
 }
 
 .calendar-day.today {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(59, 130, 246, 0.3) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.3) 0%, rgba(13, 148, 136, 0.3) 100%);
     font-weight: 700;
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
 }
 
 .calendar-day.today .calendar-day-number {
@@ -1666,7 +1735,7 @@ body::before {
 
 .calendar-day-schedules {
     font-size: 0.75rem;
-    color: rgba(168, 85, 247, 0.9);
+    color: rgba(20, 184, 166, 0.9);
     font-weight: 600;
 }
 
@@ -1707,7 +1776,7 @@ body::before {
     right: -20%;
     width: 100%;
     height: 200%;
-    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(20, 184, 166, 0.15) 0%, transparent 70%);
     pointer-events: none;
 }
 
@@ -1762,9 +1831,9 @@ body::before {
 
 /* 客戶列表項目（手風琴式） */
 .customer-list-item {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
     backdrop-filter: blur(20px);
-    border-radius: 20px;
+    border-radius: 24px;
     margin-bottom: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -1780,7 +1849,7 @@ body::before {
     right: -20%;
     width: 100%;
     height: 200%;
-    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(20, 184, 166, 0.1) 0%, transparent 70%);
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -1791,13 +1860,13 @@ body::before {
 }
 
 .customer-list-item:hover {
-    box-shadow: 0 6px 24px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 6px 24px rgba(20, 184, 166, 0.3);
     transform: translateY(-2px);
 }
 
 .customer-list-item.expanded {
-    box-shadow: 0 8px 32px rgba(168, 85, 247, 0.4);
-    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 8px 32px rgba(20, 184, 166, 0.4);
+    border-color: rgba(20, 184, 166, 0.5);
 }
 
 .customer-list-header {
@@ -1819,8 +1888,8 @@ body::before {
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    border: 2.5px solid rgba(168, 85, 247, 0.6);
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    border: 2.5px solid rgba(20, 184, 166, 0.6);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
     position: relative;
     z-index: 1;
 }
@@ -1834,7 +1903,7 @@ body::before {
 .avatar-placeholder-list {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.8) 0%, rgba(13, 148, 136, 0.8) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1874,7 +1943,7 @@ body::before {
 
 .expand-icon {
     font-size: 1.2rem;
-    color: rgba(168, 85, 247, 0.9);
+    color: rgba(20, 184, 166, 0.9);
     transition: transform 0.3s ease;
     position: relative;
     z-index: 1;
@@ -1919,7 +1988,7 @@ body::before {
 }
 
 .customer-detail-content .detail-row strong {
-    color: rgba(168, 85, 247, 0.9);
+    color: rgba(20, 184, 166, 0.9);
     margin-right: 12px;
     display: inline-block;
     min-width: 120px;
@@ -1932,8 +2001,8 @@ body::before {
 
 /* 編輯模式樣式 */
 .customer-list-item.editable {
-    border: 2px solid rgba(168, 85, 247, 0.6);
-    box-shadow: 0 6px 24px rgba(168, 85, 247, 0.4);
+    border: 2px solid rgba(20, 184, 166, 0.6);
+    box-shadow: 0 6px 24px rgba(20, 184, 166, 0.4);
 }
 
 .editable-text {
@@ -1975,8 +2044,8 @@ body::before {
 .editable-input:focus,
 .editable-textarea:focus {
     outline: none;
-    border-color: rgba(168, 85, 247, 0.6);
-    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+    border-color: rgba(20, 184, 166, 0.6);
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
     background: rgba(255, 255, 255, 0.15);
 }
 
@@ -2012,7 +2081,7 @@ body::before {
 }
 
 .customer-card {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
     backdrop-filter: blur(20px);
     border-radius: 20px;
     padding: 24px;
@@ -2031,7 +2100,7 @@ body::before {
     right: -20%;
     width: 100%;
     height: 200%;
-    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(20, 184, 166, 0.1) 0%, transparent 70%);
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -2043,8 +2112,8 @@ body::before {
 
 .customer-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 28px rgba(168, 85, 247, 0.4);
-    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 8px 28px rgba(20, 184, 166, 0.4);
+    border-color: rgba(20, 184, 166, 0.5);
 }
 
 .customer-card-avatar {
@@ -2053,8 +2122,8 @@ body::before {
     border-radius: 50%;
     overflow: hidden;
     margin: 0 auto 16px;
-    border: 2.5px solid rgba(168, 85, 247, 0.6);
-    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
+    border: 2.5px solid rgba(20, 184, 166, 0.6);
+    box-shadow: 0 4px 16px rgba(20, 184, 166, 0.3);
     position: relative;
     z-index: 1;
 }
@@ -2068,7 +2137,7 @@ body::before {
 .avatar-placeholder-small {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.8) 0%, rgba(13, 148, 136, 0.8) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2119,14 +2188,215 @@ body::before {
 
 .search-bar input:focus {
     outline: none;
-    border-color: rgba(168, 85, 247, 0.6);
-    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+    border-color: rgba(20, 184, 166, 0.6);
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
     background: rgba(255, 255, 255, 0.15);
 }
 
-/* 訂單表格 */
+/* 訂單卡片容器 */
+.orders-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+}
+
+/* 訂單卡片 */
+.order-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 4px 20px rgba(20, 184, 166, 0.15);
+    transform: translateY(-2px);
+}
+
+/* 訂單卡片標題區 */
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #F3F4F6;
+}
+
+.order-customer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.order-customer-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.order-customer-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1F2937;
+}
+
+/* 訂單狀態 */
+.order-status {
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.order-status-paid {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.order-status-unpaid {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+/* 產品區域 */
+.order-product-section {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #F9FAFB;
+    border-radius: 16px;
+}
+
+.order-product-image {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.order-product-placeholder {
+    font-size: 2rem;
+    color: #9CA3AF;
+}
+
+.order-product-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.order-product-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1F2937;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.order-product-quantity {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+/* 訂單摘要 */
+.order-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    margin-bottom: 16px;
+    border-top: 1px solid #F3F4F6;
+    border-bottom: 1px solid #F3F4F6;
+}
+
+.order-date {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.order-total {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.order-total-label {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.order-total-amount {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #14B8A6;
+}
+
+/* 訂單操作按鈕 */
+.order-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.btn-order-primary,
+.btn-order-secondary {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 16px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-order-primary {
+    background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+    color: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(20, 184, 166, 0.3);
+}
+
+.btn-order-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);
+}
+
+.btn-order-secondary {
+    background: #FFFFFF;
+    color: #6B7280;
+    border: 1.5px solid #E5E7EB;
+}
+
+.btn-order-secondary:hover {
+    background: #F9FAFB;
+    border-color: #14B8A6;
+    color: #14B8A6;
+}
+
+/* 舊的表格樣式（保留以備不時之需） */
 .orders-table-container {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
     backdrop-filter: blur(20px);
     border-radius: 24px;
     padding: 24px;
@@ -2135,48 +2405,7 @@ body::before {
     border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
-}
-
-.orders-table-container::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 100%;
-    height: 200%;
-    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
-    pointer-events: none;
-}
-
-.orders-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.orders-table th {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 10px 8px;
-    text-align: left;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.875rem;
-    white-space: nowrap;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.orders-table td {
-    padding: 10px 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.875rem;
-    vertical-align: middle;
-}
-
-.orders-table tr:hover {
-    background: rgba(255, 255, 255, 0.05);
+    display: none; /* 隱藏表格，使用卡片 */
 }
 
 .btn-sm {
@@ -2211,14 +2440,14 @@ body::before {
 }
 
 .schedule-item {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
     backdrop-filter: blur(20px);
     border-radius: 16px;
     padding: 16px;
     margin-bottom: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    border-left: 3px solid rgba(168, 85, 247, 0.6);
+    border-left: 3px solid rgba(20, 184, 166, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     position: relative;
@@ -2232,7 +2461,7 @@ body::before {
     right: -20%;
     width: 100%;
     height: 200%;
-    background: radial-gradient(ellipse, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(20, 184, 166, 0.1) 0%, transparent 70%);
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -2243,9 +2472,9 @@ body::before {
 }
 
 .schedule-item:hover {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.25) 0%, rgba(13, 148, 136, 0.25) 100%);
     transform: translateX(4px);
-    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.3);
 }
 
 .schedule-item-header {
@@ -2264,13 +2493,13 @@ body::before {
 }
 
 .schedule-type-badge {
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.8) 0%, rgba(13, 148, 136, 0.8) 100%);
     color: white;
     padding: 4px 10px;
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 2px 8px rgba(20, 184, 166, 0.3);
     position: relative;
     z-index: 1;
 }
@@ -2286,7 +2515,7 @@ body::before {
 }
 
 .detail-row strong {
-    color: rgba(168, 85, 247, 0.9);
+    color: rgba(20, 184, 166, 0.9);
     margin-right: 12px;
     font-weight: 600;
 }

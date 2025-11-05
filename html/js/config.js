@@ -14,5 +14,5 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // 'java-api' - 使用 Java Spring Boot 後端 API（推薦）
 // 'supabase' - 直接使用 Supabase 客戶端
 // 'google-sheets' - 使用 Google Apps Script
-const DATA_SOURCE = 'java-api'; // 使用 Java 後端 API
+const DATA_SOURCE = 'supabase'; // 使用 Supabase（暫時不需要 Java 後端）
 

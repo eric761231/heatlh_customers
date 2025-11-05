@@ -7,49 +7,46 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
 </head>
 <body class="login-page">
-    <div class="login-container">
-        <div class="login-card">
-            <h1>葡眾愛客戶</h1>
-            <p class="login-subtitle">建立新帳號</p>
-            
-            <div id="status" class="login-status"></div>
-            
-            <form id="registerForm" onsubmit="handleRegister(event)">
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="name">姓名</label>
-                    <input type="text" id="name" name="name" required placeholder="請輸入您的姓名">
-                </div>
-                
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required placeholder="請輸入 Email">
-                </div>
-                
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="password">密碼</label>
-                    <input type="password" id="password" name="password" required placeholder="請輸入密碼（至少 6 個字元）" minlength="6">
-                </div>
-                
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label for="confirmPassword">確認密碼</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="請再次輸入密碼" minlength="6">
-                </div>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px 24px; font-size: 1rem; font-weight: 600;">
-                    註冊帳號
-                </button>
-            </form>
-            
-            <div style="margin-top: 24px; text-align: center;">
-                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
-                    已有帳號？
-                    <a href="login.html" style="color: rgba(168, 85, 247, 0.9); text-decoration: none; font-weight: 600;">
-                        立即登入
-                    </a>
-                </p>
+    <div class="login-header">
+        <button class="back-btn" onclick="window.history.back()" style="display: none;" id="backBtn">
+            <span>←</span> 返回
+        </button>
+        <h1 class="welcome-title" id="welcomeTitle">歡迎加入</h1>
+    </div>
+    
+    <div class="login-content-card">
+        <h2 class="login-title">註冊</h2>
+        
+        <div id="status" class="login-status"></div>
+        
+        <form id="registerForm" onsubmit="handleRegister(event)">
+            <div class="form-group-modern">
+                <input type="text" id="name" name="name" required placeholder="Your name" autocomplete="name" class="modern-input">
             </div>
+            
+            <div class="form-group-modern">
+                <input type="email" id="email" name="email" required placeholder="Your email" autocomplete="email" class="modern-input">
+            </div>
+            
+            <div class="form-group-modern">
+                <input type="password" id="password" name="password" required placeholder="Password (至少 6 個字元)" autocomplete="new-password" class="modern-input" minlength="6">
+            </div>
+            
+            <div class="form-group-modern">
+                <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm password" autocomplete="new-password" class="modern-input" minlength="6">
+            </div>
+            
+            <button type="submit" class="btn-login-gradient">
+                註冊帳號
+            </button>
+        </form>
+        
+        <div class="signup-link">
+            <span>已有帳號？</span>
+            <a href="login.html">立即登入</a>
         </div>
     </div>
 
@@ -114,7 +111,7 @@
             // 顯示載入狀態
             submitBtn.disabled = true;
             submitBtn.textContent = '註冊中...';
-            statusDiv.innerHTML = '<div style="color: rgba(255,255,255,0.8);">正在註冊，請稍候...</div>';
+            statusDiv.innerHTML = '<div style="color: #6B7280; padding: 12px; text-align: center;">正在註冊，請稍候...</div>';
             
             try {
                 // 註冊新用戶
@@ -151,12 +148,7 @@
                 }
                 
                 // 註冊成功
-                statusDiv.innerHTML = `
-                    <div class="success-message">
-                        <p><strong>註冊成功！</strong></p>
-                        <p>正在跳轉到登入頁面...</p>
-                    </div>
-                `;
+                statusDiv.innerHTML = '<div class="success-message">註冊成功！正在跳轉到登入頁面...</div>';
                 
                 // 2秒後跳轉到登入頁面
                 setTimeout(() => {

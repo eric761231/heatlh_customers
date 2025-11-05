@@ -22,47 +22,80 @@ function setTodayDateForOrder() {
 
 // 載入訂單列表
 async function loadOrders() {
-    const tbody = document.getElementById('ordersTableBody');
-    tbody.innerHTML = '<tr><td colspan="7" class="loading">載入中...</td></tr>';
+    const container = document.getElementById('ordersCardsContainer');
+    container.innerHTML = '<div class="loading">載入中...</div>';
     
     try {
         orders = await getOrders();
         displayOrders(orders);
     } catch (error) {
-        tbody.innerHTML = `<tr><td colspan="7" class="error-message">載入失敗：${error.message}</td></tr>`;
+        container.innerHTML = `<div class="error-message">載入失敗：${error.message}</div>`;
     }
 }
 
-// 顯示訂單列表
+// 顯示訂單列表（卡片式）
 function displayOrders(ordersList) {
-    const tbody = document.getElementById('ordersTableBody');
+    const container = document.getElementById('ordersCardsContainer');
     
     if (ordersList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="empty-message">尚無訂單</td></tr>';
+        container.innerHTML = '<div class="empty-message">尚無訂單</div>';
         return;
     }
     
-    tbody.innerHTML = ordersList.map(order => {
+    container.innerHTML = ordersList.map(order => {
         // 確保 ID 是字符串
         const orderId = String(order.id);
-        const date = new Date(order.date).toLocaleDateString('zh-TW');
+        const date = new Date(order.date).toLocaleDateString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+        
         const paidStatus = order.paid === true || order.paid === 'true' 
-            ? '<span class="badge badge-success">已收款</span>' 
-            : '<span class="badge badge-warning">未收款</span>';
+            ? '<span class="order-status order-status-paid">已收款</span>' 
+            : '<span class="order-status order-status-unpaid">未收款</span>';
+        
+        // 獲取客戶名稱首字作為頭像
+        const customerName = order.customerName || '未指定';
+        const customerInitial = customerName.charAt(0).toUpperCase();
+        
+        const quantity = order.quantity || 1;
+        const amount = order.amount || 0;
+        const product = order.product || '未指定產品';
         
         return `
-            <tr>
-                <td>${date}</td>
-                <td>${order.customerName || '未指定'}</td>
-                <td>${order.product}</td>
-                <td>${order.quantity || 1}</td>
-                <td>$${order.amount || 0}</td>
-                <td>${paidStatus}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="editOrder('${orderId}')">編輯</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteOrder('${orderId}')">刪除</button>
-                </td>
-            </tr>
+            <div class="order-card">
+                <div class="order-card-header">
+                    <div class="order-customer-info">
+                        <div class="order-customer-avatar">${customerInitial}</div>
+                        <div class="order-customer-name">${customerName}</div>
+                    </div>
+                    ${paidStatus}
+                </div>
+                
+                <div class="order-product-section">
+                    <div class="order-product-image">
+                        <div class="order-product-placeholder">📦</div>
+                    </div>
+                    <div class="order-product-details">
+                        <div class="order-product-name">${product}</div>
+                        <div class="order-product-quantity">數量：${quantity}</div>
+                    </div>
+                </div>
+                
+                <div class="order-summary">
+                    <div class="order-date">${date}</div>
+                    <div class="order-total">
+                        <span class="order-total-label">合計：</span>
+                        <span class="order-total-amount">$${amount.toLocaleString()}</span>
+                    </div>
+                </div>
+                
+                <div class="order-actions">
+                    <button class="btn btn-order-secondary" onclick="editOrder('${orderId}')">編輯</button>
+                    <button class="btn btn-order-primary" onclick="deleteOrder('${orderId}')">刪除</button>
+                </div>
+            </div>
         `;
     }).join('');
 }
