@@ -15,6 +15,7 @@ desktop.ini
 *.swp
 *.swo
 *~
+*.iml
 
 # 暫存檔案
 *.tmp
@@ -24,5 +25,14 @@ desktop.ini
 node_modules/
 package-lock.json
 
+# Java 編譯產物
+java-backend/target/
+java-backend/build/
+*.class
+*.jar
+*.war
+
+# Java 依賴庫（可選，如果需要提交可以移除這行）
+java-backend/lib/
 
 .fake
