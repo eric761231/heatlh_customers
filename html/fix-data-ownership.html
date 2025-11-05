@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修正資料所有權</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-card">
+            <h1>修正資料所有權</h1>
+            <p class="login-subtitle">此工具會將所有沒有 created_by 的資料設定為當前登入的使用者</p>
+            
+            <div id="status" class="login-status"></div>
+            
+            <div style="margin-top: 24px;">
+                <button class="btn btn-primary" onclick="fixDataOwnership()" style="width: 100%;">
+                    開始修正資料
+                </button>
+            </div>
+            
+            <div style="margin-top: 16px;">
+                <a href="login.html" class="btn btn-secondary" style="width: 100%; text-align: center; display: block;">
+                    返回登入頁面
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 檢查登入狀態
+        function checkAuth() {
+            const loginInfo = localStorage.getItem('googleLogin');
+            if (!loginInfo) {
+                document.getElementById('status').innerHTML = '<div class="error-message">請先登入</div>';
+                return null;
+            }
+            
+            try {
+                const userInfo = JSON.parse(loginInfo);
+                if (userInfo.email && userInfo.exp) {
+                    const now = Date.now();
+                    if (now >= userInfo.exp) {
+                        document.getElementById('status').innerHTML = '<div class="error-message">登入已過期，請重新登入</div>';
+                        return null;
+                    }
+                    return userInfo;
+                }
+            } catch (e) {
+                document.getElementById('status').innerHTML = '<div class="error-message">登入資訊錯誤</div>';
+                return null;
+            }
+            
+            return null;
+        }
+
+        // 修正資料所有權
+        async function fixDataOwnership() {
+            const user = checkAuth();
+            if (!user) {
+                return;
+            }
+
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '<div style="color: rgba(255,255,255,0.8);">正在修正資料，請稍候...</div>';
+
+            try {
+                // 初始化 Supabase
+                if (typeof initSupabase === 'undefined') {
+                    throw new Error('Supabase 未初始化');
+                }
+                
+                await initSupabase();
+                
+                if (!supabaseClient) {
+                    throw new Error('Supabase 客戶端未初始化');
+                }
+
+                const userEmail = user.email;
+                let updatedCount = {
+                    customers: 0,
+                    schedules: 0,
+                    orders: 0
+                };
+
+                // 更新客戶資料
+                const { data: customers, error: customersError } = await supabaseClient
+                    .from('customers')
+                    .update({ created_by: userEmail })
+                    .is('created_by', null)
+                    .select();
+                
+                if (customersError) {
+                    console.error('更新客戶資料錯誤:', customersError);
+                } else {
+                    updatedCount.customers = customers ? customers.length : 0;
+                }
+
+                // 更新行程資料
+                const { data: schedules, error: schedulesError } = await supabaseClient
+                    .from('schedules')
+                    .update({ created_by: userEmail })
+                    .is('created_by', null)
+                    .select();
+                
+                if (schedulesError) {
+                    console.error('更新行程資料錯誤:', schedulesError);
+                } else {
+                    updatedCount.schedules = schedules ? schedules.length : 0;
+                }
+
+                // 更新訂單資料
+                const { data: orders, error: ordersError } = await supabaseClient
+                    .from('orders')
+                    .update({ created_by: userEmail })
+                    .is('created_by', null)
+                    .select();
+                
+                if (ordersError) {
+                    console.error('更新訂單資料錯誤:', ordersError);
+                } else {
+                    updatedCount.orders = orders ? orders.length : 0;
+                }
+
+                // 顯示結果
+                statusDiv.innerHTML = `
+                    <div class="success-message">
+                        <h3 style="margin-bottom: 12px;">修正完成！</h3>
+                        <p>已更新 ${updatedCount.customers} 筆客戶資料</p>
+                        <p>已更新 ${updatedCount.schedules} 筆行程資料</p>
+                        <p>已更新 ${updatedCount.orders} 筆訂單資料</p>
+                        <p style="margin-top: 16px;">現在您可以正常查看所有資料了。</p>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('修正資料所有權錯誤:', error);
+                statusDiv.innerHTML = '<div class="error-message">修正失敗：' + error.message + '</div>';
+            }
+        }
+
+        // 頁面載入時檢查
+        window.addEventListener('DOMContentLoaded', function() {
+            const user = checkAuth();
+            if (!user) {
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
+
