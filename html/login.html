@@ -154,23 +154,23 @@
                 
                 // 登入成功，更新用戶資料到 users 表（確保 user_login 正確設定）
                 try {
-                    // 先查詢是否已有 user_login
+                    // 先查詢是否已有用戶資料
                     const { data: existingUser, error: checkError } = await client
                         .from('users')
-                        .select('user_login')
+                        .select('user_login, name')
                         .eq('id', data.user.id)
                         .single();
                     
                     // 如果沒有 user_login，使用 email 作為預設值
                     const userLogin = existingUser?.user_login || data.user.email;
+                    const userName = existingUser?.name || data.user.user_metadata?.name || data.user.email?.split('@')[0] || '使用者';
                     
                     const { data: userData, error: userError } = await client
                         .from('users')
                         .upsert({
                             id: data.user.id,
-                            email: data.user.email,
                             user_login: userLogin, // 確保 user_login 正確設定
-                            name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || '使用者',
+                            name: userName,
                             last_login: new Date().toISOString()
                         }, { onConflict: 'id' })
                         .select()
@@ -178,9 +178,16 @@
                     
                     if (userError) {
                         console.error('更新用戶資料失敗:', userError);
+                        // 顯示錯誤但不阻止登入
+                        if (userError.message && (userError.message.includes('permission') || userError.message.includes('policy') || userError.message.includes('RLS'))) {
+                            console.warn('資料庫權限問題，請檢查 RLS 政策');
+                        }
+                    } else {
+                        console.log('用戶資料已成功更新:', userData);
                     }
                 } catch (e) {
                     console.error('更新用戶資料時出錯:', e);
+                    // 不阻止登入，但記錄錯誤
                 }
                 
                 // 登入成功

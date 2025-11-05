@@ -14,7 +14,7 @@
         <button class="back-btn" onclick="window.history.back()" style="display: none;" id="backBtn">
             <span>←</span> 返回
         </button>
-        <h1 class="welcome-title" id="welcomeTitle">歡迎回到葡眾愛</h1>
+        <h1 class="welcome-title" id="welcomeTitle">歡迎加入</h1>
     </div>
     
     <div class="login-content-card">
@@ -112,28 +112,51 @@
                     throw error;
                 }
                 
+                // 檢查註冊結果
+                if (!data.user) {
+                    throw new Error('註冊失敗，未收到用戶資料');
+                }
+                
+                // 嘗試建立 users 表記錄
+                let dbSuccess = false;
+                let dbErrorMsg = '';
+                
+                try {
+                    const { data: userData, error: dbError } = await client
+                        .from('users')
+                        .upsert({
+                            id: data.user.id,
+                            user_login: email, // 使用 email 作為 user_login
+                            name: name,
+                            last_login: new Date().toISOString()
+                        }, { onConflict: 'id' })
+                        .select()
+                        .single();
+                    
+                    if (dbError) {
+                        console.error('建立用戶資料記錄失敗:', dbError);
+                        dbErrorMsg = dbError.message || '資料庫寫入失敗';
+                        
+                        // 如果是 RLS 政策問題，提示用戶
+                        if (dbError.message && (dbError.message.includes('permission') || dbError.message.includes('policy') || dbError.message.includes('RLS'))) {
+                            dbErrorMsg = '資料庫權限問題，請聯繫管理員檢查 RLS 政策';
+                        }
+                    } else {
+                        dbSuccess = true;
+                        console.log('用戶資料已成功建立:', userData);
+                    }
+                } catch (e) {
+                    console.error('建立用戶資料記錄時發生錯誤:', e);
+                    dbErrorMsg = e.message || '未知錯誤';
+                }
+                
                 // 檢查是否需要 Email 確認
                 if (data.user && !data.session) {
                     // 需要 Email 確認的情況
-                    statusDiv.innerHTML = '<div class="success-message">註冊成功！請檢查您的 Email 並點擊確認連結後再登入</div>';
-                    
-                    // 嘗試建立 users 表記錄（即使需要確認也可以先建立）
-                    try {
-                        const { error: dbError } = await client
-                            .from('users')
-                            .upsert({
-                                id: data.user.id,
-                                email: email,
-                                user_login: email,
-                                name: name,
-                                last_login: new Date().toISOString()
-                            }, { onConflict: 'id' });
-                        
-                        if (dbError) {
-                            console.error('建立用戶資料記錄失敗:', dbError);
-                        }
-                    } catch (e) {
-                        console.error('建立用戶資料記錄失敗:', e);
+                    if (dbSuccess) {
+                        statusDiv.innerHTML = '<div class="success-message">註冊成功！用戶資料已建立。請檢查您的 Email 並點擊確認連結後再登入</div>';
+                    } else {
+                        statusDiv.innerHTML = `<div class="success-message">註冊成功！但用戶資料建立失敗：${dbErrorMsg}。請先確認 Email，登入時會自動建立用戶資料。</div>`;
                     }
                     
                     // 3秒後跳轉到登入頁面
@@ -145,45 +168,28 @@
                 
                 // 註冊成功且已自動登入（不需要 Email 確認的情況）
                 if (data.user && data.session) {
-                    // 建立 users 表記錄
-                    try {
-                        const { error: dbError } = await client
-                            .from('users')
-                            .upsert({
-                                id: data.user.id,
-                                email: email,
-                                user_login: email,
-                                name: name,
-                                last_login: new Date().toISOString()
-                            }, { onConflict: 'id' });
-                        
-                        if (dbError) {
-                            console.error('建立用戶資料記錄失敗:', dbError);
-                            throw new Error('建立用戶資料失敗：' + dbError.message);
-                        }
-                        
-                        console.log('用戶資料已成功建立');
-                    } catch (e) {
-                        console.error('建立用戶資料記錄失敗:', e);
-                        // 即使資料庫寫入失敗，也繼續流程
+                    if (dbSuccess) {
+                        statusDiv.innerHTML = '<div class="success-message">註冊成功！用戶資料已建立。正在跳轉...</div>';
+                    } else {
+                        statusDiv.innerHTML = `<div class="error-message">註冊成功但用戶資料建立失敗：${dbErrorMsg}。請聯繫管理員或稍後再試。</div>`;
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = '註冊帳號';
+                        return;
                     }
                     
                     // 註冊成功，直接跳轉到主頁面
-                    statusDiv.innerHTML = '<div class="success-message">註冊成功！正在跳轉...</div>';
-                    
                     setTimeout(() => {
                         window.location.href = 'calendar.html';
                     }, 1000);
                     return;
                 }
                 
-                // 如果沒有 user 資料，可能是其他問題
-                if (!data.user) {
-                    throw new Error('註冊失敗，未收到用戶資料');
+                // 其他情況：註冊成功但狀態不明確
+                if (dbSuccess) {
+                    statusDiv.innerHTML = '<div class="success-message">註冊成功！正在跳轉到登入頁面...</div>';
+                } else {
+                    statusDiv.innerHTML = `<div class="success-message">註冊成功！但用戶資料建立失敗：${dbErrorMsg}。登入時會自動建立用戶資料。</div>`;
                 }
-                
-                // 註冊成功，跳轉到登入頁面
-                statusDiv.innerHTML = '<div class="success-message">註冊成功！正在跳轉到登入頁面...</div>';
                 
                 setTimeout(() => {
                     window.location.href = 'login.html?registered=true';
