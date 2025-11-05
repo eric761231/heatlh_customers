@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>修正資料所有權</title>
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .btn-primary {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+    </style>
     <script src="js/config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
@@ -13,19 +27,25 @@
     <div class="login-container">
         <div class="login-card">
             <h1>修正資料所有權</h1>
-            <p class="login-subtitle">此工具會將所有沒有 created_by 的資料設定為當前登入的使用者</p>
+            <p class="login-subtitle">此工具會將所有沒有 <code>created_by</code> 的資料設定為當前登入的使用者</p>
             
             <div id="status" class="login-status"></div>
             
             <div style="margin-top: 24px;">
-                <button class="btn btn-primary" onclick="fixDataOwnership()" style="width: 100%;">
-                    開始修正資料
+                <button class="btn btn-primary" onclick="fixDataOwnership()" style="width: 100%; padding: 14px 24px; font-size: 1rem; font-weight: 600;">
+                    🔧 開始修正資料
                 </button>
             </div>
             
             <div style="margin-top: 16px;">
-                <a href="login.html" class="btn btn-secondary" style="width: 100%; text-align: center; display: block;">
-                    返回登入頁面
+                <a href="calendar.html" class="btn btn-secondary" style="width: 100%; text-align: center; display: block; padding: 12px 24px;">
+                    ← 返回主頁
+                </a>
+            </div>
+            
+            <div style="margin-top: 12px;">
+                <a href="login.html" class="btn btn-secondary" style="width: 100%; text-align: center; display: block; padding: 12px 24px; background: rgba(255, 255, 255, 0.05);">
+                    登出並返回登入頁面
                 </a>
             </div>
         </div>
@@ -35,27 +55,36 @@
         // 檢查登入狀態
         function checkAuth() {
             const loginInfo = localStorage.getItem('googleLogin');
+            console.log('localStorage 中的登入資訊:', loginInfo ? '存在' : '不存在');
+            
             if (!loginInfo) {
-                document.getElementById('status').innerHTML = '<div class="error-message">請先登入</div>';
+                console.log('沒有登入資訊');
                 return null;
             }
             
             try {
                 const userInfo = JSON.parse(loginInfo);
-                if (userInfo.email && userInfo.exp) {
-                    const now = Date.now();
-                    if (now >= userInfo.exp) {
-                        document.getElementById('status').innerHTML = '<div class="error-message">登入已過期，請重新登入</div>';
-                        return null;
+                console.log('解析後的用戶資訊:', userInfo);
+                
+                if (userInfo.email) {
+                    // 檢查是否過期（如果有 exp 欄位）
+                    if (userInfo.exp) {
+                        const now = Date.now();
+                        if (now >= userInfo.exp) {
+                            console.log('登入已過期');
+                            return null;
+                        }
                     }
+                    console.log('登入驗證成功，用戶:', userInfo.email);
                     return userInfo;
+                } else {
+                    console.log('用戶資訊中沒有 email');
+                    return null;
                 }
             } catch (e) {
-                document.getElementById('status').innerHTML = '<div class="error-message">登入資訊錯誤</div>';
+                console.error('解析登入資訊失敗:', e);
                 return null;
             }
-            
-            return null;
         }
 
         // 修正資料所有權
@@ -154,20 +183,39 @@
 
         // 頁面載入時檢查
         window.addEventListener('DOMContentLoaded', function() {
+            console.log('頁面載入完成，開始檢查登入狀態...');
             const user = checkAuth();
+            console.log('登入檢查結果:', user);
+            
             if (!user) {
+                const statusDiv = document.getElementById('status');
+                statusDiv.innerHTML = `
+                    <div class="error-message" style="margin-bottom: 16px;">
+                        <p>請先登入系統</p>
+                        <p>3秒後將自動跳轉到登入頁面...</p>
+                    </div>
+                `;
                 setTimeout(() => {
                     window.location.href = 'login.html';
-                }, 2000);
+                }, 3000);
             } else {
                 // 顯示當前用戶資訊
                 const statusDiv = document.getElementById('status');
                 statusDiv.innerHTML = `
                     <div class="success-message" style="margin-bottom: 16px;">
-                        <p>當前登入用戶：${user.email}</p>
-                        <p>請點擊下方按鈕開始修正資料</p>
+                        <p><strong>當前登入用戶：</strong>${user.email}</p>
+                        <p style="margin-top: 8px;">此工具會將所有沒有 <code>created_by</code> 的資料設定為您的帳號</p>
+                        <p style="margin-top: 8px;">請點擊下方按鈕開始修正資料</p>
                     </div>
                 `;
+                
+                // 確保按鈕可見
+                const button = document.querySelector('.btn-primary');
+                if (button) {
+                    button.style.display = 'block';
+                    button.style.visibility = 'visible';
+                    button.style.opacity = '1';
+                }
             }
         });
     </script>
