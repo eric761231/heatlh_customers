@@ -30,7 +30,7 @@
             
             <div class="form-group-modern">
                 <input type="password" id="password" name="password" required placeholder="Password" autocomplete="current-password" class="modern-input">
-                <a href="#" class="forgot-password" onclick="event.preventDefault(); alert('請聯絡系統管理員重設密碼');">忘記密碼？</a>
+                <a href="forgot-password.html" class="forgot-password">忘記密碼？</a>
             </div>
             
             <button type="submit" class="btn-login-gradient">
@@ -84,9 +84,12 @@
             
             // 檢查 URL 參數
             const urlParams = new URLSearchParams(window.location.search);
+            const statusDiv = document.getElementById('status');
+            
             if (urlParams.get('registered') === 'true') {
-                const statusDiv = document.getElementById('status');
                 statusDiv.innerHTML = '<div class="success-message">註冊成功！請使用您的 Email 和密碼登入</div>';
+            } else if (urlParams.get('passwordReset') === 'true') {
+                statusDiv.innerHTML = '<div class="success-message">密碼重置成功！請使用新密碼登入</div>';
             }
         }
 
@@ -106,6 +109,21 @@
                 statusDiv.innerHTML = '<div class="error-message">請填寫 Email 和密碼</div>';
                 return;
             }
+            
+            // 驗證 email 格式
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                statusDiv.innerHTML = '<div class="error-message">Email 格式不正確，請檢查後重試</div>';
+                return;
+            }
+            
+            // 驗證密碼長度
+            if (password.length < 6) {
+                statusDiv.innerHTML = '<div class="error-message">密碼長度至少需要 6 個字元</div>';
+                return;
+            }
+            
+            console.log('開始登入流程，Email:', email, '密碼長度:', password.length);
             
             // 初始化 Supabase
             const client = initSupabase();
@@ -137,12 +155,18 @@
                     throw new Error('登入失敗，未收到用戶資料');
                 }
                 
+                // 檢查是否有有效的 session（這是登入成功的必要條件）
                 if (!data.session) {
-                    console.warn('登入成功但沒有 session:', data);
-                    // 即使沒有 session，也嘗試繼續
+                    console.warn('登入失敗：沒有 session', data);
+                    // 檢查是否需要 email 確認
+                    if (data.user && !data.user.email_confirmed_at) {
+                        throw new Error('請先確認您的 Email。請檢查您的收件匣並點擊確認連結。');
+                    } else {
+                        throw new Error('登入失敗：無法建立會話，請稍後再試或聯繫管理員');
+                    }
                 }
                 
-                console.log('登入成功，用戶 ID:', data.user.id);
+                console.log('登入成功，用戶 ID:', data.user.id, 'Session:', data.session ? '已建立' : '未建立');
                 
                 // 登入成功，更新用戶資料到 users 表（確保 user_login 正確設定）
                 try {
@@ -182,8 +206,16 @@
                     // 不阻止登入，但記錄錯誤
                 }
                 
+                // 驗證 session 是否真的有效
+                const sessionCheck = await client.auth.getSession();
+                if (!sessionCheck.data.session) {
+                    console.error('Session 驗證失敗，session 不存在');
+                    throw new Error('登入會話驗證失敗，請重新登入');
+                }
+                
                 // 登入成功
-                console.log('準備跳轉到主頁面');
+                console.log('登入成功，準備跳轉到主頁面');
+                console.log('Session 驗證通過，用戶:', sessionCheck.data.session.user.email);
                 statusDiv.innerHTML = '<div class="success-message">登入成功！正在跳轉...</div>';
                 
                 // 確保跳轉執行
@@ -197,12 +229,40 @@
                 let errorMessage = '登入失敗，請重試';
                 
                 if (error.message) {
-                    if (error.message.includes('Invalid login credentials') || error.message.includes('Invalid credentials')) {
-                        errorMessage = 'Email 或密碼錯誤';
-                    } else if (error.message.includes('Email not confirmed')) {
-                        errorMessage = '請先確認您的 Email';
+                    // 更精確的錯誤訊息處理
+                    const errMsg = error.message.toLowerCase();
+                    
+                    if (errMsg.includes('invalid login credentials') || 
+                        errMsg.includes('invalid credentials') ||
+                        errMsg.includes('email or password') ||
+                        errMsg.includes('wrong password')) {
+                        errorMessage = 'Email 或密碼錯誤，請檢查後重試';
+                    } else if (errMsg.includes('email not confirmed') || 
+                               errMsg.includes('email confirmation') ||
+                               errMsg.includes('請先確認您的 email')) {
+                        errorMessage = '請先確認您的 Email。請檢查您的收件匣並點擊確認連結。';
+                    } else if (errMsg.includes('user not found') || 
+                               errMsg.includes('user does not exist')) {
+                        errorMessage = '此 Email 尚未註冊，請先註冊帳號';
+                    } else if (errMsg.includes('too many requests') || 
+                               errMsg.includes('rate limit')) {
+                        errorMessage = '登入嘗試過於頻繁，請稍後再試';
+                    } else if (errMsg.includes('session') || 
+                               errMsg.includes('會話')) {
+                        errorMessage = '無法建立登入會話，請重新整理頁面後重試';
                     } else {
                         errorMessage = error.message;
+                    }
+                } else if (error.status) {
+                    // 處理 HTTP 狀態碼
+                    if (error.status === 400) {
+                        errorMessage = '請求格式錯誤，請檢查輸入的資料';
+                    } else if (error.status === 401) {
+                        errorMessage = 'Email 或密碼錯誤';
+                    } else if (error.status === 429) {
+                        errorMessage = '登入嘗試過於頻繁，請稍後再試';
+                    } else if (error.status >= 500) {
+                        errorMessage = '伺服器錯誤，請稍後再試';
                     }
                 }
                 
