@@ -45,26 +45,8 @@
     </div>
 
     <script>
-        // 初始化 Supabase
-        let supabaseClient = null;
-        
-        function initSupabase() {
-            if (typeof supabase === 'undefined') {
-                console.error('Supabase JS 庫未載入');
-                return null;
-            }
-            
-            if (typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') {
-                console.error('Supabase 配置未設定');
-                return null;
-            }
-            
-            if (!supabaseClient) {
-                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            }
-            
-            return supabaseClient;
-        }
+        // 使用 supabase-client.js 中已提供的 initSupabase 函數
+        // 不需要重新宣告 supabaseClient，因為 supabase-client.js 已經提供了
 
         // 檢查登入狀態
         async function checkLoginStatus() {
@@ -139,18 +121,28 @@
             
             try {
                 // 登入
+                console.log('嘗試登入，Email:', email);
                 const { data, error } = await client.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
                 
                 if (error) {
+                    console.error('登入錯誤詳情:', error);
                     throw error;
                 }
                 
-                if (!data.user) {
-                    throw new Error('登入失敗，請重試');
+                if (!data || !data.user) {
+                    console.error('登入失敗：未收到用戶資料', data);
+                    throw new Error('登入失敗，未收到用戶資料');
                 }
+                
+                if (!data.session) {
+                    console.warn('登入成功但沒有 session:', data);
+                    // 即使沒有 session，也嘗試繼續
+                }
+                
+                console.log('登入成功，用戶 ID:', data.user.id);
                 
                 // 登入成功，更新用戶資料到 users 表（確保 user_login 正確設定）
                 try {
@@ -191,10 +183,12 @@
                 }
                 
                 // 登入成功
+                console.log('準備跳轉到主頁面');
                 statusDiv.innerHTML = '<div class="success-message">登入成功！正在跳轉...</div>';
                 
-                // 跳轉到主頁面
+                // 確保跳轉執行
                 setTimeout(() => {
+                    console.log('執行跳轉到 calendar.html');
                     window.location.href = 'calendar.html';
                 }, 1000);
                 

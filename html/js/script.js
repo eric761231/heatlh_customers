@@ -1,13 +1,13 @@
 // 登入驗證
 async function checkAuth() {
     try {
-        // 檢查 Supabase 會話
-        if (typeof supabase === 'undefined' || typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') {
+        // 使用 supabase-client.js 中的 initSupabase 函數
+        const client = initSupabase();
+        if (!client) {
             window.location.href = 'login.html';
             return false;
         }
         
-        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const { data: { session }, error } = await client.auth.getSession();
         
         if (error || !session || !session.user) {
@@ -28,8 +28,8 @@ async function logout() {
     if (confirm('確定要登出嗎？')) {
         try {
             // 清除 Supabase 會話
-            if (typeof supabase !== 'undefined' && typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined') {
-                const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const client = initSupabase();
+            if (client) {
                 await client.auth.signOut();
             }
             

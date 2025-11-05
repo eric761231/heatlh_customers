@@ -11,11 +11,12 @@ const JAVA_API_BASE_URL = 'http://localhost:8080/api';
  */
 async function getCurrentUserId() {
     try {
-        if (typeof supabase === 'undefined' || typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') {
+        // 使用 supabase-client.js 中的 initSupabase 函數
+        const client = initSupabase();
+        if (!client) {
             throw new Error('Supabase 未初始化');
         }
         
-        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const { data: { session }, error } = await client.auth.getSession();
         
         if (error || !session || !session.user) {
