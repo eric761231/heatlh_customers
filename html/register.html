@@ -14,7 +14,7 @@
         <button class="back-btn" onclick="window.history.back()" style="display: none;" id="backBtn">
             <span>←</span> 返回
         </button>
-        <h1 class="welcome-title" id="welcomeTitle">歡迎加入</h1>
+        <h1 class="welcome-title" id="welcomeTitle">歡迎回到葡眾愛</h1>
     </div>
     
     <div class="login-content-card">
@@ -51,26 +51,8 @@
     </div>
 
     <script>
-        // 初始化 Supabase
-        let supabaseClient = null;
-        
-        function initSupabase() {
-            if (typeof supabase === 'undefined') {
-                console.error('Supabase JS 庫未載入');
-                return null;
-            }
-            
-            if (typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') {
-                console.error('Supabase 配置未設定');
-                return null;
-            }
-            
-            if (!supabaseClient) {
-                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            }
-            
-            return supabaseClient;
-        }
+        // 使用 supabase-client.js 中已提供的 initSupabase 函數
+        // 不需要重新宣告 supabaseClient，因為 supabase-client.js 已經提供了
 
         // 處理註冊
         async function handleRegister(event) {
@@ -121,7 +103,8 @@
                     options: {
                         data: {
                             name: name
-                        }
+                        },
+                        emailRedirectTo: window.location.origin + '/login.html'
                     }
                 });
                 
@@ -129,28 +112,79 @@
                     throw error;
                 }
                 
-                // 註冊成功，建立 users 表記錄（設定 user_login）
-                if (data.user) {
+                // 檢查是否需要 Email 確認
+                if (data.user && !data.session) {
+                    // 需要 Email 確認的情況
+                    statusDiv.innerHTML = '<div class="success-message">註冊成功！請檢查您的 Email 並點擊確認連結後再登入</div>';
+                    
+                    // 嘗試建立 users 表記錄（即使需要確認也可以先建立）
                     try {
-                        await client
+                        const { error: dbError } = await client
                             .from('users')
                             .upsert({
                                 id: data.user.id,
                                 email: email,
-                                user_login: email, // 使用 email 作為 user_login（之後可以修改）
+                                user_login: email,
                                 name: name,
                                 last_login: new Date().toISOString()
                             }, { onConflict: 'id' });
+                        
+                        if (dbError) {
+                            console.error('建立用戶資料記錄失敗:', dbError);
+                        }
                     } catch (e) {
                         console.error('建立用戶資料記錄失敗:', e);
-                        // 不影響註冊流程，登入時會自動建立
                     }
+                    
+                    // 3秒後跳轉到登入頁面
+                    setTimeout(() => {
+                        window.location.href = 'login.html?registered=true';
+                    }, 3000);
+                    return;
                 }
                 
-                // 註冊成功
+                // 註冊成功且已自動登入（不需要 Email 確認的情況）
+                if (data.user && data.session) {
+                    // 建立 users 表記錄
+                    try {
+                        const { error: dbError } = await client
+                            .from('users')
+                            .upsert({
+                                id: data.user.id,
+                                email: email,
+                                user_login: email,
+                                name: name,
+                                last_login: new Date().toISOString()
+                            }, { onConflict: 'id' });
+                        
+                        if (dbError) {
+                            console.error('建立用戶資料記錄失敗:', dbError);
+                            throw new Error('建立用戶資料失敗：' + dbError.message);
+                        }
+                        
+                        console.log('用戶資料已成功建立');
+                    } catch (e) {
+                        console.error('建立用戶資料記錄失敗:', e);
+                        // 即使資料庫寫入失敗，也繼續流程
+                    }
+                    
+                    // 註冊成功，直接跳轉到主頁面
+                    statusDiv.innerHTML = '<div class="success-message">註冊成功！正在跳轉...</div>';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'calendar.html';
+                    }, 1000);
+                    return;
+                }
+                
+                // 如果沒有 user 資料，可能是其他問題
+                if (!data.user) {
+                    throw new Error('註冊失敗，未收到用戶資料');
+                }
+                
+                // 註冊成功，跳轉到登入頁面
                 statusDiv.innerHTML = '<div class="success-message">註冊成功！正在跳轉到登入頁面...</div>';
                 
-                // 2秒後跳轉到登入頁面
                 setTimeout(() => {
                     window.location.href = 'login.html?registered=true';
                 }, 2000);
@@ -160,10 +194,12 @@
                 let errorMessage = '註冊失敗，請重試';
                 
                 if (error.message) {
-                    if (error.message.includes('already registered')) {
+                    if (error.message.includes('already registered') || error.message.includes('already exists') || error.message.includes('User already registered')) {
                         errorMessage = '此 Email 已被註冊，請使用其他 Email 或直接登入';
-                    } else if (error.message.includes('invalid')) {
+                    } else if (error.message.includes('invalid') || error.message.includes('Invalid')) {
                         errorMessage = 'Email 格式不正確';
+                    } else if (error.message.includes('Password')) {
+                        errorMessage = '密碼不符合要求';
                     } else {
                         errorMessage = error.message;
                     }
