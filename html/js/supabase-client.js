@@ -7,9 +7,14 @@
 let supabaseClient = null;
 let currentUser = null; // 當前登入的使用者
 
-// 將變數暴露到 window 物件，以便在登入頁面清除
+// 將變數暴露到 window 物件，以便在登入頁面清除和外部訪問
 if (typeof window !== 'undefined') {
     window.currentUser = null;
+    // 暴露 supabaseClient 以便外部訪問（如果需要）
+    Object.defineProperty(window, 'supabaseClient', {
+        get: function() { return supabaseClient; },
+        set: function(value) { supabaseClient = value; }
+    });
 }
 
 /**

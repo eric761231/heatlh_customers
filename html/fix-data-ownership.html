@@ -69,15 +69,21 @@
             statusDiv.innerHTML = '<div style="color: rgba(255,255,255,0.8);">正在修正資料，請稍候...</div>';
 
             try {
-                // 初始化 Supabase
-                if (typeof initSupabase === 'undefined') {
-                    throw new Error('Supabase 未初始化');
+                // 檢查 Supabase 是否已載入
+                if (typeof supabase === 'undefined') {
+                    throw new Error('Supabase JS 庫未載入，請重新整理頁面');
                 }
                 
-                await initSupabase();
+                // 檢查配置
+                if (typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') {
+                    throw new Error('Supabase 配置未設定，請檢查 config.js');
+                }
                 
-                if (!supabaseClient) {
-                    throw new Error('Supabase 客戶端未初始化');
+                // 初始化 Supabase 客戶端
+                const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                
+                if (!client) {
+                    throw new Error('無法建立 Supabase 客戶端');
                 }
 
                 const userEmail = user.email;
@@ -87,41 +93,44 @@
                     orders: 0
                 };
 
-                // 更新客戶資料
-                const { data: customers, error: customersError } = await supabaseClient
+                // 更新客戶資料（包含空字串）
+                const { data: customers, error: customersError } = await client
                     .from('customers')
                     .update({ created_by: userEmail })
-                    .is('created_by', null)
+                    .or('created_by.is.null,created_by.eq.')
                     .select();
                 
                 if (customersError) {
                     console.error('更新客戶資料錯誤:', customersError);
+                    statusDiv.innerHTML += '<div class="error-message" style="margin-top: 8px;">客戶資料更新錯誤：' + customersError.message + '</div>';
                 } else {
                     updatedCount.customers = customers ? customers.length : 0;
                 }
 
-                // 更新行程資料
-                const { data: schedules, error: schedulesError } = await supabaseClient
+                // 更新行程資料（包含空字串）
+                const { data: schedules, error: schedulesError } = await client
                     .from('schedules')
                     .update({ created_by: userEmail })
-                    .is('created_by', null)
+                    .or('created_by.is.null,created_by.eq.')
                     .select();
                 
                 if (schedulesError) {
                     console.error('更新行程資料錯誤:', schedulesError);
+                    statusDiv.innerHTML += '<div class="error-message" style="margin-top: 8px;">行程資料更新錯誤：' + schedulesError.message + '</div>';
                 } else {
                     updatedCount.schedules = schedules ? schedules.length : 0;
                 }
 
-                // 更新訂單資料
-                const { data: orders, error: ordersError } = await supabaseClient
+                // 更新訂單資料（包含空字串）
+                const { data: orders, error: ordersError } = await client
                     .from('orders')
                     .update({ created_by: userEmail })
-                    .is('created_by', null)
+                    .or('created_by.is.null,created_by.eq.')
                     .select();
                 
                 if (ordersError) {
                     console.error('更新訂單資料錯誤:', ordersError);
+                    statusDiv.innerHTML += '<div class="error-message" style="margin-top: 8px;">訂單資料更新錯誤：' + ordersError.message + '</div>';
                 } else {
                     updatedCount.orders = orders ? orders.length : 0;
                 }
@@ -139,7 +148,7 @@
 
             } catch (error) {
                 console.error('修正資料所有權錯誤:', error);
-                statusDiv.innerHTML = '<div class="error-message">修正失敗：' + error.message + '</div>';
+                statusDiv.innerHTML = '<div class="error-message">修正失敗：' + error.message + '<br>請檢查瀏覽器控制台以獲取詳細錯誤訊息</div>';
             }
         }
 
@@ -150,6 +159,15 @@
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 2000);
+            } else {
+                // 顯示當前用戶資訊
+                const statusDiv = document.getElementById('status');
+                statusDiv.innerHTML = `
+                    <div class="success-message" style="margin-bottom: 16px;">
+                        <p>當前登入用戶：${user.email}</p>
+                        <p>請點擊下方按鈕開始修正資料</p>
+                    </div>
+                `;
             }
         });
     </script>
