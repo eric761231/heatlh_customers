@@ -907,6 +907,8 @@ body::before {
 
     .calendar-grid {
         padding: 16px;
+        background: #FFFFFF;
+        border: 1px solid rgba(20, 184, 166, 0.2);
     }
 
     .orders-table-container {
@@ -949,27 +951,36 @@ body::before {
     /* 主內容區 */
     .header {
         padding: 12px 16px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: 12px;
+        align-items: center;
     }
 
     .header h1 {
         font-size: 1.2rem;
-        flex: 1 1 100%;
+        flex: 1;
+        text-align: center;
+        margin: 0;
         order: 2;
-        margin-top: 8px;
     }
 
     .menu-btn {
         font-size: 1.3rem;
         padding: 8px 12px;
         order: 1;
+        flex-shrink: 0;
     }
 
     .header-actions {
         order: 3;
-        flex: 1 1 100%;
-        margin-top: 8px;
+        flex-shrink: 0;
+        margin: 0;
+    }
+    
+    .header-actions .btn {
+        width: auto;
+        padding: 8px 16px;
+        white-space: nowrap;
     }
 
     /* 容器 */
@@ -1004,6 +1015,8 @@ body::before {
         width: 100%;
         box-sizing: border-box;
         overflow-x: hidden;
+        background: #FFFFFF;
+        border: 1px solid rgba(20, 184, 166, 0.2);
     }
     
     .calendar-weekdays,
@@ -1021,7 +1034,7 @@ body::before {
         padding: 8px 2px;
         font-size: 0.75rem;
         text-align: center;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        border-right: 1px solid rgba(20, 184, 166, 0.2);
         word-break: break-word;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1031,20 +1044,23 @@ body::before {
         display: flex;
         align-items: center;
         justify-content: center;
+        color: #1F2937;
     }
     
     .calendar-day {
         padding: 8px 2px;
         aspect-ratio: 1;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-right: 1px solid rgba(20, 184, 166, 0.2);
+        border-bottom: 1px solid rgba(20, 184, 166, 0.2);
         box-sizing: border-box;
         margin: 0;
+        background: #FFFFFF;
     }
     
     .calendar-day-number {
         font-size: 0.85rem;
         margin-bottom: 2px;
+        color: #1F2937;
     }
     
     .calendar-day-schedules {
@@ -1244,6 +1260,8 @@ body::before {
     .calendar-grid {
         padding: 12px;
         border-radius: 12px;
+        background: #FFFFFF;
+        border: 1px solid rgba(20, 184, 166, 0.2);
     }
 
     .calendar-weekday {
@@ -1253,12 +1271,14 @@ body::before {
         display: flex;
         align-items: center;
         justify-content: center;
+        color: #1F2937;
     }
 
     .calendar-day {
         padding: 8px 4px;
         border-radius: 0;
         aspect-ratio: 1;
+        background: #FFFFFF;
     }
     
     .calendar-days .calendar-day:nth-child(7n),
@@ -1269,6 +1289,7 @@ body::before {
     .calendar-day-number {
         font-size: 0.9rem;
         margin-bottom: 2px;
+        color: #1F2937;
     }
 
     .calendar-day-schedules {
@@ -1519,10 +1540,12 @@ body::before {
         display: flex;
         align-items: center;
         justify-content: center;
+        color: #1F2937;
     }
 
     .calendar-day-number {
         font-size: 0.85rem;
+        color: #1F2937;
     }
 
     .calendar-day-schedules {
@@ -1549,12 +1572,15 @@ body::before {
 
     .calendar-grid {
         padding: 12px;
+        background: #FFFFFF;
+        border: 1px solid rgba(20, 184, 166, 0.2);
     }
 
     .calendar-day {
         padding: 8px 2px;
         border-radius: 0;
         aspect-ratio: 1;
+        background: #FFFFFF;
     }
     
     .calendar-days .calendar-day:nth-child(7n),
@@ -1609,12 +1635,12 @@ body::before {
 }
 
 .calendar-grid {
-    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
+    background: #FFFFFF;
     backdrop-filter: blur(20px);
     border-radius: 24px;
     padding: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(20, 184, 166, 0.15);
+    border: 1px solid rgba(20, 184, 166, 0.2);
     position: relative;
     overflow: hidden;
 }
@@ -1636,17 +1662,17 @@ body::before {
     gap: 0;
     margin: 0;
     padding: 0;
-    border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1.5px solid rgba(20, 184, 166, 0.3);
     box-sizing: border-box;
 }
 
 .calendar-weekday {
     text-align: center;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+    color: #1F2937;
     padding: 8px;
     font-size: 0.95rem;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(20, 184, 166, 0.2);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-sizing: border-box;
@@ -1667,19 +1693,19 @@ body::before {
     gap: 0;
     margin: 0;
     padding: 0;
-    border-top: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-top: 1.5px solid rgba(20, 184, 166, 0.3);
     box-sizing: border-box;
 }
 
 .calendar-day {
     aspect-ratio: 1;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(20, 184, 166, 0.2);
+    border-bottom: 1px solid rgba(20, 184, 166, 0.2);
     border-radius: 0;
     padding: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.05);
+    background: #FFFFFF;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -1694,32 +1720,53 @@ body::before {
 }
 
 .calendar-day:hover {
-    background: rgba(20, 184, 166, 0.2);
+    background: rgba(20, 184, 166, 0.1);
     z-index: 1;
     position: relative;
     transform: scale(1.05);
 }
 
 .calendar-day.today {
-    background: linear-gradient(135deg, rgba(20, 184, 166, 0.3) 0%, rgba(13, 148, 136, 0.3) 100%);
+    background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
     font-weight: 700;
     box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
 }
 
-.calendar-day.today .calendar-day-number {
-    color: #FFFFFF;
-    font-size: 1.1rem;
+.calendar-day.has-schedule {
+    background: rgba(20, 184, 166, 0.15);
+    border: 1.5px solid rgba(20, 184, 166, 0.4);
 }
 
-.calendar-day.empty {
-    background: rgba(255, 255, 255, 0.02);
-    cursor: default;
+.calendar-day.has-schedule .calendar-day-number {
+    color: #0D9488;
+    font-weight: 700;
+}
+
+.calendar-day.has-schedule.today {
+    background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.calendar-day.has-schedule.today .calendar-day-number {
+    color: #FFFFFF;
+}
+
+.calendar-day.selected {
+    background: rgba(20, 184, 166, 0.25);
+    border: 2px solid #14B8A6;
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+}
+
+.calendar-day.selected.today {
+    background: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.3);
 }
 
 .calendar-day-number {
     font-size: 1rem;
     margin-bottom: 5px;
-    color: rgba(255, 255, 255, 0.9);
+    color: #1F2937;
     font-weight: 600;
 }
 
@@ -2424,13 +2471,97 @@ body::before {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* 行程相關 */
-.schedule-list {
-    margin: 20px 0;
+/* 當天事項顯示面板 */
+.day-schedules-panel {
+    margin-top: 24px;
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(20, 184, 166, 0.15);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.day-schedules-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #14B8A6 0%, #0D9488 100%);
+    pointer-events: none;
+}
+
+.day-schedules-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid rgba(20, 184, 166, 0.3);
+}
+
+.day-schedules-header h3 {
+    margin: 0;
+    color: #1F2937;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.close-panel-btn {
+    background: transparent;
+    border: none;
+    color: #1F2937;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+    line-height: 1;
+}
+
+.close-panel-btn:hover {
+    background: rgba(20, 184, 166, 0.1);
+    color: #0D9488;
+    transform: rotate(90deg);
+}
+
+.day-schedules-content {
+    position: relative;
+    z-index: 1;
+}
+
+.no-schedules-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: rgba(31, 41, 55, 0.6);
+}
+
+.no-schedules-message p {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.schedule-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.schedule-actions .btn {
+    width: auto;
+    display: inline-block;
 }
 
 .schedule-item {
-    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%);
     backdrop-filter: blur(20px);
     border-radius: 16px;
     padding: 16px;
@@ -2438,10 +2569,17 @@ body::before {
     cursor: pointer;
     transition: all 0.3s ease;
     border-left: 3px solid rgba(20, 184, 166, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+    box-shadow: 0 4px 16px rgba(20, 184, 166, 0.1);
     position: relative;
     overflow: hidden;
+}
+
+.schedule-item p {
+    color: #1F2937;
+    margin: 8px 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
 }
 
 .schedule-item::before {
@@ -2462,9 +2600,10 @@ body::before {
 }
 
 .schedule-item:hover {
-    background: linear-gradient(135deg, rgba(20, 184, 166, 0.25) 0%, rgba(13, 148, 136, 0.25) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.2) 0%, rgba(13, 148, 136, 0.2) 100%);
     transform: translateX(4px);
-    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.3);
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.2);
+    border-color: rgba(20, 184, 166, 0.4);
 }
 
 .schedule-item-header {
@@ -2476,7 +2615,7 @@ body::before {
 
 .schedule-item-header h4 {
     margin: 0;
-    color: #FFFFFF;
+    color: #1F2937;
     font-weight: 700;
     position: relative;
     z-index: 1;

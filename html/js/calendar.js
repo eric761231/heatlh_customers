@@ -69,10 +69,11 @@ function generateCalendarGrid(year, month) {
             // 比較日期字符串（格式：YYYY-MM-DD）
             return normalizeDate(s.date) === dateStr;
         });
+        const hasSchedule = daySchedules.length > 0;
         
-        html += `<div class="calendar-day ${isToday ? 'today' : ''}" onclick="showDaySchedules('${dateStr}')">`;
+        html += `<div class="calendar-day ${isToday ? 'today' : ''} ${hasSchedule ? 'has-schedule' : ''}" onclick="showDaySchedules('${dateStr}', event)">`;
         html += `<div class="calendar-day-number">${day}</div>`;
-        if (daySchedules.length > 0) {
+        if (hasSchedule) {
             html += `<div class="calendar-day-schedules">${daySchedules.length} 個行程</div>`;
         }
         html += '</div>';
@@ -137,10 +138,38 @@ function normalizeDate(dateStr) {
     return dateStr;
 }
 
-// 顯示某天的行程
-function showDaySchedules(dateStr) {
+// 顯示某天的行程（在行事曆下方顯示）
+let selectedDate = null;
+
+function showDaySchedules(dateStr, event) {
     const normalizedDate = normalizeDate(dateStr);
     const daySchedules = schedules.filter(s => normalizeDate(s.date) === normalizedDate);
+    
+    // 如果點擊的是同一個日期，則關閉顯示
+    if (selectedDate === normalizedDate) {
+        selectedDate = null;
+        document.getElementById('daySchedulesPanel').style.display = 'none';
+        // 移除所有日期的選中狀態
+        document.querySelectorAll('.calendar-day').forEach(day => {
+            day.classList.remove('selected');
+        });
+        return;
+    }
+    
+    selectedDate = normalizedDate;
+    
+    // 移除所有日期的選中狀態
+    document.querySelectorAll('.calendar-day').forEach(day => {
+        day.classList.remove('selected');
+    });
+    
+    // 添加當前日期的選中狀態
+    if (event) {
+        const clickedDay = event.target.closest('.calendar-day');
+        if (clickedDay) {
+            clickedDay.classList.add('selected');
+        }
+    }
     
     // 解析日期用於顯示
     const dateParts = normalizedDate.split('-');
@@ -152,13 +181,21 @@ function showDaySchedules(dateStr) {
         weekday: 'long'
     });
     
-    let content = `<h3>${dateFormatted}</h3>`;
+    const panel = document.getElementById('daySchedulesPanel');
+    const panelTitle = document.getElementById('daySchedulesTitle');
+    const panelContent = document.getElementById('daySchedulesContent');
+    
+    panelTitle.textContent = dateFormatted;
     
     if (daySchedules.length === 0) {
-        content += '<p class="no-data">當天無行程</p>';
-        content += `<button class="btn btn-primary" onclick="addScheduleForDate('${dateStr}')">新增行程</button>`;
+        panelContent.innerHTML = `
+            <div class="no-schedules-message">
+                <p>當天無行程</p>
+                <button class="btn btn-primary" onclick="addScheduleForDate('${normalizedDate}')">新增行程</button>
+            </div>
+        `;
     } else {
-        content += '<div class="schedule-list">';
+        let content = '<div class="schedule-list">';
         daySchedules.forEach(schedule => {
             const typeLabels = {
                 'customer': '見客戶',
@@ -180,18 +217,31 @@ function showDaySchedules(dateStr) {
             `;
         });
         content += '</div>';
-        content += `<button class="btn btn-primary" onclick="addScheduleForDate('${dateStr}')">新增行程</button>`;
+        content += `<div class="schedule-actions"><button class="btn btn-primary" onclick="addScheduleForDate('${normalizedDate}')">新增行程</button></div>`;
+        panelContent.innerHTML = content;
     }
     
-    document.getElementById('scheduleDetailContent').innerHTML = content;
-    document.getElementById('scheduleDetailModal').style.display = 'block';
+    panel.style.display = 'block';
+    
+    // 滾動到面板位置
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // 為指定日期新增行程
 function addScheduleForDate(dateStr) {
     document.getElementById('scheduleDate').value = dateStr;
-    closeScheduleDetailModal();
+    closeDaySchedulesPanel();
     showAddScheduleModal();
+}
+
+// 關閉當天事項面板
+function closeDaySchedulesPanel() {
+    selectedDate = null;
+    document.getElementById('daySchedulesPanel').style.display = 'none';
+    // 移除所有日期的選中狀態
+    document.querySelectorAll('.calendar-day').forEach(day => {
+        day.classList.remove('selected');
+    });
 }
 
 // 顯示行程詳情
