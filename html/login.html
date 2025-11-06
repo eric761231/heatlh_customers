@@ -63,18 +63,22 @@
             }
             
             // 更新歡迎標題（如果有使用者名稱）
-            try {
-                const { data: userData } = await client
-                    .from('users')
-                    .select('name')
-                    .eq('id', session?.user?.id || '')
-                    .single();
-                
-                if (userData && userData.name) {
-                    document.getElementById('welcomeTitle').textContent = `歡迎回來，${userData.name}`;
+            // 只有在已登入時才查詢用戶資料
+            if (session && session.user && session.user.id) {
+                try {
+                    const { data: userData } = await client
+                        .from('users')
+                        .select('name')
+                        .eq('id', session.user.id)
+                        .maybeSingle(); // 使用 maybeSingle() 避免 406 錯誤
+                    
+                    if (userData && userData.name) {
+                        document.getElementById('welcomeTitle').textContent = `歡迎回來，${userData.name}`;
+                    }
+                } catch (e) {
+                    // 忽略錯誤，不影響頁面載入
+                    console.warn('查詢用戶名稱時出錯:', e);
                 }
-            } catch (e) {
-                // 忽略錯誤
             }
             
             // 檢查是否有返回按鈕需要顯示

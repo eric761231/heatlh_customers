@@ -71,7 +71,7 @@ async function getCurrentUser() {
                 .from('users')
                 .select('name, picture, user_login')
                 .eq('id', user.id)
-                .single();
+                .maybeSingle(); // 使用 maybeSingle() 避免用戶不存在時返回 406 錯誤
             
             if (!userError && data) {
                 userData = data;
