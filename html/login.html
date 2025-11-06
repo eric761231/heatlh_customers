@@ -246,17 +246,59 @@
                 
             } catch (error) {
                 console.error('登入錯誤:', error);
+                console.error('錯誤詳情:', {
+                    message: error.message,
+                    status: error.status,
+                    code: error.code,
+                    error: error
+                });
+                
                 let errorMessage = '登入失敗，請重試';
+                let debugInfo = '';
                 
                 if (error.message) {
                     // 更精確的錯誤訊息處理
                     const errMsg = error.message.toLowerCase();
                     
-                    if (errMsg.includes('invalid login credentials') || 
+                    if (errMsg.includes('email logins are disabled') || 
+                        errMsg.includes('email provider is disabled')) {
+                        errorMessage = 'Email 登入功能已被關閉';
+                        debugInfo = `
+                            <br><br><strong>❌ 問題：</strong> Supabase 的 Email Provider 已被關閉<br><br>
+                            <strong>🔧 解決步驟：</strong><br>
+                            <ol style="text-align: left; margin: 10px 0; padding-left: 20px;">
+                                <li>前往 <a href="https://app.supabase.com/" target="_blank" style="color: #4F46E5;">Supabase Dashboard</a></li>
+                                <li>選擇您的專案</li>
+                                <li>前往 <strong>Authentication</strong> > <strong>Providers</strong> > <strong>Email</strong></li>
+                                <li>開啟 <strong>Enable email provider</strong> 選項</li>
+                                <li>保存設定</li>
+                                <li>重新嘗試登入</li>
+                            </ol>
+                            <br><strong>💡 注意：</strong> Email Provider 必須啟用才能使用 Email 登入、註冊和重置密碼功能。
+                        `;
+                    } else if (errMsg.includes('invalid login credentials') || 
                         errMsg.includes('invalid credentials') ||
                         errMsg.includes('email or password') ||
                         errMsg.includes('wrong password')) {
                         errorMessage = 'Email 或密碼錯誤，請檢查後重試';
+                        debugInfo = `
+                            <br><br><strong>💡 診斷步驟：</strong><br>
+                            <ol style="text-align: left; margin: 10px 0; padding-left: 20px;">
+                                <li>確認 Email 地址是否正確：<code>${email}</code></li>
+                                <li>確認密碼是否正確（注意大小寫）</li>
+                                <li>檢查此 Email 是否已註冊</li>
+                                <li>如果剛註冊，請確認註冊是否成功</li>
+                                <li>前往 <a href="register.html" style="color: #4F46E5;">註冊頁面</a> 嘗試重新註冊</li>
+                            </ol>
+                            <br><strong>🔍 檢查清單：</strong><br>
+                            <ul style="text-align: left; margin: 10px 0; padding-left: 20px;">
+                                <li>前往 <a href="https://app.supabase.com/" target="_blank" style="color: #4F46E5;">Supabase Dashboard</a> > Authentication > Users</li>
+                                <li>檢查 Email <code>${email}</code> 是否存在</li>
+                                <li>檢查 <strong>Authentication</strong> > <strong>Providers</strong> > <strong>Email</strong> 中的 <strong>Enable email provider</strong> 是否開啟</li>
+                                <li>如果不存在，請重新註冊</li>
+                                <li>如果存在但無法登入，請檢查 Supabase 設定</li>
+                            </ul>
+                        `;
                     } else if (errMsg.includes('email not confirmed') || 
                                errMsg.includes('email confirmation') ||
                                errMsg.includes('請先確認您的 email')) {
@@ -264,6 +306,7 @@
                     } else if (errMsg.includes('user not found') || 
                                errMsg.includes('user does not exist')) {
                         errorMessage = '此 Email 尚未註冊，請先註冊帳號';
+                        debugInfo = `<br><br><a href="register.html" style="color: #4F46E5;">→ 前往註冊頁面</a>`;
                     } else if (errMsg.includes('too many requests') || 
                                errMsg.includes('rate limit')) {
                         errorMessage = '登入嘗試過於頻繁，請稍後再試';
@@ -276,9 +319,11 @@
                 } else if (error.status) {
                     // 處理 HTTP 狀態碼
                     if (error.status === 400) {
-                        errorMessage = '請求格式錯誤，請檢查輸入的資料';
+                        errorMessage = 'Email 或密碼錯誤，請檢查後重試';
+                        debugInfo = `<br><br>💡 提示：確認 Email 和密碼是否正確，或前往 <a href="register.html" style="color: #4F46E5;">註冊頁面</a> 重新註冊`;
                     } else if (error.status === 401) {
                         errorMessage = 'Email 或密碼錯誤';
+                        debugInfo = `<br><br>💡 提示：確認 Email 和密碼是否正確，或前往 <a href="register.html" style="color: #4F46E5;">註冊頁面</a> 重新註冊`;
                     } else if (error.status === 429) {
                         errorMessage = '登入嘗試過於頻繁，請稍後再試';
                     } else if (error.status >= 500) {
@@ -286,7 +331,7 @@
                     }
                 }
                 
-                statusDiv.innerHTML = `<div class="error-message">${errorMessage}</div>`;
+                statusDiv.innerHTML = `<div class="error-message">${errorMessage}${debugInfo}</div>`;
                 submitBtn.disabled = false;
                 submitBtn.textContent = '登入';
             }
