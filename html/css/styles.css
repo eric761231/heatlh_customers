@@ -6,12 +6,17 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', '微軟正黑體', Roboto, 'Helvetica Neue', 'SF Pro Display', Arial, sans-serif;
-    background: linear-gradient(135deg, #0F766E 0%, #14B8A6 50%, #0F766E 100%);
+    background: #FFFFFF;
     min-height: 100vh;
-    color: #FFFFFF;
+    color: #1F2937;
     line-height: 1.6;
     position: relative;
     overflow-x: hidden;
+}
+
+/* 非登入頁面的 body 背景 */
+body:not(.login-page) {
+    background: #FFFFFF;
 }
 
 /* 抽象背景圖形 */
@@ -22,8 +27,8 @@ body::before {
     right: -20%;
     width: 100%;
     height: 200%;
-    background: radial-gradient(ellipse at top right, rgba(20, 184, 166, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at bottom left, rgba(13, 148, 136, 0.1) 0%, transparent 50%);
+    background: radial-gradient(ellipse at top right, rgba(20, 184, 166, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom left, rgba(13, 148, 136, 0.05) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
 }
@@ -70,24 +75,6 @@ body::before {
     background: rgba(255, 255, 255, 0.1);
 }
 
-.login-header .skip-btn {
-    position: absolute;
-    top: 24px;
-    right: 20px;
-    background: transparent;
-    border: none;
-    color: #FFFFFF;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 8px 16px;
-    border-radius: 16px;
-    transition: background-color 0.2s;
-}
-
-.login-header .skip-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
 
 .login-header .welcome-title {
     color: #FFFFFF;
@@ -328,13 +315,14 @@ body::before {
     top: 0;
     width: 320px;
     height: 100vh;
-    background: linear-gradient(180deg, rgba(15, 118, 110, 0.95) 0%, rgba(20, 184, 166, 0.95) 100%);
+    background: linear-gradient(180deg, #14B8A6 0%, #0D9488 100%);
     backdrop-filter: blur(20px);
-    box-shadow: 2px 0 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 2px 0 32px rgba(0, 0, 0, 0.2);
     transition: left 0.3s ease;
     z-index: 1000;
     overflow-y: auto;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0 24px 24px 0;
 }
 
 .sidebar.active {
@@ -346,9 +334,10 @@ body::before {
     justify-content: space-between;
     align-items: center;
     padding: 24px;
-    background: linear-gradient(135deg, rgba(20, 184, 166, 0.3) 0%, rgba(13, 148, 136, 0.3) 100%);
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.4) 0%, rgba(13, 148, 136, 0.4) 100%);
     color: white;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0 24px 0 0;
 }
 
 .sidebar-header h2 {
@@ -451,20 +440,20 @@ body::before {
     align-items: center;
     padding: 14px;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
+    background: #FFFFFF;
     backdrop-filter: blur(20px);
     border-radius: 24px;
     cursor: pointer;
     transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+    box-shadow: 0 4px 16px rgba(20, 184, 166, 0.1);
 }
 
 .customer-item:hover {
-    background: linear-gradient(135deg, rgba(20, 184, 166, 0.25) 0%, rgba(13, 148, 136, 0.25) 100%);
+    background: rgba(20, 184, 166, 0.05);
     transform: translateX(4px);
-    border-color: rgba(20, 184, 166, 0.5);
-    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.3);
+    border-color: rgba(20, 184, 166, 0.4);
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.2);
 }
 
 .customer-item-avatar {
@@ -499,17 +488,17 @@ body::before {
     font-weight: 600;
     font-size: 1rem;
     margin-bottom: 4px;
-    color: #FFFFFF;
+    color: #1F2937;
 }
 
 .customer-item-phone {
     font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(31, 41, 55, 0.7);
 }
 
 .empty-message {
     text-align: center;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(31, 41, 55, 0.6);
     padding: 48px 24px;
     font-style: italic;
     font-size: 0.95rem;
@@ -523,13 +512,13 @@ body::before {
 }
 
 .header {
-    background: linear-gradient(135deg, rgba(26, 0, 38, 0.9) 0%, rgba(45, 27, 61, 0.9) 100%);
+    background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
     backdrop-filter: blur(20px);
     padding: 20px 32px;
     display: flex;
     align-items: center;
     gap: 20px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 24px rgba(20, 184, 166, 0.2);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -577,32 +566,33 @@ body::before {
 
 /* 表單卡片 */
 .form-card, .detail-card {
-    background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
+    background: #FFFFFF;
     backdrop-filter: blur(20px);
     border-radius: 24px;
     padding: 40px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(20, 184, 166, 0.15);
+    border: 1px solid rgba(20, 184, 166, 0.2);
     position: relative;
     overflow: hidden;
+    margin-bottom: 24px;
 }
 
 .form-card::before, .detail-card::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 100%;
-    height: 200%;
-    background: radial-gradient(ellipse, rgba(20, 184, 166, 0.1) 0%, transparent 70%);
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #14B8A6 0%, #0D9488 100%);
     pointer-events: none;
 }
 
 .form-card h2, .detail-card h2 {
     margin-bottom: 32px;
-    color: #FFFFFF;
+    color: #1F2937;
     font-size: 1.75rem;
-    border-bottom: 2px solid rgba(20, 184, 166, 0.5);
+    border-bottom: 2px solid rgba(20, 184, 166, 0.3);
     padding-bottom: 16px;
     font-weight: 700;
     letter-spacing: -0.3px;
@@ -630,7 +620,7 @@ body::before {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+    color: #1F2937;
     font-size: 0.95rem;
     position: relative;
     z-index: 1;
@@ -646,30 +636,30 @@ body::before {
 .form-group textarea {
     width: 100%;
     padding: 12px 16px;
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(20, 184, 166, 0.3);
     border-radius: 24px;
     font-size: 0.95rem;
     font-family: inherit;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.1);
+    background: #FFFFFF;
     backdrop-filter: blur(10px);
-    color: #FFFFFF;
+    color: #1F2937;
     position: relative;
     z-index: 1;
 }
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(31, 41, 55, 0.5);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: rgba(20, 184, 166, 0.6);
+    border-color: #14B8A6;
     box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
-    background: rgba(255, 255, 255, 0.15);
+    background: #FFFFFF;
     border-radius: 24px;
 }
 
@@ -690,7 +680,7 @@ body::before {
 .avatar-preview {
     width: 150px;
     height: 150px;
-    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border: 2px dashed rgba(20, 184, 166, 0.3);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -698,16 +688,16 @@ body::before {
     cursor: pointer;
     transition: all 0.3s ease;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(20, 184, 166, 0.05);
     backdrop-filter: blur(10px);
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(20, 184, 166, 0.6);
     font-size: 0.9rem;
     text-align: center;
 }
 
 .avatar-preview:hover {
-    border-color: rgba(20, 184, 166, 0.6);
-    background: rgba(20, 184, 166, 0.15);
+    border-color: #14B8A6;
+    background: rgba(20, 184, 166, 0.1);
     transform: scale(1.05);
 }
 
@@ -744,18 +734,18 @@ body::before {
 }
 
 .btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    color: white;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #FFFFFF;
+    color: #14B8A6;
+    box-shadow: 0 4px 16px rgba(20, 184, 166, 0.2);
+    border: 1.5px solid rgba(20, 184, 166, 0.3);
     border-radius: 24px;
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(20, 184, 166, 0.05);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.3);
+    border-color: #14B8A6;
 }
 
 .btn-danger {

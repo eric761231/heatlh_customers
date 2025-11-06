@@ -130,21 +130,57 @@ if (typeof window !== 'undefined') {
 async function apiCall(action, data = null, customerId = null) {
     // 如果使用 Java API，調用 Java 後端
     if (typeof DATA_SOURCE !== 'undefined' && DATA_SOURCE === 'java-api') {
-        if (typeof supabaseCall === 'undefined') {
+        if (typeof javaApiCall === 'undefined') {
             throw new Error('Java API 客戶端未載入，請確認已載入 java-api-client.js');
         }
+        // 使用 java-api-client.js 中的 supabaseCall（實際上是調用 Java API）
         return await supabaseCall(action, data, customerId);
     }
     
     // 如果使用 Supabase，調用 Supabase API
     if (typeof DATA_SOURCE !== 'undefined' && DATA_SOURCE === 'supabase') {
-        if (typeof supabaseCall === 'undefined') {
-            throw new Error('Supabase 客戶端未載入，請確認已載入 supabase-client.js');
+        // 確保使用的是 supabase-client.js 中的 supabaseCall，而不是 java-api-client.js 中的
+        // 由於 java-api-client.js 可能會覆蓋 supabaseCall，我們需要直接調用 supabase-client.js 的函數
+        const client = initSupabase();
+        if (!client) {
+            throw new Error('Supabase 客戶端未初始化');
         }
-        return await supabaseCall(action, data, customerId);
+        
+        // 直接使用 supabase-client.js 中的具體函數
+        try {
+            switch(action) {
+                case 'getAll':
+                    return await getAllCustomersFromSupabase();
+                case 'getById':
+                    return await getCustomerByIdFromSupabase(customerId);
+                case 'add':
+                    return await addCustomerToSupabase(data);
+                case 'update':
+                    return await updateCustomerInSupabase(customerId, data);
+                case 'delete':
+                    return await deleteCustomerFromSupabase(customerId);
+                case 'getSchedules':
+                    return await getAllSchedulesFromSupabase();
+                case 'addSchedule':
+                    return await addScheduleToSupabase(data);
+                case 'deleteSchedule':
+                    return await deleteScheduleFromSupabase(customerId);
+                case 'getOrders':
+                    return await getAllOrdersFromSupabase();
+                case 'addOrder':
+                    return await addOrderToSupabase(data);
+                case 'updateOrder':
+                    return await updateOrderInSupabase(customerId, data);
+                case 'deleteOrder':
+                    return await deleteOrderFromSupabase(customerId);
+                default:
+                    throw new Error('未知的操作');
+            }
+        } catch (error) {
+            console.error('Supabase API 錯誤:', error);
+            throw error;
+        }
     }
-    
-    // 否則使用 Google Apps Script
     try {
         const url = new URL(GOOGLE_SCRIPT_URL);
         url.searchParams.append('action', action);
