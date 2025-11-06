@@ -2,7 +2,6 @@
 # 注意：html/js/config.js 需要提交到 GitHub 以供 Netlify 部署使用
 # Client ID 是公開的，可以安全提交
 js/config.js
-# html/js/config.js - 已允許提交，因為 Netlify 部署需要
 
 # 系統檔案
 .DS_Store
