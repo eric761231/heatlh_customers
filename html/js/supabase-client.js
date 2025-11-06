@@ -84,6 +84,9 @@ async function getCurrentUser() {
         // 如果沒有 user_login，使用 email 作為 fallback
         if (!userLogin) {
             userLogin = userEmail;
+            console.log('⚠️ 未找到 user_login，使用 email 作為 fallback:', userLogin);
+        } else {
+            console.log('✅ 找到 user_login:', userLogin);
         }
         
         // 如果使用者已變更，清除舊的快取
@@ -361,6 +364,8 @@ async function getAllSchedulesFromSupabase() {
         throw new Error('未登入，無法取得行程資料');
     }
     
+    console.log('🔍 載入行程 - 當前用戶 userLogin:', user.userLogin);
+    
     // 只取得當前使用者建立的行程（使用 user_login 串聯）
     const { data: schedules, error: schedulesError } = await supabaseClient
         .from('schedules')
@@ -368,7 +373,30 @@ async function getAllSchedulesFromSupabase() {
         .eq('user_login', user.userLogin) // 使用 user_login 串聯
         .order('date', { ascending: true });
     
-    if (schedulesError) throw schedulesError;
+    if (schedulesError) {
+        console.error('❌ 載入行程錯誤:', schedulesError);
+        throw schedulesError;
+    }
+    
+    console.log('✅ 載入行程成功，找到', schedules?.length || 0, '筆資料');
+    if (schedules && schedules.length > 0) {
+        console.log('📋 行程資料範例:', schedules[0]);
+    } else {
+        // 診斷：檢查資料庫中是否有任何行程資料（不帶 user_login 過濾）
+        console.log('⚠️ 未找到行程資料，檢查資料庫中是否有任何行程...');
+        const { data: allSchedules, error: checkError } = await supabaseClient
+            .from('schedules')
+            .select('id, user_login', { count: 'exact' })
+            .limit(5);
+        
+        if (!checkError && allSchedules) {
+            console.log('📊 資料庫中總共有', allSchedules.length, '筆行程資料');
+            if (allSchedules.length > 0) {
+                console.log('📋 資料庫中的 user_login 值範例:', allSchedules.map(s => s.user_login));
+                console.log('💡 提示：如果資料庫中有資料但 user_login 不匹配，請檢查資料庫中的 user_login 欄位是否與當前用戶的 user_login 一致');
+            }
+        }
+    }
     
     // 如果有客戶 ID，取得客戶名稱（只取得自己的客戶）
     const customerIds = [...new Set(schedules.filter(s => s.customer_id).map(s => s.customer_id))];
@@ -460,6 +488,8 @@ async function getAllOrdersFromSupabase() {
         throw new Error('未登入，無法取得訂單資料');
     }
     
+    console.log('🔍 載入訂單 - 當前用戶 userLogin:', user.userLogin);
+    
     // 只取得當前使用者建立的訂單（使用 user_login 串聯）
     const { data: orders, error: ordersError } = await supabaseClient
         .from('orders')
@@ -467,7 +497,30 @@ async function getAllOrdersFromSupabase() {
         .eq('user_login', user.userLogin) // 使用 user_login 串聯
         .order('date', { ascending: false });
     
-    if (ordersError) throw ordersError;
+    if (ordersError) {
+        console.error('❌ 載入訂單錯誤:', ordersError);
+        throw ordersError;
+    }
+    
+    console.log('✅ 載入訂單成功，找到', orders?.length || 0, '筆資料');
+    if (orders && orders.length > 0) {
+        console.log('📋 訂單資料範例:', orders[0]);
+    } else {
+        // 診斷：檢查資料庫中是否有任何訂單資料（不帶 user_login 過濾）
+        console.log('⚠️ 未找到訂單資料，檢查資料庫中是否有任何訂單...');
+        const { data: allOrders, error: checkError } = await supabaseClient
+            .from('orders')
+            .select('id, user_login', { count: 'exact' })
+            .limit(5);
+        
+        if (!checkError && allOrders) {
+            console.log('📊 資料庫中總共有', allOrders.length, '筆訂單資料');
+            if (allOrders.length > 0) {
+                console.log('📋 資料庫中的 user_login 值範例:', allOrders.map(o => o.user_login));
+                console.log('💡 提示：如果資料庫中有資料但 user_login 不匹配，請檢查資料庫中的 user_login 欄位是否與當前用戶的 user_login 一致');
+            }
+        }
+    }
     
     // 如果有客戶 ID，取得客戶名稱（只取得自己的客戶）
     const customerIds = [...new Set(orders.filter(o => o.customer_id).map(o => o.customer_id))];

@@ -1107,7 +1107,7 @@ body::before {
     .form-group textarea {
         padding: 10px 14px;
         font-size: 16px; /* 防止 iOS 自動縮放 */
-        border-radius: 8px;
+        border-radius: 12px;
     }
 
     .form-row {
@@ -1125,6 +1125,7 @@ body::before {
         font-size: 0.95rem;
         width: 100%;
         margin-bottom: 10px;
+        border-radius: 12px;
     }
 
     .btn:last-child {
@@ -1426,6 +1427,23 @@ body::before {
         padding: 20px 16px;
         flex: 1;
         overflow-y: auto;
+    }
+    
+    /* Modal 中的表單元素統一圓角（手機版） */
+    .modal-content .form-group input[type="text"],
+    .modal-content .form-group input[type="tel"],
+    .modal-content .form-group input[type="date"],
+    .modal-content .form-group input[type="time"],
+    .modal-content .form-group input[type="number"],
+    .modal-content .form-group select,
+    .modal-content .form-group textarea {
+        border-radius: 12px;
+    }
+    
+    .modal-content .form-group input:focus,
+    .modal-content .form-group select:focus,
+    .modal-content .form-group textarea:focus {
+        border-radius: 12px;
     }
 
     /* 登入頁面 */
@@ -1872,6 +1890,23 @@ body::before {
     color: #FFE5E5;
 }
 
+/* Modal 中的表單元素統一圓角 */
+.modal-content .form-group input[type="text"],
+.modal-content .form-group input[type="tel"],
+.modal-content .form-group input[type="date"],
+.modal-content .form-group input[type="time"],
+.modal-content .form-group input[type="number"],
+.modal-content .form-group select,
+.modal-content .form-group textarea {
+    border-radius: 12px;
+}
+
+.modal-content .form-group input:focus,
+.modal-content .form-group select:focus,
+.modal-content .form-group textarea:focus {
+    border-radius: 12px;
+}
+
 /* 客戶列表容器 */
 .customer-list-container {
     margin-top: 20px;
@@ -1967,7 +2002,7 @@ body::before {
 
 .customer-list-summary h3 {
     margin: 0 0 8px 0;
-    color: #FFFFFF;
+    color: #1F2937;
     font-size: 1.2rem;
     font-weight: 700;
     position: relative;
@@ -1976,7 +2011,7 @@ body::before {
 
 .customer-list-health {
     margin: 0;
-    color: rgba(255, 255, 255, 0.8);
+    color: #1F2937;
     font-size: 0.95rem;
     line-height: 1.5;
     position: relative;
@@ -1991,7 +2026,7 @@ body::before {
 
 .expand-icon {
     font-size: 1.2rem;
-    color: rgba(20, 184, 166, 0.9);
+    color: #0D9488;
     transition: transform 0.3s ease;
     position: relative;
     z-index: 1;
@@ -2002,7 +2037,7 @@ body::before {
 }
 
 .customer-list-detail {
-    border-top: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-top: 1.5px solid rgba(20, 184, 166, 0.2);
     background: rgba(255, 255, 255, 0.05);
     animation: slideDown 0.3s ease-out;
     position: relative;
@@ -2027,7 +2062,7 @@ body::before {
 .customer-detail-content .detail-row {
     margin: 15px 0;
     padding: 12px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(20, 184, 166, 0.2);
     line-height: 1.7;
 }
 
@@ -2036,7 +2071,7 @@ body::before {
 }
 
 .customer-detail-content .detail-row strong {
-    color: rgba(20, 184, 166, 0.9);
+    color: #0D9488;
     margin-right: 12px;
     display: inline-block;
     min-width: 120px;
@@ -2044,7 +2079,7 @@ body::before {
 }
 
 .customer-detail-content .detail-row {
-    color: rgba(255, 255, 255, 0.9);
+    color: #1F2937;
 }
 
 /* 編輯模式樣式 */
@@ -2055,26 +2090,27 @@ body::before {
 
 .editable-text {
     display: inline-block;
+    color: #1F2937;
 }
 
 .editable-input,
 .editable-textarea {
     width: 100%;
     padding: 8px 12px;
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(20, 184, 166, 0.3);
     border-radius: 10px;
     font-size: 0.95rem;
     font-family: inherit;
-    background: rgba(255, 255, 255, 0.1);
+    background: #FFFFFF;
     backdrop-filter: blur(10px);
-    color: #FFFFFF;
+    color: #1F2937;
     margin-top: 5px;
     transition: all 0.3s ease;
 }
 
 .editable-input::placeholder,
 .editable-textarea::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(31, 41, 55, 0.5);
 }
 
 .editable-input {
@@ -2092,9 +2128,9 @@ body::before {
 .editable-input:focus,
 .editable-textarea:focus {
     outline: none;
-    border-color: rgba(20, 184, 166, 0.6);
-    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
-    background: rgba(255, 255, 255, 0.15);
+    border-color: #0D9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+    background: #FFFFFF;
 }
 
 .detail-row .editable-input,
@@ -2105,13 +2141,13 @@ body::before {
 .health-status-full {
     margin-top: 8px;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(10px);
     border-radius: 12px;
     white-space: pre-wrap;
     word-wrap: break-word;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+    color: #1F2937;
 }
 
 .customer-detail-actions {
