@@ -512,7 +512,7 @@ body::before {
 }
 
 .header {
-    background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%);
+    background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
     backdrop-filter: blur(20px);
     padding: 20px 32px;
     display: flex;
@@ -639,7 +639,7 @@ body::before {
 .form-group textarea {
     width: 100%;
     padding: 12px 16px;
-    border: 1.5px solid #0D9488;
+    border: 1.5px solid #E5E7EB;
     border-radius: 24px;
     font-size: 0.95rem;
     font-family: inherit;
@@ -660,8 +660,8 @@ body::before {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #0D9488;
-    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.3);
+    border-color: #14B8A6;
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
     background: #FFFFFF;
     border-radius: 24px;
 }
@@ -701,7 +701,6 @@ body::before {
 .avatar-preview:hover {
     border-color: #14B8A6;
     background: rgba(20, 184, 166, 0.1);
-    transform: scale(1.05);
 }
 
 .avatar-preview img {
@@ -1107,7 +1106,7 @@ body::before {
     .form-group textarea {
         padding: 10px 14px;
         font-size: 16px; /* 防止 iOS 自動縮放 */
-        border-radius: 12px;
+        border-radius: 24px;
     }
 
     .form-row {
@@ -1125,7 +1124,7 @@ body::before {
         font-size: 0.95rem;
         width: 100%;
         margin-bottom: 10px;
-        border-radius: 12px;
+        border-radius: 24px;
     }
 
     .btn:last-child {
@@ -1437,13 +1436,13 @@ body::before {
     .modal-content .form-group input[type="number"],
     .modal-content .form-group select,
     .modal-content .form-group textarea {
-        border-radius: 12px;
+        border-radius: 24px;
     }
     
     .modal-content .form-group input:focus,
     .modal-content .form-group select:focus,
     .modal-content .form-group textarea:focus {
-        border-radius: 12px;
+        border-radius: 24px;
     }
 
     /* 登入頁面 */
@@ -1744,7 +1743,6 @@ body::before {
     background: rgba(20, 184, 166, 0.1);
     z-index: 1;
     position: relative;
-    transform: scale(1.05);
 }
 
 .calendar-day.today {
@@ -1898,13 +1896,13 @@ body::before {
 .modal-content .form-group input[type="number"],
 .modal-content .form-group select,
 .modal-content .form-group textarea {
-    border-radius: 12px;
+    border-radius: 24px;
 }
 
 .modal-content .form-group input:focus,
 .modal-content .form-group select:focus,
 .modal-content .form-group textarea:focus {
-    border-radius: 12px;
+    border-radius: 24px;
 }
 
 /* 客戶列表容器 */
