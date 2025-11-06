@@ -151,30 +151,39 @@
                 }
                 
                 // 檢查是否需要 Email 確認
+                console.log('註冊結果檢查:', {
+                    hasUser: !!data.user,
+                    hasSession: !!data.session,
+                    emailConfirmed: data.user?.email_confirmed_at,
+                    userId: data.user?.id,
+                    userEmail: data.user?.email
+                });
+                
                 if (data.user && !data.session) {
                     // 需要 Email 確認的情況
+                    console.log('需要 Email 確認 - 將跳轉到登入頁面');
                     if (dbSuccess) {
-                        statusDiv.innerHTML = '<div class="success-message">註冊成功！用戶資料已建立。請檢查您的 Email 並點擊確認連結後再登入</div>';
+                        statusDiv.innerHTML = '<div class="success-message">註冊成功！用戶資料已建立。<br><br>📧 驗證郵件已發送，請檢查您的 Email 收件匣（包括垃圾郵件資料夾）。<br><br>💡 提示：郵件可能需要幾分鐘才能送達，請耐心等候。<br><br>點擊郵件中的確認連結後即可登入。</div>';
                     } else {
-                        statusDiv.innerHTML = `<div class="success-message">註冊成功！但用戶資料建立失敗：${dbErrorMsg}。請先確認 Email，登入時會自動建立用戶資料。</div>`;
+                        statusDiv.innerHTML = `<div class="success-message">註冊成功！但用戶資料建立失敗：${dbErrorMsg}。<br><br>📧 驗證郵件已發送，請先確認 Email，登入時會自動建立用戶資料。</div>`;
                     }
                     
-                    // 3秒後跳轉到登入頁面
+                    // 5秒後跳轉到登入頁面（給用戶更多時間閱讀訊息）
                     setTimeout(() => {
                         window.location.href = 'login.html?registered=true';
-                    }, 3000);
+                    }, 5000);
                     return;
                 }
                 
                 // 註冊成功且已自動登入（不需要 Email 確認的情況）
                 if (data.user && data.session) {
+                    console.log('註冊成功且已自動登入（不需要 Email 確認）- 將直接跳轉到主頁');
                     if (dbSuccess) {
                         statusDiv.innerHTML = '<div class="success-message">註冊成功！用戶資料已建立。正在跳轉...</div>';
                     } else {
-                        statusDiv.innerHTML = `<div class="error-message">註冊成功但用戶資料建立失敗：${dbErrorMsg}。請聯繫管理員或稍後再試。</div>`;
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = '註冊帳號';
-                        return;
+                        // 即使 users 表建立失敗，也允許登入（登入時會自動建立）
+                        console.warn('users 表建立失敗，但允許登入（登入時會自動建立）');
+                        statusDiv.innerHTML = `<div class="success-message">註冊成功！用戶資料建立失敗：${dbErrorMsg}，但可以登入（登入時會自動建立用戶資料）。正在跳轉...</div>`;
                     }
                     
                     // 註冊成功，直接跳轉到主頁面
