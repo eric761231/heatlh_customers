@@ -10,9 +10,10 @@
   to = "/index.html"
   status = 200
 
-# SPA 路由支援（如果未來需要）
-# [[redirects]]
-#   from = "/*"
-#   to = "/index.html"
-#   status = 200
+# SPA 路由支援（所有路徑都重定向到 index.html）
+# 注意：html/_redirects 文件會優先於此設定
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
