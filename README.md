@@ -2,11 +2,11 @@
 
 ## 📋 專案簡介
 
-這是一個使用 HTML、CSS、JavaScript 建立的客戶管理系統，資料儲存在 Supabase 資料庫中。
+這是一個使用 Flutter 建立的客戶管理系統，資料儲存在 Supabase 資料庫中。
 
 ## 🚀 快速開始
 
-### Flutter 版本（推薦）
+### Flutter 版本
 
 1. **安裝依賴**
    ```bash
@@ -21,26 +21,9 @@
 
    詳細說明請參考：`flutter_app/README.md`
 
-### HTML 版本（舊版本）
-
-1. **直接開啟 HTML 檔案**
-   - 前往 `html` 資料夾
-   - 雙擊 `login.html` 開啟登入頁面
-
-2. **使用本地伺服器（推薦）**
-   ```bash
-   cd html
-   python -m http.server 8000
-   ```
-   然後訪問：http://localhost:8000/login.html
-
-3. **使用 VS Code Live Server**
-   - 安裝 "Live Server" 擴充功能
-   - 右鍵點擊 `html/login.html` > "Open with Live Server"
-
 ### 第一次使用
 
-1. 註冊新帳號（`register.html`）
+1. 註冊新帳號
 2. 登入系統
 3. 開始使用：新增客戶、管理行程、記錄訂單
 
@@ -48,43 +31,29 @@
 
 ```
 heath/
-├── flutter_app/            # Flutter 應用程式（新版本）⭐
+├── flutter_app/            # Flutter 應用程式 ⭐
 │   ├── lib/               # Flutter 程式碼
 │   │   ├── config/       # 配置檔案
 │   │   ├── models/       # 資料模型
 │   │   ├── screens/      # 頁面
 │   │   └── services/     # 服務層
 │   └── pubspec.yaml      # Flutter 依賴配置
-├── html/                  # HTML 前端檔案（舊版本）
-│   ├── login.html        # 登入頁面
-│   ├── register.html     # 註冊頁面
-│   ├── calendar.html     # 行事曆主頁
-│   ├── customers.html    # 客戶資料列表
-│   ├── add-customer.html # 新增客戶
-│   ├── orders.html       # 訂單管理
-│   ├── css/             # 樣式檔案
-│   └── js/              # JavaScript 檔案
-│       ├── config.js    # 設定檔（重要）
-│       ├── supabase-client.js  # Supabase 客戶端
-│       └── ...
 ├── docs/                 # 專案文檔
 │   ├── user_login_串聯說明.md
 │   ├── 啟動指南.md
 │   └── 檢查_users表_RLS政策.md
-├── supabase/            # Supabase 相關文檔和 SQL 腳本
-└── netlify.toml         # Netlify 部署設定
+└── supabase/            # Supabase 相關文檔和 SQL 腳本
 ```
 
 ## ⚙️ 設定
 
 ### Supabase 設定
 
-確認 `html/js/config.js` 中的設定：
+Supabase 配置位於 `flutter_app/lib/config/app_config.dart`：
 
-```javascript
-const SUPABASE_URL = 'https://lvrcnmvnqbueghjyvxji.supabase.co';
-const SUPABASE_ANON_KEY = '您的 Supabase Key';
-const DATA_SOURCE = 'supabase'; // 使用 Supabase
+```dart
+static const String supabaseUrl = 'https://lvrcnmvnqbueghjyvxji.supabase.co';
+static const String supabaseAnonKey = '您的 Supabase Key';
 ```
 
 ### 資料庫結構
@@ -124,18 +93,19 @@ const DATA_SOURCE = 'supabase'; // 使用 Supabase
 ## 🐛 疑難排解
 
 ### 無法登入
-- 檢查 Supabase 設定是否正確
-- 檢查瀏覽器控制台是否有錯誤
-- 參考 `supabase/LOGIN_TROUBLESHOOTING.md`
+- 檢查 Supabase 設定是否正確（`flutter_app/lib/config/app_config.dart`）
+- 檢查應用程式日誌
+- 確認網路連線正常
 
 ### 資料無法顯示
 - 確認已登入
 - 檢查資料表中是否有 `user_login` 欄位
 - 參考 `docs/檢查_users表_RLS政策.md`
 
-### 前端無法連接
+### 應用程式無法連接
 - 確認 Supabase 專案正常運行
 - 檢查網路連線
+- 確認 Android/iOS 權限設定正確
 
 ## 📄 授權
 

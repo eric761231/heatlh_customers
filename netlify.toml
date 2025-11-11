@@ -1,19 +1,13 @@
+# Netlify 部署配置
+# 注意：HTML 版本已移除，如需部署請使用 Flutter Web
+# 
+# 部署 Flutter Web 版本：
+# 1. 執行：cd flutter_app && flutter build web
+# 2. 設定 publish = "flutter_app/build/web"
+# 3. 設定 command = "cd flutter_app && flutter build web"
+
 [build]
-  # 發布目錄設為 html 資料夾
-  publish = "html"
-  # 建置命令（可選，因為是靜態檔案）
-  command = ""
-
-# 重定向規則
-[[redirects]]
-  from = "/"
-  to = "/index.html"
-  status = 200
-
-# SPA 路由支援（所有路徑都重定向到 index.html）
-# 注意：html/_redirects 文件會優先於此設定
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+  # 如需部署 Flutter Web，取消下面的註解並設定正確路徑
+  # publish = "flutter_app/build/web"
+  # command = "cd flutter_app && flutter build web"
 
